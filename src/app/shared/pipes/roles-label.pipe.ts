@@ -2,7 +2,7 @@ import { inject, Pipe, PipeTransform } from '@angular/core';
 import { Role } from '@core/auth';
 import { I18nService } from '@core/i18n';
 
-const KEY: Record<Role, string> = { solicitar: 'me.cap.request', aprobar: 'me.cap.approve', auditar: 'me.cap.audit' };
+const KEY: Record<Role, string> = { request: 'me.cap.request', approve: 'me.cap.approve', audit: 'me.cap.audit' };
 
 /** ['request','approve'] → "Solicitar · Aprobar"  (vacío → "Solo lectura") */
 @Pipe({ name: 'rolesLabel', pure: false })
