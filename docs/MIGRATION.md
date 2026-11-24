@@ -31,7 +31,7 @@ Todas las pantallas del prototipo están construidas con router (lazy), estados 
 - **Contratos HTTP** (`core/api/http/*`): son una propuesta; confirmar rutas y payloads con backend antes de apagar los mocks.
 - **Textos**: el código está en inglés y los textos de UI en español dentro de las plantillas (no pasan por i18n todavía).
 - **Maestros**: nada se edita directo; cada cambio crea una solicitud (`MasterRequests`). Reglas: acción en uso no se desactiva, el último rol aprobador no se desactiva, parámetros con validación por código.
-- **Editor de flujos**: el orden se cambia con flechas (no hay arrastrar y soltar); variables, catálogos y campos se muestran en solo lectura (el prototipo los edita solo en la combinación 1-1). La validación (`flow-validation.ts`) bloquea el envío a revisión.
+- **Editor de flujos** (`features/flows/editor/`): réplica de `editor-borrador.html` — árbol de estructura con arrastrar y soltar, paneles de categoría/política/lógica con formulario de condición en línea, panel de validación y pestañas de recursos (variables, campos del request, catálogos con carga masiva por CSV pegado). Diferencias: los recursos se editan en un panel bajo la tabla (no en hoja lateral) y la carga masiva es un solo paso (pegar CSV) en lugar del asistente de 3 pasos. La validación (`flow-validation.ts`) bloquea el envío a revisión.
 - **Revisión**: control de cuatro ojos (quien editó no aprueba). Con mocks, el diálogo de aprobación permite simular conflicto (409) y error del motor.
 - Matriz canal–producto y `GRIS` de acciones usan los tokens de tema existentes.
 - `maestros-sin-identificar.html` del prototipo se tomó como recursos del editor; confirmar.

@@ -1,6 +1,6 @@
 import { FlowDocument, FlowResources } from '@core/api/flow.models';
 import { diffFlows } from './flow-diff';
-import { emptyCategory, emptyPolicy, validateCondition, validateFlow, validateValue } from './flow-validation';
+import { collectIssues, emptyCategory, emptyPolicy, validateCondition } from './flow-validation';
 
 const resources: FlowResources = {
   variables: [
@@ -23,41 +23,46 @@ function validDoc(): FlowDocument {
   return { stopOnStop: true, from: '', to: '', categories: [cat] };
 }
 
-describe('validateValue', () => {
-  it('valida formatos por tipo de variable', () => {
-    expect(validateValue('10.50', 'MONEY')).toBeNull();
-    expect(validateValue('10.555', 'MONEY')).not.toBeNull();
-    expect(validateValue('12/31/2026', 'DATE')).toBeNull();
-    expect(validateValue('31/12/2026', 'DATE')).not.toBeNull();
-    expect(validateValue('abc', 'NUMBER')).not.toBeNull();
-    expect(validateValue('lo que sea', 'TEXT')).toBeNull();
-  });
-});
-
 describe('validateCondition', () => {
-  it('exige variable, valor y al menos un extremo de rango', () => {
-    expect(validateCondition({ id: '1', type: 'condition', variable: '', rule: 'FIXED' }, resources)).toBe('Elige una variable');
-    expect(validateCondition({ id: '1', type: 'condition', variable: 'EDAD', rule: 'FIXED', value: '' }, resources)).toBe('Falta el valor');
-    expect(validateCondition({ id: '1', type: 'condition', variable: 'EDAD', rule: 'RANGE' }, resources)).toBe('Indica al menos un extremo');
-    expect(validateCondition({ id: '1', type: 'condition', variable: 'MONTO', rule: 'RANGE', from: '1', to: '2.5' }, resources)).toBeNull();
+  const base = { id: '1', type: 'condition' as const };
+  it('exige variable existente, valor y al menos un extremo de rango', () => {
+    expect(validateCondition({ ...base, variable: '', rule: 'FIXED' }, resources.variables).variable).toBeTruthy();
+    expect(validateCondition({ ...base, variable: 'NOPE', rule: 'FIXED', value: '1' }, resources.variables).variable).toBeTruthy();
+    expect(validateCondition({ ...base, variable: 'EDAD', rule: 'FIXED', value: '' }, resources.variables).value).toBeTruthy();
+    expect(validateCondition({ ...base, variable: 'EDAD', rule: 'RANGE' }, resources.variables).from).toBeTruthy();
+    expect(validateCondition({ ...base, variable: 'MONTO', rule: 'RANGE', from: '1', to: '2.5' }, resources.variables)).toEqual({});
+  });
+
+  it('valida formatos por tipo y orden del rango', () => {
+    expect(validateCondition({ ...base, variable: 'MONTO', rule: 'FIXED', value: '10.555' }, resources.variables).value).toBeTruthy();
+    expect(validateCondition({ ...base, variable: 'FECHA', rule: 'FIXED', value: '31/12/2026' }, resources.variables).value).toBeTruthy();
+    expect(validateCondition({ ...base, variable: 'FECHA', rule: 'FIXED', value: '12/31/2026' }, resources.variables)).toEqual({});
+    expect(validateCondition({ ...base, variable: 'EDAD', rule: 'RANGE', from: '70', to: '18' }, resources.variables).to).toBeTruthy();
   });
 });
 
-describe('validateFlow', () => {
+describe('collectIssues', () => {
+  const withField = { ...resources, fields: [{ group: 'A', path: 'a.c', type: 'NUMBER', required: true, sensitive: false, description: '', example: '' }] as FlowResources['fields'] };
+
   it('acepta un flujo correcto', () => {
-    expect(validateFlow(validDoc(), resources).filter((i) => i.level === 'error')).toEqual([]);
+    expect(collectIssues(validDoc(), withField).filter((i) => i.level === 'error')).toEqual([]);
   });
 
-  it('reporta código de política inválido, lógica vacía y resultado incompleto', () => {
+  it('reporta lógica vacía, subgrupo vacío y variable sin campo declarado', () => {
+    const empty = validDoc();
+    empty.categories[0].policies[0].root.children = [];
+    expect(collectIssues(empty, withField).some((i) => i.level === 'error' && i.target.policy === 'PA-001')).toBe(true);
+
+    const noField = collectIssues(validDoc(), resources);
+    expect(noField.some((i) => i.target.tab === 'vars')).toBe(true);
+  });
+
+  it('ordena los errores antes que los avisos', () => {
     const doc = validDoc();
-    const pol = doc.categories[0].policies[0];
-    pol.code = 'XX-1';
-    pol.root.children = [];
-    pol.results.pass.message = '';
-    const messages = validateFlow(doc, resources).map((i) => i.message);
-    expect(messages).toContain('El código debe ser PA-NNN o PA-NNNA');
-    expect(messages).toContain('La lógica está vacía');
-    expect(messages.some((m) => m.includes('falta el mensaje'))).toBe(true);
+    doc.categories[0].active = false;
+    doc.categories[0].policies[0].root.children.push({ id: 'g', type: 'group', op: 'OR', children: [] });
+    const levels = collectIssues(doc, resources).map((i) => i.level);
+    expect(levels.indexOf('warning')).toBeGreaterThan(levels.lastIndexOf('error'));
   });
 });
 

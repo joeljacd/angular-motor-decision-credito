@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '@core/auth';
@@ -123,6 +123,19 @@ export class FlowReviewPage implements OnInit {
     const s = this.ws.state();
     return s && s.status !== 'none' ? `Borrador ${s.openedId} · enviado ${s.sentAt || '—'} por ${s.editorNames || s.openedBy}` : 'Diferencias entre el borrador y la versión vigente.';
   });
+
+  /** Query params: `open` abre de inmediato el diálogo de aprobar o devolver (atajo desde el editor). */
+  readonly open = input<string>();
+  private shortcutDone = false;
+
+  constructor() {
+    effect(() => {
+      const state = this.ws.state();
+      if (this.shortcutDone || state?.status !== 'review' || !this.open()) return;
+      this.shortcutDone = true;
+      queueMicrotask(() => void (this.open() === 'approve' ? this.approve() : this.returnDraft()));
+    });
+  }
 
   ngOnInit(): void {
     this.ws.load();
