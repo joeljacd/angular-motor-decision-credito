@@ -27,7 +27,7 @@ export interface User {
   cargo: string;
 }
 
-export type Role = 'solicitar' | 'aprobar' | 'auditar';
+export type Role = 'request' | 'approve' | 'audit';
 
 /** Respuesta de `/me`: identidad + capacidades efectivas del usuario autenticado. */
 export interface MeInfo {

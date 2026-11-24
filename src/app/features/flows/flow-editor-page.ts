@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { Category, FLOW_ACTIONS, groupPhrase, Policy } from '@core/api/flow.models';
+import { Category, FLOW_ACTIONS, FlowDocument, FlowResources, groupPhrase, Policy } from '@core/api/flow.models';
+import { WorkflowApi } from '@core/api/workflow.api';
 import { FlowWorkspaceStore } from '@core/state/flow-workspace.store';
 import { MasterRequests } from '../masters/master-requests.service';
 import { ModalService, ToastService, UiAlert, UiButton, UiCard, UiCheckbox, UiFormField, UiInput, UiPageHeader, UiTab, UiTableSkeleton, UiTabs, UiTag } from '@shared/ui';
@@ -20,36 +21,43 @@ import { emptyCategory, emptyPolicy, FlowIssue, validateFlow } from './flow-vali
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './flow-editor-page.scss',
   template: `
-    <ui-page-header kicker="Motor · Flujos" title="Editor de borrador" [description]="description()">
-      <a ui-button routerLink="/flujos">Volver a versiones</a>
-      @if (ws.state()?.status === 'edicion') {
+    <ui-page-header kicker="Motor · Flujos" [title]="version() ? 'Versión ' + version() : 'Editor de borrador'" [description]="description()">
+      <a ui-button routerLink="/flows">Volver a versiones</a>
+      @if (version()) {
+        <!-- Vista de una versión publicada: solo lectura -->
+      } @else if (ws.state()?.status === 'editing') {
         <button ui-button (click)="validate()">Validar</button>
         <button ui-button variant="danger-ghost" [disabled]="!editable()" (click)="discard()">Descartar</button>
         <button ui-button variant="primary" [disabled]="!editable() || submitting()" [loading]="submitting()" (click)="submit()">Enviar a revisión</button>
-      } @else if (ws.state()?.status === 'revision') {
-        <a ui-button variant="primary" routerLink="/flujos/revision">Ir a la revisión</a>
+      } @else if (ws.state()?.status === 'review') {
+        <a ui-button variant="primary" routerLink="/flows/review">Ir a la revisión</a>
       }
     </ui-page-header>
 
-    @if (ws.error()) {
+    @if (viewError()) {
+      <ui-alert tone="error">{{ viewError() }}</ui-alert>
+    } @else if (ws.error()) {
       <ui-alert tone="error">No fue posible cargar el borrador.</ui-alert>
-    } @else if (!ws.loaded()) {
+    } @else if (!doc()) {
       <ui-card padding="md"><ui-table-skeleton [rows]="6" /></ui-card>
-    } @else if (ws.state()?.status === 'none') {
-      <ui-alert tone="info">No hay un borrador abierto. <a routerLink="/flujos">Abre uno desde Flujos</a>.</ui-alert>
+    } @else if (!version() && ws.state()?.status === 'none') {
+      <ui-alert tone="info">No hay un borrador abierto. <a routerLink="/flows">Abre uno desde Flujos</a>.</ui-alert>
     } @else {
-      @if (ws.state()?.devolucion) {
+      @if (version()) {
+        <ui-alert tone="info">Versión {{ version() }} · solo lectura. Una versión publicada o retirada nunca se edita: abre un borrador desde Flujos.</ui-alert>
+      }
+      @if (!version() && ws.state()?.devolucion) {
         <ui-alert tone="warning">Un aprobador devolvió el borrador: {{ ws.state()?.devolucion }}</ui-alert>
       }
-      @if (!editable() && ws.state()?.status === 'edicion') {
+      @if (!version() && !editable() && ws.state()?.status === 'editing') {
         <ui-alert tone="info">Solo lectura: tu perfil no puede solicitar cambios o el sistema de firma no está disponible.</ui-alert>
       }
 
       <ui-card padding="md">
         <div class="config">
-          <ui-checkbox [disabled]="!editable()" [ngModel]="ws.draft()!.stopOnStop" (ngModelChange)="setStop($event)">Detener el flujo al encontrar una acción que detiene</ui-checkbox>
-          <ui-form-field label="Vigencia desde (dd/MM/yyyy)"><ui-input [disabled]="!editable()" [ngModel]="ws.draft()!.from" (ngModelChange)="setDate('from', $event)" /></ui-form-field>
-          <ui-form-field label="Hasta"><ui-input [disabled]="!editable()" [ngModel]="ws.draft()!.to" (ngModelChange)="setDate('to', $event)" /></ui-form-field>
+          <ui-checkbox [disabled]="!editable()" [ngModel]="doc()!.stopOnStop" (ngModelChange)="setStop($event)">Detener el flujo al encontrar una acción que detiene</ui-checkbox>
+          <ui-form-field label="Vigencia desde (dd/MM/yyyy)"><ui-input [disabled]="!editable()" [ngModel]="doc()!.from" (ngModelChange)="setDate('from', $event)" /></ui-form-field>
+          <ui-form-field label="Hasta"><ui-input [disabled]="!editable()" [ngModel]="doc()!.to" (ngModelChange)="setDate('to', $event)" /></ui-form-field>
           @if (ws.saving()) { <span class="saving">Guardando…</span> }
         </div>
       </ui-card>
@@ -71,10 +79,10 @@ import { emptyCategory, emptyPolicy, FlowIssue, validateFlow } from './flow-vali
         @case ('tree') {
           <ui-card padding="md">
             <div class="tree-head">
-              <span>{{ ws.draft()!.categories.length }} categorías</span>
+              <span>{{ doc()!.categories.length }} categorías</span>
               <button ui-button size="sm" variant="primary" [disabled]="!editable()" (click)="editCategory(null)">+ Categoría</button>
             </div>
-            @for (cat of ws.draft()!.categories; track cat.code; let ci = $index; let first = $first; let last = $last) {
+            @for (cat of doc()!.categories; track cat.code; let ci = $index; let first = $first; let last = $last) {
               <section class="cat" [class.off]="!cat.active">
                 <header>
                   <strong class="mono">{{ cat.code }}</strong> {{ cat.name }}
@@ -115,7 +123,7 @@ import { emptyCategory, emptyPolicy, FlowIssue, validateFlow } from './flow-vali
           <ui-card padding="md">
             <div class="ui-table-wrap"><table class="ui-table">
               <thead><tr><th>Variable</th><th>Nombre</th><th>Tipo</th><th>Origen</th><th>Detalle</th><th>Sensible</th></tr></thead>
-              <tbody>@for (v of ws.resources()!.variables; track v.code) {
+              <tbody>@for (v of res()!.variables; track v.code) {
                 <tr><td class="mono">{{ v.code }}</td><td>{{ v.name }}</td><td>{{ v.type }}</td><td>{{ v.origin === 'request' ? 'Solicitud' : 'Calculada' }}</td><td class="mono">{{ v.origin === 'request' ? v.path : v.fn + '(' + (v.field ?? '') + ')' }}</td><td>{{ v.sensitive ? 'Sí' : 'No' }}</td></tr>
               }</tbody>
             </table></div>
@@ -123,7 +131,7 @@ import { emptyCategory, emptyPolicy, FlowIssue, validateFlow } from './flow-vali
         }
         @case ('cats') {
           <ui-card padding="md">
-            @for (c of ws.resources()!.catalogs; track c.code) {
+            @for (c of res()!.catalogs; track c.code) {
               <h4 class="cat-title"><span class="mono">{{ c.code }}</span> {{ c.name }} <small>({{ c.items.length }} elementos)</small></h4>
               <div class="chips">@for (i of c.items; track i.code) { <ui-tag size="sm" [tone]="i.active ? 'neutral' : 'warning'">{{ i.code }} · {{ i.label }}</ui-tag> }</div>
             }
@@ -133,7 +141,7 @@ import { emptyCategory, emptyPolicy, FlowIssue, validateFlow } from './flow-vali
           <ui-card padding="md">
             <div class="ui-table-wrap"><table class="ui-table">
               <thead><tr><th>Grupo</th><th>Ruta</th><th>Tipo</th><th>Obligatorio</th><th>Formato</th><th>Ejemplo</th></tr></thead>
-              <tbody>@for (f of ws.resources()!.fields; track f.path) {
+              <tbody>@for (f of res()!.fields; track f.path) {
                 <tr><td>{{ f.group }}</td><td class="mono">{{ f.path }}</td><td>{{ f.type }}</td><td>{{ f.required ? 'Sí' : 'No' }}</td><td class="mono">{{ f.format || '—' }}</td><td class="mono">{{ f.example }}</td></tr>
               }</tbody>
             </table></div>
@@ -150,6 +158,17 @@ export class FlowEditorPage implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
 
+  /** Query params: si llega `version`, se muestra esa versión publicada en solo lectura. */
+  readonly channel = input<string>();
+  readonly product = input<string>();
+  readonly version = input<number, string | number | undefined>(undefined, { transform: (v) => (v ? +v : 0) });
+
+  private readonly api = inject(WorkflowApi);
+  private readonly viewed = signal<{ document: FlowDocument; resources: FlowResources } | null>(null);
+  protected readonly viewError = signal('');
+  protected readonly doc = computed(() => (this.version() ? this.viewed()?.document : this.ws.draft()) ?? null);
+  protected readonly res = computed(() => (this.version() ? this.viewed()?.resources : this.ws.resources()) ?? null);
+
   protected readonly tab = signal<string>('tree');
   protected readonly tabs: UiTab[] = [
     { key: 'tree', label: 'Categorías y políticas' },
@@ -160,18 +179,33 @@ export class FlowEditorPage implements OnInit {
   protected readonly showIssues = signal(false);
   protected readonly submitting = signal(false);
 
-  protected readonly editable = computed(() => this.ws.state()?.status === 'edicion' && this.requests.canEdit());
+  protected readonly editable = computed(() => !this.version() && this.ws.state()?.status === 'editing' && this.requests.canEdit());
   protected readonly issues = computed<FlowIssue[]>(() => {
-    const d = this.ws.draft();
-    const r = this.ws.resources();
+    const d = this.doc();
+    const r = this.res();
     return d && r ? validateFlow(d, r) : [];
   });
   protected readonly errorCount = computed(() => this.issues().filter((i) => i.level === 'error').length);
   protected readonly hasErrors = computed(() => this.errorCount() > 0);
   protected readonly description = computed(() => {
     const s = this.ws.state();
+    if (this.version()) return 'Contenido de la versión publicada.';
     return s && s.status !== 'none' ? `Borrador ${s.openedId} · abierto por ${s.openedBy} · último cambio ${s.last}` : 'Edición de reglas, categorías y políticas del borrador.';
   });
+
+  constructor() {
+    // Carga la versión publicada pedida por query param (solo lectura).
+    effect(() => {
+      const version = this.version();
+      if (!version) return;
+      this.viewed.set(null);
+      this.viewError.set('');
+      this.api.versionDocument(this.channel() ?? '1', this.product() ?? '1', version).subscribe({
+        next: (v) => this.viewed.set(v),
+        error: (e) => this.viewError.set(e?.message || 'No fue posible cargar la versión.'),
+      });
+    });
+  }
 
   ngOnInit(): void {
     this.ws.load();
@@ -206,7 +240,7 @@ export class FlowEditorPage implements OnInit {
   }
 
   protected async editCategory(cat: Category | null): Promise<void> {
-    const draft = this.ws.draft()!;
+    const draft = this.doc()!;
     const isNew = cat === null;
     const ref = this.modal.open<CategoryDialog, Category, CategoryDialogData>(CategoryDialog, {
       width: 'min(480px, 100%)',
@@ -230,7 +264,7 @@ export class FlowEditorPage implements OnInit {
   }
 
   protected async editPolicy(cat: Category, pol: Policy | null): Promise<void> {
-    const draft = this.ws.draft()!;
+    const draft = this.doc()!;
     const isNew = pol === null;
     const ref = this.modal.open<PolicyDialog, Policy, PolicyDialogData>(PolicyDialog, {
       width: 'min(960px, 100%)',
@@ -238,7 +272,7 @@ export class FlowEditorPage implements OnInit {
       data: {
         policy: pol ?? emptyPolicy('', cat.policies.length + 1),
         isNew,
-        resources: this.ws.resources()!,
+        resources: this.res()!,
         takenCodes: draft.categories.flatMap((c) => c.policies.map((p) => p.code)),
         readonly: !this.editable(),
       },
@@ -290,7 +324,7 @@ export class FlowEditorPage implements OnInit {
     this.ws.submit().subscribe({
       next: () => {
         this.toast.success('Borrador enviado a revisión');
-        void this.router.navigate(['/flujos']);
+        void this.router.navigate(['/flows']);
       },
       error: () => this.submitting.set(false),
     });
@@ -298,6 +332,6 @@ export class FlowEditorPage implements OnInit {
 
   protected async discard(): Promise<void> {
     const ok = await this.modal.confirm({ title: '¿Descartar el borrador?', message: 'Se perderán los cambios no publicados.', confirmLabel: 'Descartar', cancelLabel: 'Cancelar', tone: 'danger' });
-    if (ok) this.ws.discard().subscribe({ next: () => { this.toast.success('Borrador descartado'); void this.router.navigate(['/flujos']); } });
+    if (ok) this.ws.discard().subscribe({ next: () => { this.toast.success('Borrador descartado'); void this.router.navigate(['/flows']); } });
   }
 }

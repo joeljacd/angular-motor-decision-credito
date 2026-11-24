@@ -80,7 +80,7 @@ export class InboxService {
     const rows: InboxRow[] = [];
     const myEdit = !!flow && (flow.editors.includes(me.id) || flow.openedId === me.id);
 
-    if (flow && flow.status === 'revision' && !myEdit) {
+    if (flow && flow.status === 'review' && !myEdit) {
       rows.push({
         kind: 'draft',
         element: this.i18n.t('dash.draft.name'),
@@ -91,7 +91,7 @@ export class InboxService {
         due: this.due(flow.vence),
         status: 'En revisión',
         canCancel: false,
-        link: { path: '/flujos/revision' },
+        link: { path: '/flows/review' },
       });
     }
     for (const r of this.requests.items()) {
@@ -106,8 +106,8 @@ export class InboxService {
     const flow = this.workflow.flow();
     const rows: InboxRow[] = [];
 
-    if (flow && flow.openedId === me.id && (flow.status === 'edicion' || flow.status === 'revision')) {
-      const editing = flow.status === 'edicion';
+    if (flow && flow.openedId === me.id && (flow.status === 'editing' || flow.status === 'review')) {
+      const editing = flow.status === 'editing';
       rows.push({
         kind: 'draft',
         element: this.i18n.t('dash.draft.name'),
@@ -118,7 +118,7 @@ export class InboxService {
         due: this.due(flow.vence),
         status: editing ? 'En edición' : 'En revisión',
         canCancel: false,
-        link: { path: '/flujos/editor' },
+        link: { path: '/flows/editor' },
       });
     }
     for (const r of this.requests.items()) {
@@ -158,7 +158,7 @@ export class InboxService {
       rejectComment: r.rechazo,
       approver: r.aprobador,
       canCancel: mine && r.estado === 'Pendiente',
-      link: { path: '/solicitudes', query: { id: r.id } },
+      link: { path: '/requests', query: { id: r.id } },
     };
   }
 }

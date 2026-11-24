@@ -8,13 +8,13 @@ import { FlowState } from '../workflow.api';
 export const MOCK_PROFILES: Profile[] = [
   { id: 1, codigo: 'PRF-001', nombre: 'Administrador', desc: 'Acceso total, incluida la seguridad del portal.', estado: 'Activo', upd: '03/11/2026', opts: [...ALL_OPTIONS] },
   { id: 2, codigo: 'PRF-002', nombre: 'Aprobador', desc: 'Aprueba borradores y solicitudes; también solicita y edita.', estado: 'Activo', upd: '14/11/2026',
-    opts: ['cap.solicitar', 'cap.aprobar', 'inicio', 'flujos', 'solicitudes', ...MASTER_KEYS, 'historial', 'integridad'] },
+    opts: ['cap.request', 'cap.approve', 'home', 'flows', 'requests', ...MASTER_KEYS, 'history', 'integrity'] },
   { id: 3, codigo: 'PRF-003', nombre: 'Solicitador', desc: 'Edita borradores y crea solicitudes de cambio.', estado: 'Activo', upd: '14/11/2026',
-    opts: ['cap.solicitar', 'inicio', 'flujos', 'solicitudes', ...MASTER_KEYS, 'historial'] },
+    opts: ['cap.request', 'home', 'flows', 'requests', ...MASTER_KEYS, 'history'] },
   { id: 4, codigo: 'PRF-004', nombre: 'Solo consulta', desc: 'Lectura de inicio, flujos y maestros.', estado: 'Activo', upd: '02/10/2026',
-    opts: ['inicio', 'flujos', ...MASTER_KEYS] },
+    opts: ['home', 'flows', ...MASTER_KEYS] },
   { id: 5, codigo: 'PRF-005', nombre: 'Auditor (heredado)', desc: 'Lectura de historial e integridad.', estado: 'Inactivo', upd: '11/05/2026',
-    opts: ['historial', 'integridad'] },
+    opts: ['history', 'integrity'] },
 ];
 
 /** Usuarios que se ofrecen en el login y en "Ver el portal como…". */
@@ -80,7 +80,7 @@ export const MOCK_REQUESTS: ChangeRequest[] = [
 ];
 
 export const MOCK_FLOW: FlowState = {
-  status: 'edicion',
+  status: 'editing',
   devolucion: 'Revisar el umbral de ingreso de PA-006: el comité aprobó 850.00 solo para dependientes. — María Fernanda Cevallos, 21/11/2026',
   openedBy: 'Ana Pérez',
   openedId: 'aperez',

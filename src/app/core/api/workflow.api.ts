@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { FlowDocument, FlowResources } from './flow.models';
 
 /** none = no hay borrador abierto · publicado = el borrador se aprobó y pasó a vigente. */
-export type FlowStatus = 'none' | 'edicion' | 'revision' | 'publicado';
+export type FlowStatus = 'none' | 'editing' | 'review' | 'published';
 
 /** Estado del borrador de flujo vigente (un solo borrador a la vez). */
 export interface FlowState {
@@ -43,6 +43,12 @@ export interface FlowVersion {
   validity: string;
 }
 
+/** Contenido de una versión ya publicada. */
+export interface VersionDocument {
+  document: FlowDocument;
+  resources: FlowResources;
+}
+
 export type DraftSource = 'current' | 'retired' | 'empty';
 
 /** Resultado simulado de la publicación (solo mocks; el backend real decide). */
@@ -57,10 +63,12 @@ export abstract class WorkflowApi {
   abstract versions(channel: string, product: string): Observable<FlowVersion[]>;
   /** PUT /flow/draft */
   abstract saveDraft(document: FlowDocument, resources: FlowResources): Observable<FlowState>;
-  /** POST /flow/draft  { source, version? } — abre un borrador (409 si ya existe uno). */
-  abstract openDraft(source: DraftSource, version?: number): Observable<FlowState>;
-  /** DELETE /flow/draft */
-  abstract discardDraft(): Observable<FlowState>;
+  /** GET /flows/{channel}/{product}/versions/{number} — contenido de una versión publicada o retirada (solo lectura). */
+  abstract versionDocument(channel: string, product: string, version: number): Observable<VersionDocument>;
+  /** POST /flow/draft  { source, version?, combo? } — abre un borrador (409 si ya existe uno). */
+  abstract openDraft(source: DraftSource, version?: number, combo?: string): Observable<FlowState>;
+  /** DELETE /flow/draft?combo= */
+  abstract discardDraft(combo?: string): Observable<FlowState>;
   /** POST /flow/draft/submit */
   abstract submit(): Observable<FlowState>;
   /** POST /flow/draft/return  { comment } */

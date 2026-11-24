@@ -18,18 +18,18 @@ export interface NavItem {
  * 3) ruta en app.routes.ts con `data: { option: <clave> }`, 4) textos en i18n (nav.<clave>).
  */
 export const NAV_ITEMS: readonly NavItem[] = [
-  { key: 'inicio', path: '/inicio', icon: 'inbox', group: null },
-  { key: 'flujos', path: '/flujos', icon: 'workflow', group: 'engine' },
-  { key: 'solicitudes', path: '/solicitudes', icon: 'git-pull-request', group: 'engine' },
-  { key: 'm-canales', path: '/maestros/canales', icon: 'layers', group: 'masters' },
-  { key: 'm-acciones', path: '/maestros/acciones', icon: 'flag', group: 'masters' },
-  { key: 'm-parametros', path: '/maestros/parametros', icon: 'sliders', group: 'masters' },
-  { key: 'm-catalogos', path: '/maestros/catalogos', icon: 'list', group: 'masters' },
-  { key: 'm-roles', path: '/maestros/roles', icon: 'key', group: 'masters' },
-  { key: 'historial', path: '/historial', icon: 'history', group: 'audit' },
-  { key: 'integridad', path: '/integridad', icon: 'shield-check', group: 'audit' },
-  { key: 'usuarios', path: '/usuarios', icon: 'users', group: 'security' },
-  { key: 'perfiles', path: '/perfiles', icon: 'contact', group: 'security' },
+  { key: 'home', path: '/home', icon: 'inbox', group: null },
+  { key: 'flows', path: '/flows', icon: 'workflow', group: 'engine' },
+  { key: 'requests', path: '/requests', icon: 'git-pull-request', group: 'engine' },
+  { key: 'm-channels', path: '/masters/channels', icon: 'layers', group: 'masters' },
+  { key: 'm-actions', path: '/masters/actions', icon: 'flag', group: 'masters' },
+  { key: 'm-parameters', path: '/masters/parameters', icon: 'sliders', group: 'masters' },
+  { key: 'm-catalogs', path: '/masters/catalogs', icon: 'list', group: 'masters' },
+  { key: 'm-roles', path: '/masters/roles', icon: 'key', group: 'masters' },
+  { key: 'history', path: '/history', icon: 'history', group: 'audit' },
+  { key: 'integrity', path: '/integrity', icon: 'shield-check', group: 'audit' },
+  { key: 'users', path: '/users', icon: 'users', group: 'security' },
+  { key: 'profiles', path: '/profiles', icon: 'contact', group: 'security' },
 ];
 
 export const NAV_GROUPS: readonly { id: NavGroupId | null; labelKey?: I18nKey }[] = [

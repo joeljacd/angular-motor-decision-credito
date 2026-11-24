@@ -4,7 +4,7 @@ import { I18nService } from '@core/i18n';
 
 const KEY: Record<Role, string> = { solicitar: 'me.cap.request', aprobar: 'me.cap.approve', auditar: 'me.cap.audit' };
 
-/** ['solicitar','aprobar'] → "Solicitar · Aprobar"  (vacío → "Solo lectura") */
+/** ['request','approve'] → "Solicitar · Aprobar"  (vacío → "Solo lectura") */
 @Pipe({ name: 'rolesLabel', pure: false })
 export class RolesLabelPipe implements PipeTransform {
   private readonly i18n = inject(I18nService);

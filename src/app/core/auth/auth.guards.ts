@@ -19,7 +19,7 @@ export const guestGuard: CanActivateFn = () => {
 };
 
 /**
- * Exige la opción de permiso declarada en la ruta: `data: { option: 'solicitudes' }`.
+ * Exige la opción de permiso declarada en la ruta: `data: { option: 'requests' }`.
  * Sin permiso → /403 (dentro del shell).
  */
 export const permissionGuard: CanActivateFn = (route) => {

@@ -35,8 +35,8 @@ const KIND: Record<DiffKind, { label: string; tone: 'success' | 'error' | 'warni
   `,
   template: `
     <ui-page-header kicker="Motor · Flujos" title="Revisión del borrador" [description]="description()">
-      <a ui-button routerLink="/flujos">Volver a versiones</a>
-      @if (status() === 'revision') {
+      <a ui-button routerLink="/flows">Volver a versiones</a>
+      @if (status() === 'review') {
         <button ui-button variant="danger-ghost" [disabled]="!canDecide()" (click)="returnDraft()">Devolver</button>
         <button ui-button variant="primary" [disabled]="!canDecide() || busy()" [loading]="busy()" (click)="approve()">Aprobar y publicar</button>
       }
@@ -47,12 +47,12 @@ const KIND: Record<DiffKind, { label: string; tone: 'success' | 'error' | 'warni
     } @else if (!ws.loaded()) {
       <ui-card padding="md"><ui-table-skeleton [rows]="5" /></ui-card>
     } @else if (status() === 'none') {
-      <ui-alert tone="info">No hay un borrador abierto. <a routerLink="/flujos">Volver a Flujos</a>.</ui-alert>
-    } @else if (status() === 'publicado') {
+      <ui-alert tone="info">No hay un borrador abierto. <a routerLink="/flows">Volver a Flujos</a>.</ui-alert>
+    } @else if (status() === 'published') {
       <ui-alert tone="success">Borrador publicado por {{ ws.state()?.approvedBy }} el {{ ws.state()?.publishedAt }}. Ya es la versión vigente.</ui-alert>
     } @else {
-      @if (status() === 'edicion') {
-        <ui-alert tone="info">El borrador aún está en edición. <a routerLink="/flujos/editor">Ir al editor</a>.</ui-alert>
+      @if (status() === 'editing') {
+        <ui-alert tone="info">El borrador aún está en edición. <a routerLink="/flows/editor">Ir al editor</a>.</ui-alert>
       } @else if (isOwnEdit()) {
         <ui-alert tone="warning">Participaste en la edición de este borrador: otra persona debe aprobarlo (control de cuatro ojos).</ui-alert>
       } @else if (!canApprove()) {
@@ -146,7 +146,7 @@ export class FlowReviewPage implements OnInit {
       next: () => {
         this.busy.set(false);
         this.toast.success('Flujo publicado: ya es la versión vigente');
-        void this.router.navigate(['/flujos']);
+        void this.router.navigate(['/flows']);
       },
       error: (err) => {
         this.busy.set(false);
@@ -164,7 +164,7 @@ export class FlowReviewPage implements OnInit {
     this.ws.returnDraft(comment).subscribe({
       next: () => {
         this.toast.success('Borrador devuelto al editor');
-        void this.router.navigate(['/flujos']);
+        void this.router.navigate(['/flows']);
       },
     });
   }

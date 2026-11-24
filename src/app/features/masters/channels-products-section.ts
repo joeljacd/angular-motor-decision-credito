@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { GridAction, GridColumn, GridRow, MasterGrid } from './master-grid';
 import { MasterSection } from './master-section';
 
-type SubTab = 'canales' | 'productos' | 'canalproducto';
+type SubTab = 'channels' | 'products' | 'channel-product';
 
 const COLUMNS: GridColumn[] = [
   { key: 'code', label: 'Código', kind: 'mono' },
@@ -26,8 +26,8 @@ const COLUMNS: GridColumn[] = [
       title="Canales y productos"
       description="Códigos de 1 a 4 dígitos y las combinaciones habilitadas entre ellos. Un canal o producto con versiones no se elimina: solo se solicita deshabilitarlo."
     >
-      @if (tab() !== 'canalproducto') {
-        <button ui-button variant="primary" [disabled]="!requests.canEdit()" (click)="openNew()">+ {{ tab() === 'canales' ? 'Canal' : 'Producto' }}</button>
+      @if (tab() !== 'channel-product') {
+        <button ui-button variant="primary" [disabled]="!requests.canEdit()" (click)="openNew()">+ {{ tab() === 'channels' ? 'Canal' : 'Producto' }}</button>
       }
     </ui-page-header>
 
@@ -37,7 +37,7 @@ const COLUMNS: GridColumn[] = [
       <ui-alert tone="error">No fue posible cargar los maestros.</ui-alert>
     } @else if (!masters.loaded()) {
       <ui-card padding="md"><ui-table-skeleton [rows]="5" /></ui-card>
-    } @else if (tab() === 'canalproducto') {
+    } @else if (tab() === 'channel-product') {
       <ui-card padding="md">
         <div class="ui-table-wrap">
           <table class="ui-table matrix">
@@ -57,7 +57,7 @@ const COLUMNS: GridColumn[] = [
                         <button type="button" class="switch" role="switch" [class.on]="isOn(c, p)" [attr.aria-checked]="isOn(c, p)"
                           [attr.aria-label]="c.name + ' / ' + p.name" [title]="switchTitle(c, p)" [disabled]="switchDisabled(c, p)" (click)="toggleCombo(c, p)"><span></span></button>
                         @if (pendingCombo(c, p); as pid) {
-                          <a [routerLink]="['/solicitudes']" [queryParams]="{ id: pid }">Cambio pendiente</a>
+                          <a [routerLink]="['/requests']" [queryParams]="{ id: pid }">Cambio pendiente</a>
                         }
                       </div>
                     </td>
@@ -83,25 +83,25 @@ const COLUMNS: GridColumn[] = [
 })
 export class ChannelsProductsSection extends MasterSection {
   protected readonly columns = COLUMNS;
-  protected readonly tab = signal<string>('canales');
+  protected readonly tab = signal<string>('channels');
   protected readonly snapshot = computed(() => this.masters.snapshot()!);
 
   protected readonly tabs = computed<UiTab[]>(() => {
     const s = this.masters.snapshot();
     return [
-      { key: 'canales', label: 'Canales', count: s?.channels.length },
-      { key: 'productos', label: 'Productos', count: s?.products.length },
-      { key: 'canalproducto', label: 'Canal–producto', count: s?.matrix.length },
+      { key: 'channels', label: 'Canales', count: s?.channels.length },
+      { key: 'products', label: 'Productos', count: s?.products.length },
+      { key: 'channel-product', label: 'Canal–producto', count: s?.matrix.length },
     ];
   });
 
   protected readonly rows = computed<GridRow[]>(() => {
     const s = this.masters.snapshot();
-    return ((this.tab() === 'productos' ? s?.products : s?.channels) ?? []) as unknown as GridRow[];
+    return ((this.tab() === 'products' ? s?.products : s?.channels) ?? []) as unknown as GridRow[];
   });
 
   private get kind(): 'Canal' | 'Producto' {
-    return this.tab() === 'productos' ? 'Producto' : 'Canal';
+    return this.tab() === 'products' ? 'Producto' : 'Canal';
   }
   private elementOf = (e: { code: string; name: string }) => `${e.code} ${e.name}`;
 
@@ -151,7 +151,7 @@ export class ChannelsProductsSection extends MasterSection {
   /** Alta (entity = null) o edición de canal/producto. */
   private form(entity: CodedEntity | null): void {
     const type = this.kind;
-    const list = (this.tab() === 'productos' ? this.masters.snapshot()?.products : this.masters.snapshot()?.channels) ?? [];
+    const list = (this.tab() === 'products' ? this.masters.snapshot()?.products : this.masters.snapshot()?.channels) ?? [];
     const isNew = entity === null;
     this.openForm({
       kicker: type,

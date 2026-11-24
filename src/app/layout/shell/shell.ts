@@ -30,7 +30,7 @@ import { Sidebar } from '../sidebar/sidebar';
             @for (alert of integrity.alerts(); track alert) {
               <span>{{ alert }}</span>
             }
-            <a uiAlertActions ui-button size="sm" class="on-solid" routerLink="/integridad">{{ 'shell.integrity.go' | t }}</a>
+            <a uiAlertActions ui-button size="sm" class="on-solid" routerLink="/integrity">{{ 'shell.integrity.go' | t }}</a>
           </ui-alert>
         }
         @if (status.keyUnavailable()) {

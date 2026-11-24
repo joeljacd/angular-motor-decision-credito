@@ -64,11 +64,11 @@ export class FlowWorkspaceStore {
     );
   }
 
-  open(source: DraftSource, version?: number): Observable<FlowState> {
-    return this.api.openDraft(source, version).pipe(tap((s) => this.refreshAfter(s)));
+  open(source: DraftSource, version?: number, combo?: string): Observable<FlowState> {
+    return this.api.openDraft(source, version, combo).pipe(tap((s) => this.refreshAfter(s)));
   }
-  discard(): Observable<FlowState> {
-    return this.api.discardDraft().pipe(tap((s) => this.refreshAfter(s)));
+  discard(combo?: string): Observable<FlowState> {
+    return this.api.discardDraft(combo).pipe(tap((s) => this.refreshAfter(s)));
   }
   submit(): Observable<FlowState> {
     return this.api.submit().pipe(tap((s) => this.applyState(s)));

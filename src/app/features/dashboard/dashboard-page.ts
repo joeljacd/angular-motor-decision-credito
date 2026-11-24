@@ -9,7 +9,7 @@ import { SystemStatusStore } from '@core/state/system-status.store';
 import { ModalService, ToastService, UiButton, UiCard, UiEmptyState, UiIcon, UiPageHeader, UiTab, UiTableSkeleton, UiTabs } from '@shared/ui';
 import { InboxTable } from './inbox-table';
 
-type DashboardTab = 'aprobar' | 'mias';
+type DashboardTab = 'approve' | 'mine';
 
 /** Inicio · bandeja de pendientes. Qué puedo aprobar y qué he solicitado. */
 @Component({
@@ -33,8 +33,8 @@ type DashboardTab = 'aprobar' | 'mias';
             <span>{{ alert }}</span>
           }
         </div>
-        @if (auth.can('integridad')) {
-          <a ui-button size="sm" routerLink="/integridad" class="alerts-cta">{{ 'dash.alerts.go' | t }}</a>
+        @if (auth.can('integrity')) {
+          <a ui-button size="sm" routerLink="/integrity" class="alerts-cta">{{ 'dash.alerts.go' | t }}</a>
         }
       </ui-card>
     }
@@ -44,12 +44,12 @@ type DashboardTab = 'aprobar' | 'mias';
 
       @if (inbox.loading() && !hasData()) {
         <ui-table-skeleton [rows]="5" />
-      } @else if (activeTab() === 'aprobar') {
+      } @else if (activeTab() === 'approve') {
         @if (inbox.approveRows().length) {
           <app-inbox-table mode="approve" [rows]="inbox.approveRows()" />
         } @else {
           <ui-empty-state icon="check-circle" [title]="'dash.empty.approve.title' | t" [description]="'dash.empty.approve.text' | t">
-            <a ui-button routerLink="/flujos">{{ 'dash.empty.approve.cta' | t }}</a>
+            <a ui-button routerLink="/flows">{{ 'dash.empty.approve.cta' | t }}</a>
           </ui-empty-state>
         }
       } @else {
@@ -57,7 +57,7 @@ type DashboardTab = 'aprobar' | 'mias';
           <app-inbox-table mode="mine" [rows]="inbox.mineRows()" [locked]="status.keyUnavailable()" (cancel)="confirmCancel($event)" />
         } @else {
           <ui-empty-state [title]="'dash.empty.mine.title' | t" [description]="'dash.empty.mine.text' | t">
-            <a ui-button routerLink="/maestros/canales">{{ 'dash.empty.mine.cta' | t }}</a>
+            <a ui-button routerLink="/masters/channels">{{ 'dash.empty.mine.cta' | t }}</a>
           </ui-empty-state>
         }
       }
@@ -80,18 +80,18 @@ export class DashboardPage implements OnInit {
   protected readonly firstName = computed(() => this.auth.me()?.nombre.split(' ')[0] ?? '');
   protected readonly canApprove = computed(() => this.auth.me()?.puedeAprobar ?? false);
 
-  /** Pestaña activa: la del query param si es válida; si no, "aprobar" para quien puede aprobar. */
+  /** Pestaña activa: la del query param si es válida; si no, "approve" para quien puede aprobar. */
   protected readonly activeTab = linkedSignal<string>(() => {
     const requested = this.tab();
-    if (requested === 'mias' || (requested === 'aprobar' && this.canApprove())) return requested;
-    return this.canApprove() ? 'aprobar' : 'mias';
+    if (requested === 'mine' || (requested === 'approve' && this.canApprove())) return requested;
+    return this.canApprove() ? 'approve' : 'mine';
   });
 
   protected readonly hasData = computed(() => this.inbox.approveRows().length + this.inbox.mineRows().length > 0);
 
   protected readonly tabs = computed<UiTab[]>(() => [
-    ...(this.canApprove() ? [{ key: 'aprobar' satisfies DashboardTab, label: this.i18n.t('dash.tab.approve'), count: this.inbox.approveRows().length }] : []),
-    { key: 'mias' satisfies DashboardTab, label: this.i18n.t('dash.tab.mine'), count: this.inbox.mineRows().length },
+    ...(this.canApprove() ? [{ key: 'approve' satisfies DashboardTab, label: this.i18n.t('dash.tab.approve'), count: this.inbox.approveRows().length }] : []),
+    { key: 'mine' satisfies DashboardTab, label: this.i18n.t('dash.tab.mine'), count: this.inbox.mineRows().length },
   ]);
 
   ngOnInit(): void {

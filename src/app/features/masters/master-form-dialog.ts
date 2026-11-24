@@ -72,7 +72,7 @@ export interface MasterFormData {
           <ui-textarea [rows]="3" placeholder="Motivo del cambio" [ngModel]="comment()" (ngModelChange)="comment.set($event)" />
         </ui-form-field>
         @if (duplicate(); as dup) {
-          <div class="dup">Ya hay una solicitud pendiente sobre este elemento: <a [routerLink]="['/solicitudes']" [queryParams]="{ id: dup }" (click)="ref.close()">{{ dup }}</a></div>
+          <div class="dup">Ya hay una solicitud pendiente sobre este elemento: <a [routerLink]="['/requests']" [queryParams]="{ id: dup }" (click)="ref.close()">{{ dup }}</a></div>
         }
       </div>
       <ng-container uiModalActions>

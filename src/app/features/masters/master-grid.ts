@@ -115,7 +115,7 @@ const COLOR_STYLE: Record<string, { bg: string; fg: string }> = {
                   <td>
                     <div class="row-actions">
                       @if (pendingOf()(row); as pid) {
-                        <a class="pending" [routerLink]="['/solicitudes']" [queryParams]="{ id: pid }" title="Ver la solicitud pendiente">Cambio pendiente · {{ pid }}</a>
+                        <a class="pending" [routerLink]="['/requests']" [queryParams]="{ id: pid }" title="Ver la solicitud pendiente">Cambio pendiente · {{ pid }}</a>
                       }
                       @for (a of actionsOf()(row); track a.label) {
                         <button ui-button size="sm" [variant]="a.danger ? 'danger-ghost' : 'ghost'" [disabled]="!editable()" (click)="a.run()">{{ a.label }}</button>

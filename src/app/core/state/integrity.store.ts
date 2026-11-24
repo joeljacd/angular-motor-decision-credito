@@ -12,7 +12,7 @@ export class IntegrityStore {
 
   /** Alertas visibles para el usuario actual (solo quien ve Inicio o Integridad). */
   readonly alerts = computed(() =>
-    this.auth.can('integridad') || this.auth.can('inicio') ? this._alerts() : [],
+    this.auth.can('integrity') || this.auth.can('home') ? this._alerts() : [],
   );
   readonly hasAlerts = computed(() => this.alerts().length > 0);
 

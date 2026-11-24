@@ -33,7 +33,7 @@ export interface RequestConfirmData {
         <ul>@for (item of data.list; track item) { <li>{{ item }}</li> }</ul>
       }
       @if (data.duplicateId) {
-        <div class="dup">Ya hay una solicitud pendiente sobre este elemento: <a [routerLink]="['/solicitudes']" [queryParams]="{ id: data.duplicateId }" (click)="ref.close(false)">{{ data.duplicateId }}</a></div>
+        <div class="dup">Ya hay una solicitud pendiente sobre este elemento: <a [routerLink]="['/requests']" [queryParams]="{ id: data.duplicateId }" (click)="ref.close(false)">{{ data.duplicateId }}</a></div>
       }
       @if (!data.blocked) { <div class="note">Este cambio no rige hasta que otro aprobador lo apruebe.</div> }
       <ng-container uiModalActions>

@@ -4,7 +4,7 @@ import { AuthService } from '../../auth/auth.service';
 import { NOW } from '../../util/clock';
 import { addDays, formatDmy, formatDmyHm } from '../../util/date';
 import { FlowDocument, FlowResources } from '../flow.models';
-import { DraftSource, FlowState, FlowVersion, FlowWorkspace, PublishScenario, WorkflowApi } from '../workflow.api';
+import { DraftSource, FlowState, FlowVersion, FlowWorkspace, PublishScenario, VersionDocument, WorkflowApi } from '../workflow.api';
 import { MockApiError, MockBase } from './mock-apis';
 
 const version = (number: number, status: FlowVersion['status'], seal: FlowVersion['seal'], publishedAt: string, approvedBy: string, validity: string): FlowVersion => ({
@@ -33,6 +33,8 @@ const EMPTY_FLOW: FlowDocument = { stopOnStop: true, from: '', to: '', categorie
 export class MockWorkflowApi extends MockBase implements WorkflowApi {
   private readonly auth = inject(AuthService);
   private readonly now = inject(NOW);
+  /** Combinaciones distintas de 1-1 con borrador abierto (solo demostración). */
+  private readonly localDrafts = new Set<string>();
 
   currentDraft(): Observable<FlowState> {
     return this.respond(() => this.db.flow);
@@ -51,13 +53,17 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
   versions(channel: string, product: string): Observable<FlowVersion[]> {
     return this.respond(() => {
       const key = `${channel}-${product}`;
-      if (key !== '1-1') return STATIC_VERSIONS[key] ?? [];
+      if (key !== '1-1') {
+        const base = STATIC_VERSIONS[key] ?? [];
+        // Borrador local de la combinación (demostración): siguiente número, en edición.
+        return this.localDrafts.has(key) ? [version((base[0]?.number ?? 0) + 1, 'edit', 'Sin sellar', '—', '—', '—'), ...base] : base;
+      }
       const flow = this.db.flow;
       const list: FlowVersion[] = [];
-      if (flow.status === 'edicion' || flow.status === 'revision') {
-        list.push(version(2, flow.status === 'edicion' ? 'edit' : 'review', 'Sin sellar', '—', '—', '—'));
+      if (flow.status === 'editing' || flow.status === 'review') {
+        list.push(version(2, flow.status === 'editing' ? 'edit' : 'review', 'Sin sellar', '—', '—', '—'));
       }
-      if (flow.status === 'publicado') {
+      if (flow.status === 'published') {
         const day = flow.publishedAt ?? '';
         list.push(version(2, 'current', 'Sellada', day, flow.approvedBy ?? '', `${day} → —`));
         list.push(version(1, 'retired', 'Sellada', '15/10/2026', 'Luis Mora', `15/10/2026 → ${day}`));
@@ -70,7 +76,7 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
 
   saveDraft(document: FlowDocument, resources: FlowResources): Observable<FlowState> {
     return this.respond(() => {
-      this.requireStatus('edicion');
+      this.requireStatus('editing');
       this.db.flowDraft = document;
       this.db.flowResources = resources;
       this.touch();
@@ -78,23 +84,39 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
     });
   }
 
-  openDraft(source: DraftSource): Observable<FlowState> {
+  versionDocument(channel: string, product: string, _versionNumber: number): Observable<VersionDocument> {
     return this.respond(() => {
-      if (this.db.flow.status === 'edicion' || this.db.flow.status === 'revision') throw new MockApiError(409, 'Ya existe un borrador abierto');
+      // Solo 1-1 tiene contenido de demostración; las demás combinaciones responden 404.
+      if (`${channel}-${product}` !== '1-1') throw new MockApiError(404, 'En esta demostración el detalle está disponible solo para 1 Solicitudes Web / 1 Auto Plan');
+      return { document: this.db.flowBaseline, resources: this.db.baselineResources };
+    });
+  }
+
+  openDraft(source: DraftSource, _version?: number, combo?: string): Observable<FlowState> {
+    return this.respond(() => {
+      if (combo && combo !== '1-1') {
+        this.localDrafts.add(combo);
+        return this.db.flow;
+      }
+      if (this.db.flow.status === 'editing' || this.db.flow.status === 'review') throw new MockApiError(409, 'Ya existe un borrador abierto');
       const me = this.me();
       this.db.flowDraft = source === 'empty' ? structuredClone(EMPTY_FLOW) : structuredClone(this.db.flowBaseline);
       this.db.flowResources = structuredClone(this.db.baselineResources);
       this.db.flow = {
-        status: 'edicion', devolucion: '', openedBy: me.nombre, openedId: me.id, openedAt: formatDmy(this.now()),
+        status: 'editing', devolucion: '', openedBy: me.nombre, openedId: me.id, openedAt: formatDmy(this.now()),
         editors: [me.id], editorNames: me.nombre, last: formatDmyHm(this.now()), vence: formatDmy(addDays(this.now(), 15)), sentAt: '',
       };
       return this.db.flow;
     });
   }
 
-  discardDraft(): Observable<FlowState> {
+  discardDraft(combo?: string): Observable<FlowState> {
     return this.respond(() => {
-      this.requireStatus('edicion');
+      if (combo && combo !== '1-1') {
+        this.localDrafts.delete(combo);
+        return this.db.flow;
+      }
+      this.requireStatus('editing');
       this.db.flow = { ...this.db.flow, status: 'none' };
       return this.db.flow;
     });
@@ -102,30 +124,30 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
 
   submit(): Observable<FlowState> {
     return this.respond(() => {
-      this.requireStatus('edicion');
-      this.db.flow = { ...this.db.flow, status: 'revision', devolucion: '', sentAt: formatDmy(this.now()) };
+      this.requireStatus('editing');
+      this.db.flow = { ...this.db.flow, status: 'review', devolucion: '', sentAt: formatDmy(this.now()) };
       return this.db.flow;
     });
   }
 
   returnDraft(comment: string): Observable<FlowState> {
     return this.respond(() => {
-      this.requireStatus('revision');
+      this.requireStatus('review');
       this.requireNotEditor();
-      this.db.flow = { ...this.db.flow, status: 'edicion', devolucion: `${comment} — ${this.me().nombre}, ${formatDmy(this.now())}` };
+      this.db.flow = { ...this.db.flow, status: 'editing', devolucion: `${comment} — ${this.me().nombre}, ${formatDmy(this.now())}` };
       return this.db.flow;
     });
   }
 
   approveAndPublish(scenario: PublishScenario = 'ok'): Observable<FlowState> {
     return this.respond(() => {
-      this.requireStatus('revision');
+      this.requireStatus('review');
       this.requireNotEditor();
       if (scenario === 'conflict') throw new MockApiError(409, 'La versión vigente cambió desde que se abrió el borrador');
       if (scenario === 'error') throw new MockApiError(500, 'El motor no pudo cargar la versión');
       this.db.flowBaseline = structuredClone(this.db.flowDraft);
       this.db.baselineResources = structuredClone(this.db.flowResources);
-      this.db.flow = { ...this.db.flow, status: 'publicado', approvedBy: this.me().nombre, publishedAt: formatDmy(this.now()) };
+      this.db.flow = { ...this.db.flow, status: 'published', approvedBy: this.me().nombre, publishedAt: formatDmy(this.now()) };
       return this.db.flow;
     });
   }

@@ -27,7 +27,7 @@ describe('AuthService', () => {
     await firstValueFrom(auth.login('mfcevallos', 'x'));
     auth.logout();
     expect(auth.isAuthenticated()).toBe(false);
-    expect(auth.can('inicio')).toBe(false);
+    expect(auth.can('home')).toBe(false);
   });
 
   it('restore rehidrata una sesión guardada', async () => {

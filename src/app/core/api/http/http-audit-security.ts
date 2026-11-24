@@ -8,7 +8,7 @@ import { HistoryApi, HistoryFilter, HistoryFilterOptions, HistoryPage } from '..
 import { IntegrityApi, IntegrityReport } from '../integrity.api';
 import { MastersApi, MastersSnapshot } from '../masters.api';
 import { ProfileDraft, ProfilesApi } from '../profiles.api';
-import { DraftSource, FlowState, FlowVersion, FlowWorkspace, WorkflowApi } from '../workflow.api';
+import { DraftSource, FlowState, FlowVersion, FlowWorkspace, VersionDocument, WorkflowApi } from '../workflow.api';
 import { DirectoryUser, NewUser, UsersApi } from '../users.api';
 
 /**
@@ -100,11 +100,14 @@ export class HttpWorkflowApi extends HttpBase implements WorkflowApi {
   saveDraft(document: FlowDocument, resources: FlowResources): Observable<FlowState> {
     return this.http.put<FlowState>(`${this.base}/flow/draft`, { document, resources });
   }
-  openDraft(source: DraftSource, version?: number): Observable<FlowState> {
-    return this.http.post<FlowState>(`${this.base}/flow/draft`, { source, version });
+  versionDocument(channel: string, product: string, version: number): Observable<VersionDocument> {
+    return this.http.get<VersionDocument>(`${this.base}/flows/${encodeURIComponent(channel)}/${encodeURIComponent(product)}/versions/${version}`);
   }
-  discardDraft(): Observable<FlowState> {
-    return this.http.delete<FlowState>(`${this.base}/flow/draft`);
+  openDraft(source: DraftSource, version?: number, combo?: string): Observable<FlowState> {
+    return this.http.post<FlowState>(`${this.base}/flow/draft`, { source, version, combo });
+  }
+  discardDraft(combo?: string): Observable<FlowState> {
+    return this.http.delete<FlowState>(`${this.base}/flow/draft`, { params: combo ? { combo } : {} });
   }
   submit(): Observable<FlowState> {
     return this.http.post<FlowState>(`${this.base}/flow/draft/submit`, {});

@@ -42,11 +42,11 @@ export class NavService {
 
   private badgeFor(item: NavItem, canApprove: boolean): NavBadge | null {
     switch (item.key) {
-      case 'inicio':
+      case 'home':
         return canApprove && this.inbox.pendingCount() > 0 ? { text: this.inbox.pendingCount(), tone: 'accent' } : null;
-      case 'solicitudes':
+      case 'requests':
         return this.inbox.openRequestsCount() > 0 ? { text: this.inbox.openRequestsCount(), tone: 'neutral' } : null;
-      case 'integridad':
+      case 'integrity':
         return this.integrity.hasAlerts() ? { text: '!', tone: 'error' } : null;
       default:
         return null;

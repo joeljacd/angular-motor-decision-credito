@@ -9,7 +9,7 @@ const SESSION_KEY = 'session';
 
 /**
  * Estado de autenticación y permisos (signals). La sesión vive en sessionStorage (se pierde al cerrar la pestaña).
- * Las capacidades salen de `/me` y se usan en guards (acceso a rutas) y plantillas (`auth.can('cap.aprobar')`).
+ * Las capacidades salen de `/me` y se usan en guards (acceso a rutas) y plantillas (`auth.can('cap.approve')`).
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {

@@ -6,13 +6,13 @@ export function buildMeInfo(user: User, profile: Profile | undefined): MeInfo {
   const userActive = user.estado === 'Activo';
   const opts = userActive && perfilActivo ? [...profile!.opts] : [];
 
-  const puedeSolicitar = opts.includes('cap.solicitar');
-  const puedeAprobar = opts.includes('cap.aprobar');
-  const puedeAuditar = opts.includes('historial') || opts.includes('integridad');
+  const puedeSolicitar = opts.includes('cap.request');
+  const puedeAprobar = opts.includes('cap.approve');
+  const puedeAuditar = opts.includes('history') || opts.includes('integrity');
   const roles: Role[] = [
-    ...(puedeSolicitar ? (['solicitar'] as const) : []),
-    ...(puedeAprobar ? (['aprobar'] as const) : []),
-    ...(puedeAuditar ? (['auditar'] as const) : []),
+    ...(puedeSolicitar ? (['request'] as const) : []),
+    ...(puedeAprobar ? (['approve'] as const) : []),
+    ...(puedeAuditar ? (['audit'] as const) : []),
   ];
 
   return {

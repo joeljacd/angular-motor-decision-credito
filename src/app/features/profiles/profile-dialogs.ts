@@ -114,7 +114,7 @@ export class ProfileFormDialog {
   protected readonly name = signal(this.data.profile?.nombre ?? '');
   protected readonly desc = signal(this.data.profile?.desc ?? '');
   protected readonly state = signal<ActiveState>(this.data.profile?.estado ?? 'Activo');
-  protected readonly opts = signal<OptionKey[]>(this.data.profile ? [...this.data.profile.opts] : ['inicio']);
+  protected readonly opts = signal<OptionKey[]>(this.data.profile ? [...this.data.profile.opts] : ['home']);
   protected readonly errors = signal<{ name?: string; state?: string; opts?: string }>({});
   protected readonly saving = signal(false);
 

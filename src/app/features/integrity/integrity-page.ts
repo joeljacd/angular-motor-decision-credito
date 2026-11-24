@@ -90,10 +90,10 @@ const MIN_DURATION_MS = 2300;
                         <button ui-button size="sm" [disabled]="locked()" (click)="requestSeal(f)">Solicitar sellado</button>
                       }
                       @if (f.pendingRequestId) {
-                        <a [routerLink]="['/solicitudes']" [queryParams]="{ id: f.pendingRequestId }">Pendiente · {{ f.pendingRequestId }}</a>
+                        <a [routerLink]="['/requests']" [queryParams]="{ id: f.pendingRequestId }">Pendiente · {{ f.pendingRequestId }}</a>
                       }
                       @if (f.inHistory) {
-                        <a ui-button size="sm" variant="ghost" routerLink="/historial">Ver en Historial</a>
+                        <a ui-button size="sm" variant="ghost" routerLink="/history">Ver en Historial</a>
                       }
                     </td>
                   </tr>

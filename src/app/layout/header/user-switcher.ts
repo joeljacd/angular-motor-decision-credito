@@ -53,7 +53,7 @@ import { navPathFor } from '../nav/nav.config';
             }
           </button>
         }
-        @if (auth.can('perfiles')) {
+        @if (auth.can('profiles')) {
           <button type="button" class="manage" (click)="goProfiles()">{{ 'shell.viewAs.manageProfiles' | t }}</button>
         }
       </ui-popover>
@@ -95,6 +95,6 @@ export class UserSwitcher {
 
   protected goProfiles(): void {
     this.open.set(false);
-    void this.router.navigateByUrl('/perfiles');
+    void this.router.navigateByUrl('/profiles');
   }
 }

@@ -16,40 +16,40 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
   {
     title: 'Capacidades',
     items: [
-      { id: 'cap.solicitar', label: 'Solicitar y editar', hint: 'Editar borradores y crear solicitudes' },
-      { id: 'cap.aprobar', label: 'Aprobar y publicar', hint: 'Nunca sobre lo propio (cuatro ojos)' },
+      { id: 'cap.request', label: 'Solicitar y editar', hint: 'Editar borradores y crear solicitudes' },
+      { id: 'cap.approve', label: 'Aprobar y publicar', hint: 'Nunca sobre lo propio (cuatro ojos)' },
     ],
   },
-  { title: 'Inicio', items: [{ id: 'inicio', label: 'Inicio', hint: 'Bandeja de pendientes' }] },
+  { title: 'Inicio', items: [{ id: 'home', label: 'Inicio', hint: 'Bandeja de pendientes' }] },
   {
     title: 'Motor',
     items: [
-      { id: 'flujos', label: 'Flujos', hint: 'Versiones, editor y revisión' },
-      { id: 'solicitudes', label: 'Solicitudes de cambio', hint: 'Lista y detalle' },
+      { id: 'flows', label: 'Flujos', hint: 'Versiones, editor y revisión' },
+      { id: 'requests', label: 'Solicitudes de cambio', hint: 'Lista y detalle' },
     ],
   },
   {
     title: 'Maestros',
     items: [
-      { id: 'm-canales', label: 'Canales y productos', hint: 'Incluye la matriz canal–producto' },
-      { id: 'm-acciones', label: 'Acciones', hint: '' },
-      { id: 'm-parametros', label: 'Parámetros', hint: '' },
-      { id: 'm-catalogos', label: 'Catálogos', hint: '' },
+      { id: 'm-channels', label: 'Canales y productos', hint: 'Incluye la matriz canal–producto' },
+      { id: 'm-actions', label: 'Acciones', hint: '' },
+      { id: 'm-parameters', label: 'Parámetros', hint: '' },
+      { id: 'm-catalogs', label: 'Catálogos', hint: '' },
       { id: 'm-roles', label: 'Roles', hint: '' },
     ],
   },
   {
     title: 'Auditoría',
     items: [
-      { id: 'historial', label: 'Historial', hint: '' },
-      { id: 'integridad', label: 'Integridad', hint: '' },
+      { id: 'history', label: 'Historial', hint: '' },
+      { id: 'integrity', label: 'Integridad', hint: '' },
     ],
   },
   {
     title: 'Seguridad',
     items: [
-      { id: 'usuarios', label: 'Usuarios', hint: '' },
-      { id: 'perfiles', label: 'Perfiles', hint: '' },
+      { id: 'users', label: 'Usuarios', hint: '' },
+      { id: 'profiles', label: 'Perfiles', hint: '' },
     ],
   },
 ];
@@ -61,8 +61,8 @@ export const SCREEN_PERMISSION_IDS = ALL_PERMISSION_IDS.filter((id) => !id.start
 /** Capacidades resumidas de un perfil para mostrar en la tabla. */
 export function capabilitiesOf(opts: OptionKey[]): string[] {
   return [
-    opts.includes('cap.solicitar') && 'Solicitar',
-    opts.includes('cap.aprobar') && 'Aprobar',
-    (opts.includes('historial') || opts.includes('integridad')) && 'Auditar',
+    opts.includes('cap.request') && 'Solicitar',
+    opts.includes('cap.approve') && 'Aprobar',
+    (opts.includes('history') || opts.includes('integrity')) && 'Auditar',
   ].filter((c): c is string => !!c);
 }

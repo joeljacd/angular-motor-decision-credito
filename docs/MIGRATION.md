@@ -6,15 +6,15 @@ Referencias del prototipo en `docs/prototype/` (marcado Angular-like con sintaxi
 | Ruta | Permiso (`data.option`) | Componente actual | Referencia |
 |---|---|---|---|
 | `/inicio` | `inicio` | **hecho** `features/dashboard` | `inicio.html` |
-| `/flujos` | `flujos` | hecho | `flujos.html` |
-| `/flujos/editor` | `flujos` | hecho | `editor-borrador.html` |
-| `/flujos/revision` | `flujos` | hecho | `revision.html` |
-| `/solicitudes` | `solicitudes` | hecho | `solicitudes.html` |
-| `/maestros/*` (5) | `m-canales`, `m-acciones`, `m-parametros`, `m-catalogos`, `m-roles` | hecho (un componente, `data.section`) | `maestros.html` (+ `maestros-sin-identificar.html`: confirmar a qué sección pertenece) |
-| `/historial` | `historial` | hecho | `historial.html` |
-| `/integridad` | `integridad` | hecho | `integridad.html` |
-| `/usuarios` | `usuarios` | hecho | `usuarios.html` |
-| `/perfiles` | `perfiles` | hecho | `perfiles.html` |
+| `/flows` | `flujos` | hecho | `flujos.html` |
+| `/flows/editor` | `flujos` | hecho | `editor-borrador.html` |
+| `/flows/review` | `flujos` | hecho | `revision.html` |
+| `/requests` | `solicitudes` | hecho | `solicitudes.html` |
+| `/masters/*` (5) | `m-canales`, `m-acciones`, `m-parametros`, `m-catalogos`, `m-roles` | hecho (un componente, `data.section`) | `maestros.html` (+ `maestros-sin-identificar.html`: confirmar a qué sección pertenece) |
+| `/history` | `historial` | hecho | `historial.html` |
+| `/integrity` | `integridad` | hecho | `integridad.html` |
+| `/users` | `usuarios` | hecho | `usuarios.html` |
+| `/profiles` | `perfiles` | hecho | `perfiles.html` |
 
 ## Receta para portar una pantalla
 1. Crear `core/api/<x>.api.ts` (clase abstracta = token DI) + `mock/` + `http/` y registrarla en `api.providers.ts`.
@@ -35,3 +35,7 @@ Todas las pantallas del prototipo están construidas con router (lazy), estados 
 - **Revisión**: control de cuatro ojos (quien editó no aprueba). Con mocks, el diálogo de aprobación permite simular conflicto (409) y error del motor.
 - Matriz canal–producto y `GRIS` de acciones usan los tokens de tema existentes.
 - `maestros-sin-identificar.html` del prototipo se tomó como recursos del editor; confirmar.
+
+## Convención de idioma
+
+Rutas, claves de permiso (`flows`, `cap.request`, `m-channels`…), estados (`editing`, `review`, `published`) e identificadores van en inglés; los comentarios, en español. Los textos visibles de la UI siguen en español (i18n `es`/`en` para el marco; las pantallas nuevas tienen el texto en la plantilla). Pendiente de confirmar: los campos de los modelos heredados del prototipo (`tipo`, `estado`, `nombre`, `perfil`…) siguen en español porque son el contrato con el backend.

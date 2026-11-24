@@ -15,9 +15,9 @@ import { RolesSection } from './roles-section';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @switch (section()) {
-      @case ('acciones') { <app-actions-section /> }
-      @case ('parametros') { <app-parameters-section /> }
-      @case ('catalogos') { <app-catalogs-section /> }
+      @case ('actions') { <app-actions-section /> }
+      @case ('parameters') { <app-parameters-section /> }
+      @case ('catalogs') { <app-catalogs-section /> }
       @case ('roles') { <app-roles-section /> }
       @default { <app-channels-products-section /> }
     }
@@ -25,5 +25,5 @@ import { RolesSection } from './roles-section';
 })
 export class MastersPage {
   /** canales | acciones | parametros | catalogos | roles */
-  readonly section = input('canales');
+  readonly section = input('channels');
 }
