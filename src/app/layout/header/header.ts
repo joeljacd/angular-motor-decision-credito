@@ -43,7 +43,7 @@ import { UserSwitcher } from './user-switcher';
 
       <span class="grow"></span>
 
-      @if (auth.me()?.puedeAprobar) {
+      @if (auth.me()?.canApprove) {
         <a ui-button size="sm" routerLink="/home" [queryParams]="{ tab: 'approve' }" class="pending">
           <ui-icon name="inbox" [size]="16" />
           @if (layout.wide()) {

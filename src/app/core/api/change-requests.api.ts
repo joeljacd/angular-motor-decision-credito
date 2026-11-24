@@ -1,30 +1,30 @@
 import { Observable } from 'rxjs';
 
-export type RequestStatus = 'Pendiente' | 'Aprobada' | 'Rechazada' | 'Cancelada' | 'Vencida';
+export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'expired';
 
 export interface ChangeRequest {
   id: string;
   /** Tipo de elemento: Canal, Producto, Acción, Parámetro, Catálogo, Rol, Sellado… */
-  tipo: string;
-  elemento: string;
-  accion: string;
+  type: string;
+  element: string;
+  action: string;
   /** Usuario de red del solicitante. */
-  solicitante: string;
+  requester: string;
   /** dd/MM/yyyy */
-  fecha: string;
-  vence: string;
-  estado: RequestStatus;
+  date: string;
+  expiresAt: string;
+  status: RequestStatus;
   /** El elemento cambió desde que se hizo la solicitud: debe rehacerse (conflicto 409 al aprobar). */
   stale?: boolean;
-  aprobador?: string;
-  rechazo?: string;
-  actual: Record<string, string>;
-  propuesto: Record<string, string>;
-  comentario: string;
+  approver?: string;
+  rejectionReason?: string;
+  current: Record<string, string>;
+  proposed: Record<string, string>;
+  comment: string;
 }
 
 /** Datos para crear una solicitud; el backend asigna id, fechas y solicitante. */
-export type NewChangeRequest = Pick<ChangeRequest, 'tipo' | 'elemento' | 'accion' | 'actual' | 'propuesto' | 'comentario'>;
+export type NewChangeRequest = Pick<ChangeRequest, 'type' | 'element' | 'action' | 'current' | 'proposed' | 'comment'>;
 
 export abstract class ChangeRequestsApi {
   /** GET /change-requests */

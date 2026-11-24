@@ -35,8 +35,8 @@ export class ProfilesStore {
     return this.api.update(id, draft).pipe(tap((updated) => this.replace(updated)));
   }
 
-  setStatus(id: number, estado: ActiveState): Observable<Profile> {
-    return this.api.setStatus(id, estado).pipe(tap((updated) => this.replace(updated)));
+  setStatus(id: number, status: ActiveState): Observable<Profile> {
+    return this.api.setStatus(id, status).pipe(tap((updated) => this.replace(updated)));
   }
 
   private replace(updated: Profile): void {

@@ -103,7 +103,7 @@ export class FlowReviewPage implements OnInit {
   protected readonly failure = signal(false);
 
   protected readonly status = computed(() => this.ws.state()?.status ?? 'none');
-  protected readonly canApprove = computed(() => this.auth.me()?.puedeAprobar ?? false);
+  protected readonly canApprove = computed(() => this.auth.me()?.canApprove ?? false);
   /** Quien abrió o editó el borrador no puede aprobarlo. */
   protected readonly isOwnEdit = computed(() => {
     const me = this.auth.me()?.id;

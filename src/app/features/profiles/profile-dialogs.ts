@@ -15,8 +15,8 @@ export interface ProfileFormData {
 }
 
 const STATE_OPTIONS: UiOption<ActiveState>[] = [
-  { value: 'Activo', label: 'Activo' },
-  { value: 'Inactivo', label: 'Inactivo' },
+  { value: 'active', label: 'Activo' },
+  { value: 'inactive', label: 'Inactivo' },
 ];
 
 /** Alta/edición de perfil con selector de dos listas: opciones disponibles ↔ asignadas. */
@@ -45,7 +45,7 @@ const STATE_OPTIONS: UiOption<ActiveState>[] = [
     @media (max-width: 700px) { .lists { grid-template-columns: 1fr; } }
   `,
   template: `
-    <ui-modal-frame [kicker]="editing ? 'Editar registro' : 'Nuevo registro'" [title]="editing ? 'Editar perfil · ' + data.profile!.nombre : 'Agregar perfil'" [closable]="true">
+    <ui-modal-frame [kicker]="editing ? 'Editar registro' : 'Nuevo registro'" [title]="editing ? 'Editar perfil · ' + data.profile!.name : 'Agregar perfil'" [closable]="true">
       <div class="fields">
         <ui-form-field label="Nombre del perfil">
           <ui-input [ngModel]="name()" (ngModelChange)="name.set($event)" />
@@ -56,7 +56,7 @@ const STATE_OPTIONS: UiOption<ActiveState>[] = [
           @if (errors().state) { <p class="err" role="alert">{{ errors().state }}</p> }
         </ui-form-field>
         <ui-form-field class="wide" label="Descripción">
-          <ui-input [ngModel]="desc()" (ngModelChange)="desc.set($event)" />
+          <ui-input [ngModel]="description()" (ngModelChange)="description.set($event)" />
         </ui-form-field>
       </div>
 
@@ -111,9 +111,9 @@ export class ProfileFormDialog {
   protected readonly stateOptions = STATE_OPTIONS;
   protected readonly total = ALL_PERMISSION_IDS.length;
 
-  protected readonly name = signal(this.data.profile?.nombre ?? '');
-  protected readonly desc = signal(this.data.profile?.desc ?? '');
-  protected readonly state = signal<ActiveState>(this.data.profile?.estado ?? 'Activo');
+  protected readonly name = signal(this.data.profile?.name ?? '');
+  protected readonly description = signal(this.data.profile?.description ?? '');
+  protected readonly state = signal<ActiveState>(this.data.profile?.status ?? 'active');
   protected readonly opts = signal<OptionKey[]>(this.data.profile ? [...this.data.profile.opts] : ['home']);
   protected readonly errors = signal<{ name?: string; state?: string; opts?: string }>({});
   protected readonly saving = signal(false);
@@ -142,11 +142,11 @@ export class ProfileFormDialog {
     if (!this.name().trim()) errors.name = 'El nombre es obligatorio.';
     if (!this.opts().length) errors.opts = 'Asigna al menos una opción.';
     // El Administrador es la red de seguridad: no puede quedar inactivo ni sin opciones.
-    if (this.data.profile?.id === 1 && this.state() === 'Inactivo') errors.state = 'El perfil Administrador no se puede inactivar.';
+    if (this.data.profile?.id === 1 && this.state() === 'inactive') errors.state = 'El perfil Administrador no se puede inactivar.';
     this.errors.set(errors);
     if (Object.keys(errors).length) return;
 
-    const draft = { nombre: this.name().trim(), desc: this.desc().trim(), estado: this.state(), opts: this.opts() };
+    const draft = { name: this.name().trim(), description: this.description().trim(), status: this.state(), opts: this.opts() };
     this.saving.set(true);
     const op = this.data.profile ? this.store.update(this.data.profile.id, draft) : this.store.create(draft);
     op.subscribe({

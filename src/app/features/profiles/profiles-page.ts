@@ -11,9 +11,9 @@ import { ProfileFormDialog } from './profile-dialogs';
 interface Filters {
   q: string;
   group: string;
-  estado: string;
+  status: string;
 }
-const EMPTY: Filters = { q: '', group: '', estado: '' };
+const EMPTY: Filters = { q: '', group: '', status: '' };
 const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 /** Perfiles: definen el menú y las capacidades. Los cambios aplican al instante a los usuarios con ese perfil. */
@@ -39,7 +39,7 @@ const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLo
         <ui-select [options]="groupOptions" [ngModel]="draft().group" (ngModelChange)="patch({ group: $event })" />
       </ui-form-field>
       <ui-form-field label="Estado">
-        <ui-select [options]="stateOptions" [ngModel]="draft().estado" (ngModelChange)="patch({ estado: $event })" />
+        <ui-select [options]="stateOptions" [ngModel]="draft().status" (ngModelChange)="patch({ status: $event })" />
       </ui-form-field>
       <ng-container uiFilterActions>
         <button ui-button (click)="clear()">Limpiar</button>
@@ -58,9 +58,9 @@ const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLo
             <thead><tr><th>Código</th><th>Perfil</th><th>Capacidades</th><th>Opciones del menú</th><th>Usuarios</th><th>Estado</th><th>Acciones</th></tr></thead>
             <tbody>
               @for (p of filtered(); track p.id) {
-                <tr [class.inactive]="p.estado === 'Inactivo'">
-                  <td class="mono">{{ p.codigo }}</td>
-                  <td><div class="names"><strong>{{ p.nombre }}</strong><span class="sub">{{ p.desc }}</span></div></td>
+                <tr [class.inactive]="p.status === 'inactive'">
+                  <td class="mono">{{ p.code }}</td>
+                  <td><div class="names"><strong>{{ p.name }}</strong><span class="sub">{{ p.description }}</span></div></td>
                   <td>
                     <div class="caps">
                       @for (c of caps(p); track c) { <ui-tag size="sm" tone="accent">{{ c }}</ui-tag> }
@@ -76,12 +76,12 @@ const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLo
                     </div>
                   </td>
                   <td>{{ userCount(p) }}</td>
-                  <td><ui-tag size="sm" [tone]="p.estado === 'Activo' ? 'success' : 'neutral'" [dot]="true">{{ p.estado }}</ui-tag></td>
+                  <td><ui-tag size="sm" [tone]="p.status === 'active' ? 'success' : 'neutral'" [dot]="true">{{ stateLabel(p.status) }}</ui-tag></td>
                   <td>
                     <div class="row-actions">
                       <button ui-button size="sm" variant="ghost" [disabled]="locked()" (click)="openForm(p)">Editar</button>
-                      <button ui-button size="sm" [variant]="p.estado === 'Activo' ? 'danger-ghost' : 'ghost'" [disabled]="locked()" (click)="toggle(p)">
-                        {{ p.estado === 'Activo' ? 'Inactivar' : 'Activar' }}
+                      <button ui-button size="sm" [variant]="p.status === 'active' ? 'danger-ghost' : 'ghost'" [disabled]="locked()" (click)="toggle(p)">
+                        {{ p.status === 'active' ? 'Inactivar' : 'Activar' }}
                       </button>
                     </div>
                   </td>
@@ -104,7 +104,9 @@ export class ProfilesPage implements OnInit {
 
   protected readonly screenIds = SCREEN_PERMISSION_IDS;
   protected readonly caps = (p: Profile) => capabilitiesOf(p.opts);
-  protected readonly stateOptions: UiOption<string>[] = [{ value: '', label: 'Todos' }, { value: 'Activo', label: 'Activo' }, { value: 'Inactivo', label: 'Inactivo' }];
+  /** Texto visible del estado. */
+  protected readonly stateLabel = (state: 'active' | 'inactive') => (state === 'active' ? 'Activo' : 'Inactivo');
+  protected readonly stateOptions: UiOption<string>[] = [{ value: '', label: 'Todos' }, { value: 'active', label: 'Activo' }, { value: 'inactive', label: 'Inactivo' }];
   protected readonly groupOptions: UiOption<string>[] = [{ value: '', label: 'Cualquiera' }, ...PERMISSION_GROUPS.map((g) => ({ value: g.title, label: g.title }))];
 
   protected readonly draft = signal<Filters>({ ...EMPTY });
@@ -116,7 +118,7 @@ export class ProfilesPage implements OnInit {
     const groupIds = f.group ? (PERMISSION_GROUPS.find((g) => g.title === f.group)?.items.map((i) => i.id) ?? []) : null;
     return this.profiles
       .items()
-      .filter((p) => (!q || normalize(p.nombre).includes(q) || normalize(p.codigo).includes(q)) && (!f.estado || p.estado === f.estado) && (!groupIds || p.opts.some((o) => groupIds.includes(o))));
+      .filter((p) => (!q || normalize(p.name).includes(q) || normalize(p.code).includes(q)) && (!f.status || p.status === f.status) && (!groupIds || p.opts.some((o) => groupIds.includes(o))));
   });
 
   ngOnInit(): void {
@@ -139,10 +141,10 @@ export class ProfilesPage implements OnInit {
     return p.opts.filter((o) => !o.startsWith('cap.')).length;
   }
   protected userCount(p: Profile): number {
-    return this.users.items().filter((u) => u.perfil === p.id).length;
+    return this.users.items().filter((u) => u.profile === p.id).length;
   }
   private activeUserCount(p: Profile): number {
-    return this.users.items().filter((u) => u.perfil === p.id && u.estado === 'Activo').length;
+    return this.users.items().filter((u) => u.profile === p.id && u.status === 'active').length;
   }
 
   protected openForm(profile: Profile | null): void {
@@ -155,11 +157,11 @@ export class ProfilesPage implements OnInit {
 
   /** Activa/inactiva con confirmación; el Administrador no se puede inactivar. */
   protected async toggle(p: Profile): Promise<void> {
-    const deactivating = p.estado === 'Activo';
+    const deactivating = p.status === 'active';
     if (deactivating && p.id === 1) return void this.toast.info('El perfil Administrador no se puede inactivar');
     const n = this.activeUserCount(p);
     const ok = await this.modal.confirm({
-      title: deactivating ? `Inactivar perfil ${p.nombre}` : `Activar perfil ${p.nombre}`,
+      title: deactivating ? `Inactivar perfil ${p.name}` : `Activar perfil ${p.name}`,
       message: deactivating
         ? `${n ? `${n} usuario${n > 1 ? 's' : ''} activo${n > 1 ? 's' : ''} con este perfil perderá${n > 1 ? 'n' : ''} el acceso al portal. ` : ''}Podrás reactivarlo cuando quieras.`
         : 'Los usuarios con este perfil recuperarán sus opciones.',
@@ -168,7 +170,7 @@ export class ProfilesPage implements OnInit {
       tone: deactivating ? 'danger' : 'primary',
     });
     if (!ok) return;
-    this.profiles.setStatus(p.id, deactivating ? 'Inactivo' : 'Activo').subscribe({
+    this.profiles.setStatus(p.id, deactivating ? 'inactive' : 'active').subscribe({
       next: () => this.toast.success(deactivating ? 'Perfil inactivado' : 'Perfil activado'),
       error: () => this.toast.error('No se pudo cambiar el estado.'),
     });

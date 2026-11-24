@@ -8,14 +8,14 @@ export type FlowStatus = 'none' | 'editing' | 'review' | 'published';
 export interface FlowState {
   status: FlowStatus;
   /** Comentario con el que un aprobador devolvió el borrador. */
-  devolucion: string;
+  returnComment: string;
   openedBy: string;
   openedId: string;
   openedAt: string;
   editors: string[];
   editorNames: string;
   last: string;
-  vence: string;
+  expiresAt: string;
   sentAt: string;
   /** Quién aprobó y publicó (status = publicado). */
   approvedBy?: string;
@@ -32,7 +32,7 @@ export interface FlowWorkspace {
 }
 
 export type VersionStatus = 'current' | 'retired' | 'edit' | 'review';
-export type SealStatus = 'Sellada' | 'Sin sellar' | 'Firma inválida';
+export type SealStatus = 'sealed' | 'unsealed' | 'invalid';
 
 export interface FlowVersion {
   number: number;

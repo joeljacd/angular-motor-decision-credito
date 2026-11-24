@@ -13,7 +13,7 @@ export interface FormFieldDef {
   mono?: boolean;
   hint?: string;
   /** kind = select */
-  options?: string[];
+  options?: (string | { value: string; label: string })[];
 }
 
 export type FormValues = Record<string, string | boolean>;
@@ -99,7 +99,7 @@ export class MasterFormDialog {
   protected readonly duplicate = computed(() => (this.data.element ? this.requests.pendingFor(this.data.element)?.id : undefined));
 
   protected optionsOf(field: FormFieldDef) {
-    return (field.options ?? []).map((o) => ({ value: o, label: o }));
+    return (field.options ?? []).map((o) => (typeof o === 'string' ? { value: o, label: o } : o));
   }
 
   protected set(key: string, value: string | boolean): void {

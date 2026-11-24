@@ -8,12 +8,12 @@ import { DirectoryUser, NewUser, UsersApi } from '../users.api';
 import { MockApiError, MockBase } from './mock-apis';
 
 /** Directorio activo simulado: solo estos usuarios "existen" en AD. */
-const DIRECTORY: Record<string, Omit<DirectoryUser, 'usuario' | 'correo'>> = {
-  amolina: { nombre: 'Alejandra Molina', area: 'Riesgos' },
-  ctapia: { nombre: 'Cristina Tapia', area: 'Banca Personas' },
-  egarcia: { nombre: 'Eduardo García', area: 'Crédito Pyme' },
-  rnaranjo: { nombre: 'Roberto Naranjo', area: 'Cobranzas' },
-  sloor: { nombre: 'Sebastián Loor', area: 'Tecnología' },
+const DIRECTORY: Record<string, Omit<DirectoryUser, 'username' | 'email'>> = {
+  amolina: { name: 'Alejandra Molina', area: 'Riesgos' },
+  ctapia: { name: 'Cristina Tapia', area: 'Banca Personas' },
+  egarcia: { name: 'Eduardo García', area: 'Crédito Pyme' },
+  rnaranjo: { name: 'Roberto Naranjo', area: 'Cobranzas' },
+  sloor: { name: 'Sebastián Loor', area: 'Tecnología' },
 };
 export const MOCK_DIRECTORY_USERS = Object.keys(DIRECTORY);
 
@@ -28,22 +28,22 @@ export class MockUsersApi extends MockBase implements UsersApi {
       const key = username.trim().toLowerCase();
       const entry = DIRECTORY[key];
       if (!entry) throw new MockApiError(404, 'Usuario no encontrado en el directorio activo');
-      return { usuario: key, correo: `${key}@bancoamazonas.ec`, ...entry };
+      return { username: key, email: `${key}@bancoamazonas.ec`, ...entry };
     });
   }
 
   create(user: NewUser): Observable<User> {
     return this.respond(() => {
-      if (this.db.users.some((u) => u.usuario === user.usuario)) throw new MockApiError(409, 'El usuario ya está registrado');
-      const created: User = { id: user.usuario, correo: `${user.usuario}@bancoamazonas.ec`, acceso: '—', cargo: '', ...user };
+      if (this.db.users.some((u) => u.username === user.username)) throw new MockApiError(409, 'El usuario ya está registrado');
+      const created: User = { id: user.username, email: `${user.username}@bancoamazonas.ec`, lastAccess: '—', jobTitle: '', ...user };
       this.db.users.push(created);
       return created;
     });
   }
 
-  update(username: string, changes: Partial<Pick<User, 'nombre' | 'estado'>>): Observable<User> {
+  update(username: string, changes: Partial<Pick<User, 'name' | 'status'>>): Observable<User> {
     return this.respond(() => {
-      const user = this.db.users.find((u) => u.usuario === username);
+      const user = this.db.users.find((u) => u.username === username);
       if (!user) throw new MockApiError(404, 'Usuario no encontrado');
       Object.assign(user, changes);
       return user;
@@ -62,7 +62,7 @@ export class MockProfilesApi extends MockBase implements ProfilesApi {
   create(draft: ProfileDraft): Observable<Profile> {
     return this.respond(() => {
       const id = Math.max(0, ...this.db.profiles.map((p) => p.id)) + 1;
-      const created: Profile = { id, codigo: `PRF-${String(id).padStart(3, '0')}`, upd: formatDmy(this.now()), ...draft };
+      const created: Profile = { id, code: `PRF-${String(id).padStart(3, '0')}`, updatedAt: formatDmy(this.now()), ...draft };
       this.db.profiles.push(created);
       return created;
     });
@@ -71,18 +71,18 @@ export class MockProfilesApi extends MockBase implements ProfilesApi {
   update(id: number, draft: ProfileDraft): Observable<Profile> {
     return this.respond(() => {
       const profile = this.find(id);
-      Object.assign(profile, draft, { upd: formatDmy(this.now()) });
+      Object.assign(profile, draft, { updatedAt: formatDmy(this.now()) });
       return profile;
     });
   }
 
-  setStatus(id: number, estado: Profile['estado']): Observable<Profile> {
+  setStatus(id: number, status: Profile['status']): Observable<Profile> {
     return this.respond(() => {
       const profile = this.find(id);
       // El perfil Administrador es la red de seguridad: nunca queda inactivo.
-      if (profile.id === 1 && estado === 'Inactivo') throw new MockApiError(409, 'El perfil Administrador no se puede inactivar');
-      profile.estado = estado;
-      profile.upd = formatDmy(this.now());
+      if (profile.id === 1 && status === 'inactive') throw new MockApiError(409, 'El perfil Administrador no se puede inactivar');
+      profile.status = status;
+      profile.updatedAt = formatDmy(this.now());
       return profile;
     });
   }

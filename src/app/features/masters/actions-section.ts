@@ -85,13 +85,13 @@ export class ActionsSection extends MasterSection {
       existingElement: isNew ? null : this.elementOf(action),
       elementOf: (v) => `${v['code']} · ${v['name']}`,
       initial: isNew
-        ? { code: '', name: '', severity: '', color: 'GRIS', stops: false, active: true }
+        ? { code: '', name: '', severity: '', color: 'gray', stops: false, active: true }
         : { code: action.code, name: action.name, severity: String(action.severity), color: action.color, stops: action.stops, active: action.active },
       fields: [
         { key: 'code', label: 'Código (letra)', kind: 'text', disabled: !isNew, mono: true },
         { key: 'name', label: 'Nombre', kind: 'text' },
         { key: 'severity', label: 'Severidad (única)', kind: 'text', hint: 'Mayor severidad prevalece al combinar resultados.' },
-        { key: 'color', label: 'Color', kind: 'select', options: ['VERDE', 'AMARILLO', 'ROJO', 'GRIS'] },
+        { key: 'color', label: 'Color', kind: 'select', options: [{ value: 'green', label: 'Verde' }, { value: 'yellow', label: 'Amarillo' }, { value: 'red', label: 'Rojo' }, { value: 'gray', label: 'Gris' }] },
         { key: 'stops', label: 'Detiene la evaluación', kind: 'check' },
         { key: 'active', label: 'Activa', kind: 'check' },
       ],

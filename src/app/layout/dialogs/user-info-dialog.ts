@@ -28,8 +28,8 @@ import { UiButton, UiIcon, UiModalFrame } from '@shared/ui';
     <ui-modal-frame [flush]="true">
       @if (me(); as m) {
         <div class="hero">
-          <span class="avatar">{{ m.ini }}</span>
-          <div class="who"><span class="who-name">{{ m.nombre }}</span><span class="who-pos">{{ m.cargo }}</span></div>
+          <span class="avatar">{{ m.initials }}</span>
+          <div class="who"><span class="who-name">{{ m.name }}</span><span class="who-pos">{{ m.jobTitle }}</span></div>
           <button ui-button icon variant="ghost" class="x" [attr.aria-label]="i18n.t('common.close')" (click)="ref.close()"><ui-icon name="x" /></button>
         </div>
         <div class="grid">
@@ -56,10 +56,10 @@ export class UserInfoDialog {
     const t = (k: string) => this.i18n.t(k);
     return [
       { k: t('me.adUser'), v: `${this.config.adDomain}\\${m.id}` },
-      { k: t('me.profile'), v: m.perfil },
+      { k: t('me.profile'), v: m.profile },
       { k: t('me.capabilities'), v: this.roles.transform(m.roles) },
-      { k: t('me.email'), v: m.correo },
-      { k: t('me.position'), v: m.cargo },
+      { k: t('me.email'), v: m.email },
+      { k: t('me.position'), v: m.jobTitle },
       { k: t('me.environment'), v: this.config.environmentLabel },
       { k: t('me.sessionStart'), v: new Date(this.auth.session()?.startedAt ?? Date.now()).toLocaleString(this.i18n.lang()) },
     ];

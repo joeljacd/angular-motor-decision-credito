@@ -2,32 +2,32 @@ import { MeInfo, Profile, Role, User } from './auth.models';
 
 /** Construye el `/me` efectivo a partir de usuario + perfil (usado por los mocks; el backend real lo entrega ya armado). */
 export function buildMeInfo(user: User, profile: Profile | undefined): MeInfo {
-  const perfilActivo = !!profile && profile.estado === 'Activo';
-  const userActive = user.estado === 'Activo';
-  const opts = userActive && perfilActivo ? [...profile!.opts] : [];
+  const profileActive = !!profile && profile.status === 'active';
+  const userActive = user.status === 'active';
+  const opts = userActive && profileActive ? [...profile!.opts] : [];
 
-  const puedeSolicitar = opts.includes('cap.request');
-  const puedeAprobar = opts.includes('cap.approve');
-  const puedeAuditar = opts.includes('history') || opts.includes('integrity');
+  const canRequest = opts.includes('cap.request');
+  const canApprove = opts.includes('cap.approve');
+  const canAudit = opts.includes('history') || opts.includes('integrity');
   const roles: Role[] = [
-    ...(puedeSolicitar ? (['request'] as const) : []),
-    ...(puedeAprobar ? (['approve'] as const) : []),
-    ...(puedeAuditar ? (['audit'] as const) : []),
+    ...(canRequest ? (['request'] as const) : []),
+    ...(canApprove ? (['approve'] as const) : []),
+    ...(canAudit ? (['audit'] as const) : []),
   ];
 
   return {
-    id: user.usuario,
-    nombre: user.nombre,
-    ini: initials(user.nombre),
-    cargo: user.cargo || '—',
-    correo: user.correo,
-    perfil: profile?.nombre ?? 'Sin perfil',
-    perfilActivo,
+    id: user.username,
+    name: user.name,
+    initials: initials(user.name),
+    jobTitle: user.jobTitle || '—',
+    email: user.email,
+    profile: profile?.name ?? 'Sin perfil',
+    profileActive,
     userActive,
     opts,
-    puedeSolicitar,
-    puedeAprobar,
-    puedeAuditar,
+    canRequest,
+    canApprove,
+    canAudit,
     roles,
   };
 }

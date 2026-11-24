@@ -95,7 +95,7 @@ export class LoginPage implements OnDestroy {
   protected readonly flowSteps = FLOW_STEPS;
   protected readonly domainPrefix = `${this.config.adDomain}\\`;
   protected readonly form = inject(FormBuilder).nonNullable.group({
-    usuario: ['', [Validators.required]],
+    username: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
 
@@ -119,13 +119,13 @@ export class LoginPage implements OnDestroy {
       this.error.set(this.i18n.t('login.required'));
       return;
     }
-    const { usuario, password } = this.form.getRawValue();
+    const { username, password } = this.form.getRawValue();
     this.loading.set(true);
-    this.auth.login(usuario.trim().toLowerCase(), password).subscribe({
+    this.auth.login(username.trim().toLowerCase(), password).subscribe({
       next: (me) => {
         this.form.controls.password.reset('');
         this.loading.set(false);
-        this.startBoot(me.nombre);
+        this.startBoot(me.name);
       },
       error: (err: { status?: number }) => {
         this.loading.set(false);

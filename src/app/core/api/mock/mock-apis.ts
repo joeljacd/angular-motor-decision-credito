@@ -36,7 +36,7 @@ export abstract class MockBase {
 @Injectable()
 export class MockAuthApi extends MockBase implements AuthApi {
   login(username: string, password: string): Observable<Session> {
-    const user = this.db.users.find((u) => u.usuario === username.trim().toLowerCase());
+    const user = this.db.users.find((u) => u.username === username.trim().toLowerCase());
     // Demo: cualquier contraseña no vacía es válida para los usuarios del directorio de prueba.
     if (!user || !password) {
       return this.respond(() => 0).pipe(
@@ -45,20 +45,20 @@ export class MockAuthApi extends MockBase implements AuthApi {
         }),
       );
     }
-    return this.respond(() => this.sessionFor(user.usuario));
+    return this.respond(() => this.sessionFor(user.username));
   }
 
   me(session: Session): Observable<MeInfo> {
-    const user = this.db.users.find((u) => u.usuario === session.userId);
+    const user = this.db.users.find((u) => u.username === session.userId);
     if (!user) return throwError(() => new MockApiError(401, 'Sesión inválida'));
-    return this.respond(() => buildMeInfo(user, this.db.profiles.find((p) => p.id === user.perfil)));
+    return this.respond(() => buildMeInfo(user, this.db.profiles.find((p) => p.id === user.profile)));
   }
 
   demoUsers(): Observable<MeInfo[]> {
     return this.respond(() =>
       DEMO_USER_IDS.map((id) => {
-        const u = this.db.users.find((x) => x.usuario === id)!;
-        return buildMeInfo(u, this.db.profiles.find((p) => p.id === u.perfil));
+        const u = this.db.users.find((x) => x.username === id)!;
+        return buildMeInfo(u, this.db.profiles.find((p) => p.id === u.profile));
       }),
     );
   }
@@ -87,10 +87,10 @@ export class MockChangeRequestsApi extends MockBase implements ChangeRequestsApi
       const created: ChangeRequest = {
         ...request,
         id: `SC-${String(next).padStart(4, '0')}`,
-        solicitante: this.auth.me()?.id ?? '',
-        fecha: formatDmy(this.now()),
-        vence: formatDmy(addDays(this.now(), 15)),
-        estado: 'Pendiente',
+        requester: this.auth.me()?.id ?? '',
+        date: formatDmy(this.now()),
+        expiresAt: formatDmy(addDays(this.now(), 15)),
+        status: 'pending',
       };
       this.db.requests.unshift(created);
       return created;
@@ -98,17 +98,17 @@ export class MockChangeRequestsApi extends MockBase implements ChangeRequestsApi
   }
 
   cancel(id: string): Observable<ChangeRequest> {
-    return this.respond(() => this.pending(id, (req) => (req.estado = 'Cancelada')));
+    return this.respond(() => this.pending(id, (req) => (req.status = 'cancelled')));
   }
 
   approve(id: string): Observable<ChangeRequest> {
     return this.respond(() =>
       this.pending(id, (req) => {
         // Control de cuatro ojos: nadie aprueba lo que solicitó.
-        if (req.solicitante === this.auth.me()?.id) throw new MockApiError(403, 'No puedes aprobar tu propia solicitud');
+        if (req.requester === this.auth.me()?.id) throw new MockApiError(403, 'No puedes aprobar tu propia solicitud');
         if (req.stale) throw new MockApiError(409, 'El elemento cambió desde la solicitud');
-        req.estado = 'Aprobada';
-        req.aprobador = this.auth.me()?.nombre;
+        req.status = 'approved';
+        req.approver = this.auth.me()?.name;
       }),
     );
   }
@@ -116,10 +116,10 @@ export class MockChangeRequestsApi extends MockBase implements ChangeRequestsApi
   reject(id: string, comment: string): Observable<ChangeRequest> {
     return this.respond(() =>
       this.pending(id, (req) => {
-        if (req.solicitante === this.auth.me()?.id) throw new MockApiError(403, 'No puedes rechazar tu propia solicitud');
-        req.estado = 'Rechazada';
-        req.aprobador = this.auth.me()?.nombre;
-        req.rechazo = comment;
+        if (req.requester === this.auth.me()?.id) throw new MockApiError(403, 'No puedes rechazar tu propia solicitud');
+        req.status = 'rejected';
+        req.approver = this.auth.me()?.name;
+        req.rejectionReason = comment;
       }),
     );
   }
@@ -128,7 +128,7 @@ export class MockChangeRequestsApi extends MockBase implements ChangeRequestsApi
   private pending(id: string, mutate: (req: ChangeRequest) => void): ChangeRequest {
     const req = this.db.requests.find((r) => r.id === id);
     if (!req) throw new MockApiError(404, 'Solicitud no encontrada');
-    if (req.estado !== 'Pendiente') throw new MockApiError(409, 'La solicitud ya no está pendiente');
+    if (req.status !== 'pending') throw new MockApiError(409, 'La solicitud ya no está pendiente');
     mutate(req);
     return req;
   }

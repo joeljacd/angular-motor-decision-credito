@@ -35,7 +35,7 @@ export class NavService {
       entries: NAV_ITEMS.filter((i) => i.group === group.id && this.auth.can(i.key)).map((item) => ({
         item,
         labelKey: `nav.${item.key}` as I18nKey,
-        badge: this.badgeFor(item, !!me?.puedeAprobar),
+        badge: this.badgeFor(item, !!me?.canApprove),
       })),
     })).filter((s) => s.entries.length > 0);
   });

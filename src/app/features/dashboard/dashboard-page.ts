@@ -77,8 +77,8 @@ export class DashboardPage implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly i18n = inject(I18nService);
 
-  protected readonly firstName = computed(() => this.auth.me()?.nombre.split(' ')[0] ?? '');
-  protected readonly canApprove = computed(() => this.auth.me()?.puedeAprobar ?? false);
+  protected readonly firstName = computed(() => this.auth.me()?.name.split(' ')[0] ?? '');
+  protected readonly canApprove = computed(() => this.auth.me()?.canApprove ?? false);
 
   /** Pestaña activa: la del query param si es válida; si no, "approve" para quien puede aprobar. */
   protected readonly activeTab = linkedSignal<string>(() => {

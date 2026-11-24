@@ -86,7 +86,7 @@ const MIN_DURATION_MS = 2300;
                     <td>{{ f.location }}</td>
                     <td>{{ f.detail }}</td>
                     <td class="actions">
-                      @if (f.sealable && auth.me()?.puedeSolicitar) {
+                      @if (f.sealable && auth.me()?.canRequest) {
                         <button ui-button size="sm" [disabled]="locked()" (click)="requestSeal(f)">Solicitar sellado</button>
                       }
                       @if (f.pendingRequestId) {
@@ -189,12 +189,12 @@ export class IntegrityPage implements OnInit, OnDestroy {
   protected requestSeal(finding: IntegrityFinding): void {
     this.requests
       .create({
-        tipo: 'Sellado',
-        elemento: 'Sellado · Versión 1 · Agencias / Auto Plan',
-        accion: 'Sellar',
-        actual: { Sello: 'Sin sellar' },
-        propuesto: { Sello: 'Sellada' },
-        comentario: 'Detectado en verificación de integridad.',
+        type: 'Sellado',
+        element: 'Sellado · Versión 1 · Agencias / Auto Plan',
+        action: 'Sellar',
+        current: { Sello: 'Sin sellar' },
+        proposed: { Sello: 'Sellada' },
+        comment: 'Detectado en verificación de integridad.',
       })
       .subscribe({
         next: (created) => {

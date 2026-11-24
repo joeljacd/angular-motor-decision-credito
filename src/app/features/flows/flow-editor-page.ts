@@ -46,8 +46,8 @@ import { emptyCategory, emptyPolicy, FlowIssue, validateFlow } from './flow-vali
       @if (version()) {
         <ui-alert tone="info">Versión {{ version() }} · solo lectura. Una versión publicada o retirada nunca se edita: abre un borrador desde Flujos.</ui-alert>
       }
-      @if (!version() && ws.state()?.devolucion) {
-        <ui-alert tone="warning">Un aprobador devolvió el borrador: {{ ws.state()?.devolucion }}</ui-alert>
+      @if (!version() && ws.state()?.returnComment) {
+        <ui-alert tone="warning">Un aprobador devolvió el borrador: {{ ws.state()?.returnComment }}</ui-alert>
       }
       @if (!version() && !editable() && ws.state()?.status === 'editing') {
         <ui-alert tone="info">Solo lectura: tu perfil no puede solicitar cambios o el sistema de firma no está disponible.</ui-alert>

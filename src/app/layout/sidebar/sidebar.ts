@@ -56,18 +56,18 @@ import { NavService } from '../nav/nav.service';
     <div class="user">
       <ui-popover [(open)]="menuOpen" [placement]="layout.expanded() ? 'top-start' : 'right-end'" width="260px">
         <div class="menu-head">
-          <span class="menu-name">{{ auth.me()?.nombre }}</span>
+          <span class="menu-name">{{ auth.me()?.name }}</span>
           <span class="menu-id">BAMAZONAS\{{ auth.me()?.id }}</span>
         </div>
         <button type="button" class="menu-item" (click)="openInfo()"><ui-icon name="user" [size]="17" />{{ 'shell.user.info' | t }}</button>
         <div class="menu-sep"></div>
         <button type="button" class="menu-item" (click)="logout()"><ui-icon name="log-out" [size]="17" />{{ 'shell.user.logout' | t }}</button>
       </ui-popover>
-      <button type="button" class="user-btn" [title]="auth.me()?.nombre ?? ''" aria-haspopup="true" [attr.aria-expanded]="menuOpen()" (click)="menuOpen.set(!menuOpen())">
-        <ui-avatar [initials]="auth.me()?.ini ?? ''" [size]="38" uiBlueprint corners="diagonal" />
+      <button type="button" class="user-btn" [title]="auth.me()?.name ?? ''" aria-haspopup="true" [attr.aria-expanded]="menuOpen()" (click)="menuOpen.set(!menuOpen())">
+        <ui-avatar [initials]="auth.me()?.initials ?? ''" [size]="38" uiBlueprint corners="diagonal" />
         @if (layout.expanded()) {
           <span class="user-text">
-            <span class="user-name">{{ auth.me()?.nombre }}</span>
+            <span class="user-name">{{ auth.me()?.name }}</span>
             <span class="user-roles">{{ auth.me()?.roles | rolesLabel }}</span>
           </span>
           <ui-icon name="chevron-up" [size]="16" />

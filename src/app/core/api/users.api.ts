@@ -3,17 +3,17 @@ import { ActiveState, User } from '../auth/auth.models';
 
 /** Datos de un usuario hallado en el directorio activo (AD). */
 export interface DirectoryUser {
-  usuario: string;
-  nombre: string;
-  correo: string;
+  username: string;
+  name: string;
+  email: string;
   area: string;
 }
 
 export interface NewUser {
-  usuario: string;
-  nombre: string;
-  perfil: number;
-  estado: ActiveState;
+  username: string;
+  name: string;
+  profile: number;
+  status: ActiveState;
 }
 
 export abstract class UsersApi {
@@ -24,5 +24,5 @@ export abstract class UsersApi {
   /** POST /users */
   abstract create(user: NewUser): Observable<User>;
   /** PATCH /users/{username}  (nombre y/o estado) */
-  abstract update(username: string, changes: Partial<Pick<User, 'nombre' | 'estado'>>): Observable<User>;
+  abstract update(username: string, changes: Partial<Pick<User, 'name' | 'status'>>): Observable<User>;
 }

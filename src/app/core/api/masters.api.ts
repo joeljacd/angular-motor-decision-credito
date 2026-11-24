@@ -10,7 +10,7 @@ export interface CodedEntity {
   versions: number;
 }
 
-export type ActionColor = 'VERDE' | 'AMARILLO' | 'ROJO' | 'GRIS';
+export type ActionColor = 'green' | 'yellow' | 'red' | 'gray';
 
 export interface ActionMaster {
   /** Una letra mayúscula */
@@ -23,7 +23,7 @@ export interface ActionMaster {
   active: boolean;
 }
 
-export type CatalogSource = 'Manual' | 'Archivo' | 'Servicio';
+export type CatalogSource = 'manual' | 'file' | 'service';
 
 export interface CatalogHeader {
   code: string;

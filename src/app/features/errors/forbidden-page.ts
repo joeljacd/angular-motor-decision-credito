@@ -20,7 +20,7 @@ import { UiButton, UiCard } from '@shared/ui';
     <ui-card padding="lg">
       <span class="code">403</span>
       <h2>{{ 'forbidden.title' | t }}</h2>
-      <p>{{ 'forbidden.body' | t: { profile: auth.me()?.perfil ?? '', note: note() } }}</p>
+      <p>{{ 'forbidden.body' | t: { profile: auth.me()?.profile ?? '', note: note() } }}</p>
       @if (home()) {
         <a ui-button variant="primary" [routerLink]="home()" style="align-self: flex-start">{{ 'forbidden.home' | t }}</a>
       }
@@ -38,6 +38,6 @@ export class ForbiddenPage {
   protected readonly note = computed(() => {
     const me = this.auth.me();
     if (!me) return '';
-    return !me.userActive ? this.i18n.t('forbidden.userInactive') : !me.perfilActivo ? this.i18n.t('forbidden.profileInactive') : '';
+    return !me.userActive ? this.i18n.t('forbidden.userInactive') : !me.profileActive ? this.i18n.t('forbidden.profileInactive') : '';
   });
 }

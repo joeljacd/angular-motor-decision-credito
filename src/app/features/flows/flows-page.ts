@@ -17,7 +17,8 @@ const STATUS: Record<VersionStatus, { label: string; tone: Tone }> = {
   edit: { label: 'Borrador · En edición', tone: 'warning' },
   review: { label: 'Borrador · En revisión', tone: 'info' },
 };
-const SEAL: Record<SealStatus, Tone> = { Sellada: 'success', 'Sin sellar': 'warning', 'Firma inválida': 'error' };
+const SEAL: Record<SealStatus, Tone> = { sealed: 'success', unsealed: 'warning', invalid: 'error' }
+const SEAL_LABEL: Record<SealStatus, string> = { sealed: 'Sellada', unsealed: 'Sin sellar', invalid: 'Firma inválida' };;
 
 /** Combinación con contenido de demostración completo (editor, revisión y vista de versión). */
 const DEMO_COMBO = '1-1';
@@ -96,7 +97,7 @@ const DEMO_COMBO = '1-1';
                 <tr>
                   <td class="ver">v{{ v.number }}</td>
                   <td><ui-tag size="sm" [tone]="statusOf(v).tone">{{ statusOf(v).label }}</ui-tag></td>
-                  <td><ui-tag size="sm" [tone]="sealTone(v)">{{ v.seal }}</ui-tag></td>
+                  <td><ui-tag size="sm" [tone]="sealTone(v)">{{ sealLabel(v) }}</ui-tag></td>
                   <td>{{ v.publishedAt }}</td>
                   <td>{{ v.approvedBy }}</td>
                   <td>{{ v.validity }}</td>
@@ -109,7 +110,7 @@ const DEMO_COMBO = '1-1';
                       @if (canSeal(v)) {
                         <button ui-button size="sm" variant="ghost" (click)="requestSeal(v)">Solicitar sellado</button>
                       }
-                      @if (v.seal === 'Firma inválida') {
+                      @if (v.seal === 'invalid') {
                         <a ui-button size="sm" variant="ghost" class="bad" routerLink="/integrity">Ver en Integridad</a>
                       }
                     </div>
@@ -211,6 +212,9 @@ export class FlowsPage implements OnInit {
   protected statusOf(v: FlowVersion) {
     return STATUS[v.status];
   }
+  protected sealLabel(v: FlowVersion): string {
+    return SEAL_LABEL[v.seal];
+  }
   protected sealTone(v: FlowVersion): Tone {
     return SEAL[v.seal];
   }
@@ -219,7 +223,7 @@ export class FlowsPage implements OnInit {
   }
   /** Se puede pedir sellado de cualquier versión sin sellar que no sea un borrador. */
   protected canSeal(v: FlowVersion): boolean {
-    return v.seal === 'Sin sellar' && v.status !== 'edit' && v.status !== 'review' && this.requests.canEdit();
+    return v.seal === 'unsealed' && v.status !== 'edit' && v.status !== 'review' && this.requests.canEdit();
   }
 
   // ── Navegación ───────────────────────────────────────────────────────

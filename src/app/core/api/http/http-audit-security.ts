@@ -56,7 +56,7 @@ export class HttpUsersApi extends HttpBase implements UsersApi {
   create(user: NewUser): Observable<User> {
     return this.http.post<User>(`${this.base}/users`, user);
   }
-  update(username: string, changes: Partial<Pick<User, 'nombre' | 'estado'>>): Observable<User> {
+  update(username: string, changes: Partial<Pick<User, 'name' | 'status'>>): Observable<User> {
     return this.http.patch<User>(`${this.base}/users/${encodeURIComponent(username)}`, changes);
   }
 }
@@ -72,8 +72,8 @@ export class HttpProfilesApi extends HttpBase implements ProfilesApi {
   update(id: number, profile: ProfileDraft): Observable<Profile> {
     return this.http.put<Profile>(`${this.base}/profiles/${id}`, profile);
   }
-  setStatus(id: number, estado: ActiveState): Observable<Profile> {
-    return this.http.patch<Profile>(`${this.base}/profiles/${id}`, { estado });
+  setStatus(id: number, status: ActiveState): Observable<Profile> {
+    return this.http.patch<Profile>(`${this.base}/profiles/${id}`, { status });
   }
 }
 

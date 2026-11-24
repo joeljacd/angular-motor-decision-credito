@@ -56,7 +56,7 @@ export class MockIntegrityApi extends MockBase implements IntegrityApi {
 
   verify(scenario: 'bad' | 'ok' = 'bad'): Observable<IntegrityReport> {
     return this.respond(() =>
-      this.report(scenario, `Verificación manual: ${formatDmyHm(this.now())} · ${this.auth.me()?.nombre ?? ''}`),
+      this.report(scenario, `Verificación manual: ${formatDmyHm(this.now())} · ${this.auth.me()?.name ?? ''}`),
     );
   }
 
@@ -65,7 +65,7 @@ export class MockIntegrityApi extends MockBase implements IntegrityApi {
       return { verifiedAt, clean: true, recordsVerified: 1210, sealedVersions: 9, historyFindings: 0, versionFindings: 0, globalSealValid: true, chain: [], findings: [] };
     }
     // Si ya hay una solicitud de sellado pendiente, el hallazgo la referencia en lugar de ofrecer crearla.
-    const pending = this.db.requests.find((r) => r.estado === 'Pendiente' && r.tipo === 'Sellado');
+    const pending = this.db.requests.find((r) => r.status === 'pending' && r.type === 'Sellado');
     const finding = (f: Partial<IntegrityFinding> & Pick<IntegrityFinding, 'kind' | 'severity' | 'location' | 'detail'>): IntegrityFinding => ({
       sealable: false,
       inHistory: false,

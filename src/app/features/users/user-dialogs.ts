@@ -9,8 +9,8 @@ import { UsersStore } from '@core/state/users.store';
 import { ToastService, UiAvatar, UiButton, UiFormField, UiInput, UiModalFrame, UiOption, UiRadioGroup, UiSelect, UiTag } from '@shared/ui';
 
 const STATE_OPTIONS: UiOption<ActiveState>[] = [
-  { value: 'Activo', label: 'Activo' },
-  { value: 'Inactivo', label: 'Inactivo' },
+  { value: 'active', label: 'Activo' },
+  { value: 'inactive', label: 'Inactivo' },
 ];
 
 /** Alta de usuario: se valida contra el directorio activo (AD) y se asigna un perfil. */
@@ -44,8 +44,8 @@ const STATE_OPTIONS: UiOption<ActiveState>[] = [
 
       @if (found(); as f) {
         <div class="found">
-          <ui-avatar [initials]="ini(f.nombre)" [size]="36" />
-          <div><strong>{{ f.nombre }}</strong><small>{{ f.correo }} · {{ f.area }}</small></div>
+          <ui-avatar [initials]="initials(f.name)" [size]="36" />
+          <div><strong>{{ f.name }}</strong><small>{{ f.email }} · {{ f.area }}</small></div>
           <ui-tag tone="success" size="sm">Validado</ui-tag>
         </div>
       }
@@ -77,17 +77,17 @@ export class AddUserDialog {
 
   protected readonly stateOptions = STATE_OPTIONS;
   protected readonly profileOptions: UiOption<number | null>[] = this.profiles
-    .filter((p) => p.estado === 'Activo')
-    .map((p) => ({ value: p.id, label: p.nombre }));
+    .filter((p) => p.status === 'active')
+    .map((p) => ({ value: p.id, label: p.name }));
 
   protected readonly username = signal('');
   protected readonly profile = signal<number | null>(null);
-  protected readonly state = signal<ActiveState>('Activo');
+  protected readonly state = signal<ActiveState>('active');
   protected readonly found = signal<DirectoryUser | null>(null);
   protected readonly validating = signal(false);
   protected readonly saving = signal(false);
   protected readonly errors = signal<{ username?: string; profile?: string }>({});
-  protected readonly ini = initials;
+  protected readonly initials = initials;
 
   protected onUsername(value: string): void {
     this.username.set(value);
@@ -99,12 +99,12 @@ export class AddUserDialog {
   protected validate(): void {
     const name = this.username().trim().toLowerCase();
     if (!name) return void this.errors.set({ username: 'Ingresa el usuario de red.' });
-    if (this.store.items().some((u) => u.usuario === name)) return void this.errors.set({ username: 'Este usuario ya está registrado en el portal.' });
+    if (this.store.items().some((u) => u.username === name)) return void this.errors.set({ username: 'Este usuario ya está registrado en el portal.' });
     this.validating.set(true);
     this.api.lookupDirectory(name).subscribe({
       next: (user) => {
         this.validating.set(false);
-        this.username.set(user.usuario);
+        this.username.set(user.username);
         this.found.set(user);
         this.errors.set({});
       },
@@ -125,9 +125,9 @@ export class AddUserDialog {
     if (!found || profile === null) return;
 
     this.saving.set(true);
-    this.store.create({ usuario: found.usuario, nombre: found.nombre, perfil: profile, estado: this.state() }).subscribe({
+    this.store.create({ username: found.username, name: found.name, profile: profile, status: this.state() }).subscribe({
       next: (user) => {
-        this.toast.success(`Usuario ${user.usuario} agregado`);
+        this.toast.success(`Usuario ${user.username} agregado`);
         this.ref.close(user);
       },
       error: () => {
@@ -153,7 +153,7 @@ export class AddUserDialog {
   template: `
     <ui-modal-frame kicker="Editar registro" title="Editar usuario">
       <div class="ro">
-        <div><small>Usuario AD</small><span class="mono">{{ data.user.usuario }}</span></div>
+        <div><small>Usuario AD</small><span class="mono">{{ data.user.username }}</span></div>
         <div><small>Perfil</small><span>{{ data.profileName }}</span></div>
       </div>
       <ui-form-field label="Nombre completo">
@@ -177,8 +177,8 @@ export class EditUserDialog {
   private readonly toast = inject(ToastService);
 
   protected readonly stateOptions = STATE_OPTIONS;
-  protected readonly name = signal(this.data.user.nombre);
-  protected readonly state = signal<ActiveState>(this.data.user.estado);
+  protected readonly name = signal(this.data.user.name);
+  protected readonly state = signal<ActiveState>(this.data.user.status);
   protected readonly error = signal('');
   protected readonly saving = signal(false);
   protected readonly canSave = computed(() => this.name().trim().length > 0);
@@ -186,7 +186,7 @@ export class EditUserDialog {
   protected save(): void {
     if (!this.canSave()) return void this.error.set('El nombre es obligatorio.');
     this.saving.set(true);
-    this.store.update(this.data.user.usuario, { nombre: this.name().trim(), estado: this.state() }).subscribe({
+    this.store.update(this.data.user.username, { name: this.name().trim(), status: this.state() }).subscribe({
       next: (user) => {
         this.toast.success('Cambios guardados');
         this.ref.close(user);

@@ -14,10 +14,10 @@ import { AddUserDialog, EditUserDialog } from './user-dialogs';
 
 interface Filters {
   q: string;
-  perfil: string;
-  estado: string;
+  profile: string;
+  status: string;
 }
-const EMPTY: Filters = { q: '', perfil: '', estado: '' };
+const EMPTY: Filters = { q: '', profile: '', status: '' };
 
 /** Quita tildes y pasa a minúsculas para comparar texto. */
 const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -44,10 +44,10 @@ const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLo
         <ui-input placeholder="Ej. aperez o Ana" [ngModel]="draft().q" (ngModelChange)="patch({ q: $event })" (keydown.enter)="apply()" />
       </ui-form-field>
       <ui-form-field label="Perfil">
-        <ui-select [options]="profileOptions()" [ngModel]="draft().perfil" (ngModelChange)="patch({ perfil: $event })" />
+        <ui-select [options]="profileOptions()" [ngModel]="draft().profile" (ngModelChange)="patch({ profile: $event })" />
       </ui-form-field>
       <ui-form-field label="Estado">
-        <ui-select [options]="stateOptions" [ngModel]="draft().estado" (ngModelChange)="patch({ estado: $event })" />
+        <ui-select [options]="stateOptions" [ngModel]="draft().status" (ngModelChange)="patch({ status: $event })" />
       </ui-form-field>
       <ng-container uiFilterActions>
         <button ui-button (click)="clear()">Limpiar</button>
@@ -74,24 +74,24 @@ const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLo
           <table class="ui-table">
             <thead><tr><th>Usuario AD</th><th>Nombre</th><th>Perfil</th><th>Estado</th><th>Último acceso</th><th>Acciones</th></tr></thead>
             <tbody>
-              @for (u of pageItems(); track u.usuario) {
-                <tr [class.inactive]="u.estado === 'Inactivo'">
-                  <td class="mono">{{ u.usuario }}</td>
+              @for (u of pageItems(); track u.username) {
+                <tr [class.inactive]="u.status === 'inactive'">
+                  <td class="mono">{{ u.username }}</td>
                   <td>
                     <div class="person">
-                      <ui-avatar [initials]="ini(u.nombre)" [size]="30" />
-                      <div class="names"><span>{{ u.nombre }}</span><span class="sub">{{ u.correo }}</span></div>
-                      @if (u.usuario === auth.me()?.id) { <ui-tag size="sm" tone="accent">Tú</ui-tag> }
+                      <ui-avatar [initials]="initials(u.name)" [size]="30" />
+                      <div class="names"><span>{{ u.name }}</span><span class="sub">{{ u.email }}</span></div>
+                      @if (u.username === auth.me()?.id) { <ui-tag size="sm" tone="accent">Tú</ui-tag> }
                     </div>
                   </td>
-                  <td><ui-tag size="sm" [tone]="profileActive(u.perfil) ? 'accent' : 'neutral'">{{ profileName(u.perfil) }}</ui-tag></td>
-                  <td><ui-tag size="sm" [tone]="u.estado === 'Activo' ? 'success' : 'neutral'" [dot]="true">{{ u.estado }}</ui-tag></td>
-                  <td class="nowrap">{{ u.acceso }}</td>
+                  <td><ui-tag size="sm" [tone]="profileActive(u.profile) ? 'accent' : 'neutral'">{{ profileName(u.profile) }}</ui-tag></td>
+                  <td><ui-tag size="sm" [tone]="u.status === 'active' ? 'success' : 'neutral'" [dot]="true">{{ stateLabel(u.status) }}</ui-tag></td>
+                  <td class="nowrap">{{ u.lastAccess }}</td>
                   <td>
                     <div class="row-actions">
                       <button ui-button size="sm" variant="ghost" [disabled]="locked()" (click)="edit(u)">Editar</button>
-                      <button ui-button size="sm" [variant]="u.estado === 'Activo' ? 'danger-ghost' : 'ghost'" [disabled]="locked()" (click)="toggle(u)">
-                        {{ u.estado === 'Activo' ? 'Inactivar' : 'Activar' }}
+                      <button ui-button size="sm" [variant]="u.status === 'active' ? 'danger-ghost' : 'ghost'" [disabled]="locked()" (click)="toggle(u)">
+                        {{ u.status === 'active' ? 'Inactivar' : 'Activar' }}
                       </button>
                     </div>
                   </td>
@@ -113,8 +113,10 @@ export class UsersPage implements OnInit {
   private readonly toast = inject(ToastService);
   protected readonly locked = inject(SystemStatusStore).keyUnavailable;
 
-  protected readonly ini = initials;
-  protected readonly stateOptions: UiOption<string>[] = [{ value: '', label: 'Todos' }, { value: 'Activo', label: 'Activo' }, { value: 'Inactivo', label: 'Inactivo' }];
+  protected readonly initials = initials;
+  /** Texto visible del estado. */
+  protected readonly stateLabel = (state: 'active' | 'inactive') => (state === 'active' ? 'Activo' : 'Inactivo');
+  protected readonly stateOptions: UiOption<string>[] = [{ value: '', label: 'Todos' }, { value: 'active', label: 'Activo' }, { value: 'inactive', label: 'Inactivo' }];
   protected readonly sizeOptions: UiOption<number>[] = [5, 10, 20].map((n) => ({ value: n, label: String(n) }));
 
   protected readonly draft = signal<Filters>({ ...EMPTY });
@@ -124,7 +126,7 @@ export class UsersPage implements OnInit {
 
   protected readonly profileOptions = computed<UiOption<string>[]>(() => [
     { value: '', label: 'Todos los perfiles' },
-    ...this.profiles.items().map((p) => ({ value: String(p.id), label: p.nombre })),
+    ...this.profiles.items().map((p) => ({ value: String(p.id), label: p.name })),
   ]);
 
   protected readonly filtered = computed(() => {
@@ -132,13 +134,13 @@ export class UsersPage implements OnInit {
     const q = normalize(f.q.trim());
     return this.users
       .items()
-      .filter((u) => (!q || normalize(u.usuario).includes(q) || normalize(u.nombre).includes(q)) && (!f.perfil || u.perfil === +f.perfil) && (!f.estado || u.estado === f.estado));
+      .filter((u) => (!q || normalize(u.username).includes(q) || normalize(u.name).includes(q)) && (!f.profile || u.profile === +f.profile) && (!f.status || u.status === f.status));
   });
   protected readonly pageItems = computed(() => this.filtered().slice((this.page() - 1) * this.size(), this.page() * this.size()));
 
   protected readonly stats = computed<UiStat[]>(() => {
     const all = this.users.items();
-    const active = all.filter((u) => u.estado === 'Activo').length;
+    const active = all.filter((u) => u.status === 'active').length;
     return [
       { label: 'Total', value: all.length },
       { label: 'Activos', value: active, color: 'var(--color-success)' },
@@ -168,10 +170,10 @@ export class UsersPage implements OnInit {
   }
 
   protected profileName(id: number): string {
-    return this.profiles.items().find((p) => p.id === id)?.nombre ?? '—';
+    return this.profiles.items().find((p) => p.id === id)?.name ?? '—';
   }
   protected profileActive(id: number): boolean {
-    return this.profiles.items().find((p) => p.id === id)?.estado === 'Activo';
+    return this.profiles.items().find((p) => p.id === id)?.status === 'active';
   }
 
   protected add(): void {
@@ -179,15 +181,15 @@ export class UsersPage implements OnInit {
   }
 
   protected edit(user: User): void {
-    this.modal.open(EditUserDialog, { data: { user, profileName: this.profileName(user.perfil) } });
+    this.modal.open(EditUserDialog, { data: { user, profileName: this.profileName(user.profile) } });
   }
 
   /** Activa/inactiva con confirmación; nadie puede inactivarse a sí mismo. */
   protected async toggle(user: User): Promise<void> {
-    const deactivating = user.estado === 'Activo';
-    if (deactivating && user.usuario === this.auth.me()?.id) return void this.toast.info('No puedes inactivar tu propio usuario');
+    const deactivating = user.status === 'active';
+    if (deactivating && user.username === this.auth.me()?.id) return void this.toast.info('No puedes inactivar tu propio usuario');
     const ok = await this.modal.confirm({
-      title: deactivating ? `Inactivar a ${user.nombre}` : `Activar a ${user.nombre}`,
+      title: deactivating ? `Inactivar a ${user.name}` : `Activar a ${user.name}`,
       message: deactivating
         ? 'Perderá el acceso al portal de inmediato. Su historial de cambios se conserva.'
         : 'Recuperará el acceso según su perfil.',
@@ -196,7 +198,7 @@ export class UsersPage implements OnInit {
       tone: deactivating ? 'danger' : 'primary',
     });
     if (!ok) return;
-    this.users.update(user.usuario, { estado: deactivating ? 'Inactivo' : 'Activo' }).subscribe({
+    this.users.update(user.username, { status: deactivating ? 'inactive' : 'active' }).subscribe({
       next: () => this.toast.success(deactivating ? 'Usuario inactivado' : 'Usuario activado'),
       error: () => this.toast.error('No se pudo cambiar el estado.'),
     });

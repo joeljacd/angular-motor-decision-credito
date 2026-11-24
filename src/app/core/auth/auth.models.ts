@@ -1,30 +1,30 @@
 import { OptionKey } from './permissions';
 
-export type ActiveState = 'Activo' | 'Inactivo';
+export type ActiveState = 'active' | 'inactive';
 
 export interface Profile {
   id: number;
-  codigo: string;
-  nombre: string;
-  desc: string;
-  estado: ActiveState;
+  code: string;
+  name: string;
+  description: string;
+  status: ActiveState;
   /** dd/MM/yyyy */
-  upd: string;
+  updatedAt: string;
   opts: OptionKey[];
 }
 
 export interface User {
   id: string;
   /** Usuario de red (Active Directory), sin dominio. */
-  usuario: string;
-  nombre: string;
-  correo: string;
+  username: string;
+  name: string;
+  email: string;
   /** id del perfil */
-  perfil: number;
-  estado: ActiveState;
+  profile: number;
+  status: ActiveState;
   /** "dd/MM/yyyy HH:mm" o "—" */
-  acceso: string;
-  cargo: string;
+  lastAccess: string;
+  jobTitle: string;
 }
 
 export type Role = 'request' | 'approve' | 'audit';
@@ -32,19 +32,19 @@ export type Role = 'request' | 'approve' | 'audit';
 /** Respuesta de `/me`: identidad + capacidades efectivas del usuario autenticado. */
 export interface MeInfo {
   id: string;
-  nombre: string;
+  name: string;
   /** Iniciales para el avatar. */
-  ini: string;
-  cargo: string;
-  correo: string;
-  perfil: string;
-  perfilActivo: boolean;
+  initials: string;
+  jobTitle: string;
+  email: string;
+  profile: string;
+  profileActive: boolean;
   userActive: boolean;
   /** Opciones efectivas (vacío si usuario o perfil están inactivos). */
   opts: OptionKey[];
-  puedeSolicitar: boolean;
-  puedeAprobar: boolean;
-  puedeAuditar: boolean;
+  canRequest: boolean;
+  canApprove: boolean;
+  canAudit: boolean;
   roles: Role[];
 }
 

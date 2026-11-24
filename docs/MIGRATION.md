@@ -38,4 +38,4 @@ Todas las pantallas del prototipo están construidas con router (lazy), estados 
 
 ## Convención de idioma
 
-Rutas, claves de permiso (`flows`, `cap.request`, `m-channels`…), estados (`editing`, `review`, `published`) e identificadores van en inglés; los comentarios, en español. Los textos visibles de la UI siguen en español (i18n `es`/`en` para el marco; las pantallas nuevas tienen el texto en la plantilla). Pendiente de confirmar: los campos de los modelos heredados del prototipo (`tipo`, `estado`, `nombre`, `perfil`…) siguen en español porque son el contrato con el backend.
+Todo el código va en inglés (rutas, identificadores, campos de modelos, claves y códigos de estado como `pending`, `active`, `sealed`, `green`); los comentarios van en español y los títulos y textos visibles de las pantallas también. Quedan en español solo los datos de dominio que el backend envía como etiquetas (tipo de elemento, acción y tipo de cambio de una solicitud, p. ej. «Canal», «Alta»), los códigos de parámetros del motor (`DIAS_VENCIMIENTO`…) y los datos de demostración.

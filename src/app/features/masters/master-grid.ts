@@ -29,11 +29,14 @@ export interface GridStateFilter {
   offLabel: string;
 }
 
+/** Texto visible de cada color de acción. */
+const COLOR_LABEL: Record<string, string> = { green: 'VERDE', yellow: 'AMARILLO', red: 'ROJO', gray: 'GRIS' };
+
 const COLOR_STYLE: Record<string, { bg: string; fg: string }> = {
-  VERDE: { bg: 'var(--color-act-c)', fg: 'var(--color-act-c-fg)' },
-  AMARILLO: { bg: 'var(--color-act-e)', fg: 'var(--color-act-e-fg)' },
-  ROJO: { bg: 'var(--color-act-r)', fg: 'var(--color-act-r-fg)' },
-  GRIS: { bg: 'var(--color-act-g)', fg: 'var(--color-act-g-fg)' },
+  green: { bg: 'var(--color-act-c)', fg: 'var(--color-act-c-fg)' },
+  yellow: { bg: 'var(--color-act-e)', fg: 'var(--color-act-e-fg)' },
+  red: { bg: 'var(--color-act-r)', fg: 'var(--color-act-r-fg)' },
+  gray: { bg: 'var(--color-act-g)', fg: 'var(--color-act-g-fg)' },
 };
 
 /**
@@ -100,7 +103,7 @@ const COLOR_STYLE: Record<string, { bg: string; fg: string }> = {
                         @case ('yesno') { <ui-tag size="sm" [tone]="row[c.key] ? 'success' : 'neutral'">{{ row[c.key] ? 'Sí' : 'No' }}</ui-tag> }
                         @case ('stop') { <ui-tag size="sm" [tone]="row[c.key] ? 'error' : 'neutral'">{{ row[c.key] ? 'Sí' : 'No' }}</ui-tag> }
                         @case ('check') { <span class="check" [class.on]="row[c.key]" aria-hidden="true">{{ row[c.key] ? '✓' : '' }}</span><span class="sr-only">{{ row[c.key] ? 'Sí' : 'No' }}</span> }
-                        @case ('color') { <span class="tag-color" [style.background]="colorOf(row[c.key]).bg" [style.color]="colorOf(row[c.key]).fg">{{ row[c.key] }}</span> }
+                        @case ('color') { <span class="tag-color" [style.background]="colorOf(row[c.key]).bg" [style.color]="colorOf(row[c.key]).fg">{{ colorLabel(row[c.key]) }}</span> }
                         @case ('scope') { <ui-tag size="sm" [tone]="row[c.key] === 'Global' ? 'neutral' : 'accent'">{{ row[c.key] }}</ui-tag> }
                         @case ('chip') {
                           <span class="chip">
@@ -170,8 +173,12 @@ export class MasterGrid {
   });
   protected readonly pageRows = computed(() => this.filtered().slice((this.page() - 1) * this.pageSize(), this.page() * this.pageSize()));
 
+  protected colorLabel(value: string | number | boolean): string {
+    return COLOR_LABEL[String(value)] ?? String(value);
+  }
+
   protected colorOf(value: string | number | boolean) {
-    return COLOR_STYLE[String(value)] ?? COLOR_STYLE['GRIS'];
+    return COLOR_STYLE[String(value)] ?? COLOR_STYLE['gray'];
   }
 
   /** Filas deshabilitadas/inactivas se atenúan. */

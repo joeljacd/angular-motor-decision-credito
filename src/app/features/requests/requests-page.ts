@@ -12,14 +12,17 @@ import {
   ModalService, ToastService, UiAlert, UiButton, UiCard, UiCheckbox, UiEmptyState, UiFilterBar, UiFormField, UiOption,
   UiPageHeader, UiSelect, UiTableSkeleton, UiTag,
 } from '@shared/ui';
+import { TPipe } from '@core/i18n';
 import { RejectDialog } from './reject-dialog';
 
-const ALL_STATUSES: RequestStatus[] = ['Pendiente', 'Aprobada', 'Rechazada', 'Cancelada', 'Vencida'];
+/** Texto visible de cada estado de solicitud. */
+const STATUS_LABEL: Record<RequestStatus, string> = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada', cancelled: 'Cancelada', expired: 'Vencida' };
+const ALL_STATUSES: RequestStatus[] = ['pending', 'approved', 'rejected', 'cancelled', 'expired'];
 
 interface Filters {
-  estado: string;
-  tipo: string;
-  solicitante: string;
+  status: string;
+  type: string;
+  requester: string;
   mine: boolean;
 }
 
@@ -37,7 +40,7 @@ interface DiffRow {
  */
 @Component({
   selector: 'app-requests-page',
-  imports: [FormsModule, UiPageHeader, UiCard, UiFilterBar, UiFormField, UiSelect, UiCheckbox, UiTag, UiButton, UiAlert, UiEmptyState, UiTableSkeleton],
+  imports: [TPipe, FormsModule, UiPageHeader, UiCard, UiFilterBar, UiFormField, UiSelect, UiCheckbox, UiTag, UiButton, UiAlert, UiEmptyState, UiTableSkeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './requests-page.scss',
   template: `
@@ -49,13 +52,13 @@ interface DiffRow {
 
     <ui-filter-bar>
       <ui-form-field label="Estado">
-        <ui-select [options]="statusOptions" [ngModel]="filters().estado" (ngModelChange)="patch({ estado: $event })" />
+        <ui-select [options]="statusOptions" [ngModel]="filters().status" (ngModelChange)="patch({ status: $event })" />
       </ui-form-field>
       <ui-form-field label="Tipo de elemento">
-        <ui-select [options]="typeOptions()" [ngModel]="filters().tipo" (ngModelChange)="patch({ tipo: $event })" />
+        <ui-select [options]="typeOptions()" [ngModel]="filters().type" (ngModelChange)="patch({ type: $event })" />
       </ui-form-field>
       <ui-form-field label="Solicitante">
-        <ui-select [options]="requesterOptions()" [ngModel]="filters().solicitante" (ngModelChange)="patch({ solicitante: $event })" />
+        <ui-select [options]="requesterOptions()" [ngModel]="filters().requester" (ngModelChange)="patch({ requester: $event })" />
       </ui-form-field>
       <ui-checkbox [ngModel]="filters().mine" (ngModelChange)="patch({ mine: $event })">Solo mías</ui-checkbox>
     </ui-filter-bar>
@@ -80,12 +83,12 @@ interface DiffRow {
                 @for (r of filtered(); track r.id) {
                   <tr class="clickable" [class.active]="r.id === selectedId()" tabindex="0" (click)="select(r.id)" (keydown.enter)="select(r.id)">
                     <td class="mono">{{ r.id }}</td>
-                    <td>{{ r.tipo }}</td>
-                    <td>{{ r.elemento }}</td>
-                    <td>{{ users.nameOf(r.solicitante) }}</td>
-                    <td><ui-tag size="sm" [tone]="tone(r.estado)" [dot]="true">{{ r.estado }}</ui-tag></td>
+                    <td>{{ r.type }}</td>
+                    <td>{{ r.element }}</td>
+                    <td>{{ users.nameOf(r.requester) }}</td>
+                    <td><ui-tag size="sm" [tone]="tone(r.status)" [dot]="true">{{ ('status.' + r.status) | t }}</ui-tag></td>
                     <td>
-                      @if (r.estado === 'Pendiente') {
+                      @if (r.status === 'pending') {
                         <ui-tag size="sm" [tone]="dueDays(r) < 3 ? 'orange' : 'neutral'">{{ dueLabel(r) }}</ui-tag>
                       } @else { — }
                     </td>
@@ -101,24 +104,24 @@ interface DiffRow {
         <ui-card padding="lg" class="detail">
           <div class="detail-head">
             <span class="mono">{{ r.id }}</span>
-            <span class="muted">{{ r.tipo }} · {{ r.accion }}</span>
+            <span class="muted">{{ r.type }} · {{ r.action }}</span>
             <span class="spacer"></span>
-            <ui-tag [tone]="tone(r.estado)" [dot]="true">{{ r.estado }}</ui-tag>
+            <ui-tag [tone]="tone(r.status)" [dot]="true">{{ ('status.' + r.status) | t }}</ui-tag>
           </div>
-          <h3>{{ r.elemento }}</h3>
+          <h3>{{ r.element }}</h3>
 
           <dl class="meta">
-            <div><dt>Solicitante</dt><dd>{{ users.nameOf(r.solicitante) }}</dd></div>
-            <div><dt>Fecha</dt><dd>{{ r.fecha }}</dd></div>
-            <div><dt>Vence</dt><dd>{{ r.vence }}@if (r.estado === 'Pendiente') { ({{ dueLabel(r) }}) }</dd></div>
-            <div><dt>Aprobador</dt><dd>{{ r.aprobador || '—' }}</dd></div>
+            <div><dt>Solicitante</dt><dd>{{ users.nameOf(r.requester) }}</dd></div>
+            <div><dt>Fecha</dt><dd>{{ r.date }}</dd></div>
+            <div><dt>Vence</dt><dd>{{ r.expiresAt }}@if (r.status === 'pending') { ({{ dueLabel(r) }}) }</dd></div>
+            <div><dt>Aprobador</dt><dd>{{ r.approver || '—' }}</dd></div>
           </dl>
 
-          @if (r.comentario) {
-            <div class="block"><span class="kicker">Comentario del solicitante</span><p>{{ r.comentario }}</p></div>
+          @if (r.comment) {
+            <div class="block"><span class="kicker">Comentario del solicitante</span><p>{{ r.comment }}</p></div>
           }
-          @if (r.rechazo) {
-            <ui-alert tone="error"><strong>Rechazada por {{ r.aprobador }}:</strong> {{ r.rechazo }}</ui-alert>
+          @if (r.rejectionReason) {
+            <ui-alert tone="error"><strong>Rechazada por {{ r.approver }}:</strong> {{ r.rejectionReason }}</ui-alert>
           }
 
           <span class="kicker">Valor actual vs. propuesto</span>
@@ -137,13 +140,13 @@ interface DiffRow {
             <ui-alert tone="error"><strong>Conflicto:</strong> el elemento cambió desde la solicitud; debe rehacerse.</ui-alert>
           }
 
-          @if (r.estado === 'Pendiente') {
+          @if (r.status === 'pending') {
             <div class="actions">
               @if (isOwn(r)) {
                 <button ui-button variant="secondary" [disabled]="locked() || busy()" (click)="cancel(r)">Cancelar solicitud</button>
               }
               <span class="spacer"></span>
-              @if (auth.me()?.puedeAprobar) {
+              @if (auth.me()?.canApprove) {
                 <button ui-button variant="secondary" [disabled]="isOwn(r) || busy()" (click)="reject(r)">Rechazar</button>
                 <span class="approve-wrap" (mouseenter)="tip.set(true)" (mouseleave)="tip.set(false)">
                   <button ui-button variant="primary" [disabled]="isOwn(r) || conflictId() === r.id || locked() || busy()" [loading]="busy()" (click)="approve(r)">Aprobar</button>
@@ -171,7 +174,7 @@ export class RequestsPage implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly now = inject(NOW);
 
-  protected readonly filters = signal<Filters>({ estado: '', tipo: '', solicitante: '', mine: false });
+  protected readonly filters = signal<Filters>({ status: '', type: '', requester: '', mine: false });
   /** Seleccionada: sigue al query param, pero el usuario puede cambiarla haciendo clic. */
   protected readonly selectedId = linkedSignal<string | null>(() => this.id() ?? null);
   protected readonly busy = signal(false);
@@ -180,15 +183,15 @@ export class RequestsPage implements OnInit {
   protected readonly conflictId = signal<string | null>(null);
 
   protected readonly locked = this.status.keyUnavailable;
-  protected readonly statusOptions: UiOption<string>[] = [{ value: '', label: 'Todos' }, ...ALL_STATUSES.map((s) => ({ value: s, label: s }))];
+  protected readonly statusOptions: UiOption<string>[] = [{ value: '', label: 'Todos' }, ...ALL_STATUSES.map((s) => ({ value: s, label: STATUS_LABEL[s] }))];
 
   protected readonly typeOptions = computed<UiOption<string>[]>(() => [
     { value: '', label: 'Todos' },
-    ...[...new Set(this.store.items().map((r) => r.tipo))].map((t) => ({ value: t, label: t })),
+    ...[...new Set(this.store.items().map((r) => r.type))].map((t) => ({ value: t, label: t })),
   ]);
   protected readonly requesterOptions = computed<UiOption<string>[]>(() => [
     { value: '', label: 'Todos' },
-    ...[...new Set(this.store.items().map((r) => r.solicitante))].map((u) => ({ value: u, label: this.users.nameOf(u) })),
+    ...[...new Set(this.store.items().map((r) => r.requester))].map((u) => ({ value: u, label: this.users.nameOf(u) })),
   ]);
 
   protected readonly filtered = computed(() => {
@@ -196,7 +199,7 @@ export class RequestsPage implements OnInit {
     const me = this.auth.me()?.id;
     return this.store
       .items()
-      .filter((r) => (!f.estado || r.estado === f.estado) && (!f.tipo || r.tipo === f.tipo) && (!f.solicitante || r.solicitante === f.solicitante) && (!f.mine || r.solicitante === me));
+      .filter((r) => (!f.status || r.status === f.status) && (!f.type || r.type === f.type) && (!f.requester || r.requester === f.requester) && (!f.mine || r.requester === me));
   });
 
   protected readonly selected = computed(() => this.store.items().find((r) => r.id === this.selectedId()) ?? null);
@@ -205,8 +208,8 @@ export class RequestsPage implements OnInit {
   protected readonly diff = computed<DiffRow[]>(() => {
     const r = this.selected();
     if (!r) return [];
-    const keys = [...new Set([...Object.keys(r.actual), ...Object.keys(r.propuesto)])];
-    return keys.map((key) => ({ key, current: r.actual[key] ?? '—', proposed: r.propuesto[key] ?? '—', changed: r.actual[key] !== r.propuesto[key] }));
+    const keys = [...new Set([...Object.keys(r.current), ...Object.keys(r.proposed)])];
+    return keys.map((key) => ({ key, current: r.current[key] ?? '—', proposed: r.proposed[key] ?? '—', changed: r.current[key] !== r.proposed[key] }));
   });
 
   ngOnInit(): void {
@@ -228,11 +231,11 @@ export class RequestsPage implements OnInit {
   }
 
   protected isOwn(r: ChangeRequest): boolean {
-    return r.solicitante === this.auth.me()?.id;
+    return r.requester === this.auth.me()?.id;
   }
 
   protected dueDays(r: ChangeRequest): number {
-    return daysUntil(r.vence, this.now());
+    return daysUntil(r.expiresAt, this.now());
   }
 
   protected dueLabel(r: ChangeRequest): string {

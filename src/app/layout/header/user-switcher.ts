@@ -20,11 +20,11 @@ import { navPathFor } from '../nav/nav.config';
   template: `
     <div class="anchor">
       <button type="button" class="trigger" [class.open]="open()" [title]="'shell.viewAs.tooltip' | t" aria-haspopup="true" [attr.aria-expanded]="open()" (click)="toggle()">
-        <ui-avatar [initials]="auth.me()?.ini ?? ''" [size]="34" />
+        <ui-avatar [initials]="auth.me()?.initials ?? ''" [size]="34" />
         @if (layout.wide()) {
           <span class="who">
-            <span class="who-name">{{ auth.me()?.nombre }}</span>
-            <span class="who-profile">{{ auth.me()?.perfil }}</span>
+            <span class="who-name">{{ auth.me()?.name }}</span>
+            <span class="who-profile">{{ auth.me()?.profile }}</span>
           </span>
         }
         <ui-icon name="chevron-down" [size]="14" />
@@ -37,15 +37,15 @@ import { navPathFor } from '../nav/nav.config';
         </div>
         @for (u of users(); track u.id) {
           <button type="button" class="row" [class.current]="u.id === auth.me()?.id" (click)="pick(u)">
-            <ui-avatar [initials]="u.ini" [size]="38" [variant]="u.id === auth.me()?.id ? 'filled' : 'outline'" />
+            <ui-avatar [initials]="u.initials" [size]="38" [variant]="u.id === auth.me()?.id ? 'filled' : 'outline'" />
             <span class="info">
               <span class="line">
-                <span class="r-name">{{ u.nombre }}</span>
+                <span class="r-name">{{ u.name }}</span>
                 <span class="r-screens">{{ screens(u) }}</span>
               </span>
               <span class="tags">
-                <ui-tag [tone]="u.perfilActivo ? 'accent' : 'neutral'" size="sm">{{ u.perfil }}</ui-tag>
-                <ui-tag size="sm">{{ u.perfilActivo ? (u.roles | rolesLabel) : i18n.t('me.noAccess') }}</ui-tag>
+                <ui-tag [tone]="u.profileActive ? 'accent' : 'neutral'" size="sm">{{ u.profile }}</ui-tag>
+                <ui-tag size="sm">{{ u.profileActive ? (u.roles | rolesLabel) : i18n.t('me.noAccess') }}</ui-tag>
               </span>
             </span>
             @if (u.id === auth.me()?.id) {
@@ -89,7 +89,7 @@ export class UserSwitcher {
       // Si la pantalla actual no está permitida para el nuevo usuario, va a su primera pantalla permitida.
       const first = this.auth.firstAllowedScreen();
       void this.router.navigateByUrl(first ? navPathFor(first) : '/403');
-      this.toast.success(this.i18n.t('shell.viewAs.toast', { name: me.nombre, profile: me.perfil }));
+      this.toast.success(this.i18n.t('shell.viewAs.toast', { name: me.name, profile: me.profile }));
     });
   }
 

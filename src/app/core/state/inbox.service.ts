@@ -9,18 +9,18 @@ import { ChangeRequestsStore } from './change-requests.store';
 import { WorkflowStore } from './workflow.store';
 
 export type InboxStatus =
-  | 'Pendiente' | 'Aprobada' | 'Rechazada' | 'Cancelada' | 'Vencida'
-  | 'En edición' | 'En revisión' | 'Publicada';
+  | 'pending' | 'approved' | 'rejected' | 'cancelled' | 'expired'
+  | 'editing' | 'review' | 'published';
 
 export const STATUS_TONE: Record<InboxStatus, Tone> = {
-  Pendiente: 'warning',
-  Aprobada: 'success',
-  Rechazada: 'error',
-  Cancelada: 'neutral',
-  Vencida: 'orange',
-  'En edición': 'warning',
-  'En revisión': 'info',
-  Publicada: 'success',
+  pending: 'warning',
+  approved: 'success',
+  rejected: 'error',
+  cancelled: 'neutral',
+  expired: 'orange',
+  editing: 'warning',
+  review: 'info',
+  published: 'success',
 };
 
 export interface DueInfo {
@@ -87,15 +87,15 @@ export class InboxService {
         sub: this.i18n.t('dash.draft.inReview'),
         requester: flow.openedBy,
         date: flow.sentAt || '22/11/2026',
-        dueDate: flow.vence,
-        due: this.due(flow.vence),
-        status: 'En revisión',
+        dueDate: flow.expiresAt,
+        due: this.due(flow.expiresAt),
+        status: 'review',
         canCancel: false,
         link: { path: '/flows/review' },
       });
     }
     for (const r of this.requests.items()) {
-      if (r.estado === 'Pendiente' && r.solicitante !== me.id) rows.push(this.requestRow(r, false));
+      if (r.status === 'pending' && r.requester !== me.id) rows.push(this.requestRow(r, false));
     }
     return rows;
   });
@@ -111,18 +111,18 @@ export class InboxService {
       rows.push({
         kind: 'draft',
         element: this.i18n.t('dash.draft.name'),
-        sub: this.i18n.t(editing && flow.devolucion ? 'dash.draft.returned' : 'dash.draft.rules'),
-        requester: me.nombre,
+        sub: this.i18n.t(editing && flow.returnComment ? 'dash.draft.returned' : 'dash.draft.rules'),
+        requester: me.name,
         date: flow.openedAt,
-        dueDate: flow.vence,
-        due: this.due(flow.vence),
-        status: editing ? 'En edición' : 'En revisión',
+        dueDate: flow.expiresAt,
+        due: this.due(flow.expiresAt),
+        status: editing ? 'editing' : 'review',
         canCancel: false,
         link: { path: '/flows/editor' },
       });
     }
     for (const r of this.requests.items()) {
-      if (r.solicitante === me.id) rows.push(this.requestRow(r, true));
+      if (r.requester === me.id) rows.push(this.requestRow(r, true));
     }
     return rows;
   });
@@ -130,7 +130,7 @@ export class InboxService {
   /** Badge del menú "Inicio". */
   readonly pendingCount = computed(() => this.approveRows().length);
   /** Badge del menú "Solicitudes de cambio". */
-  readonly openRequestsCount = computed(() => this.requests.items().filter((r) => r.estado === 'Pendiente').length);
+  readonly openRequestsCount = computed(() => this.requests.items().filter((r) => r.status === 'pending').length);
 
   refresh(force = false): void {
     this.requests.load(force);
@@ -143,21 +143,21 @@ export class InboxService {
   }
 
   private requestRow(r: ChangeRequest, mine: boolean): InboxRow {
-    const approvedBy = r.aprobador && r.estado === 'Aprobada' ? ` · ${this.i18n.t('dash.approvedBy', { name: r.aprobador })}` : '';
+    const approvedBy = r.approver && r.status === 'approved' ? ` · ${this.i18n.t('dash.approvedBy', { name: r.approver })}` : '';
     return {
       kind: 'request',
       id: r.id,
-      typeLabel: r.tipo,
-      element: r.elemento,
-      sub: `${r.id} · ${r.tipo} · ${r.accion}${mine ? approvedBy : ''}`,
-      requester: DISPLAY_NAMES[r.solicitante] ?? r.solicitante,
-      date: r.fecha,
-      dueDate: r.vence,
-      due: r.estado === 'Pendiente' ? this.due(r.vence) : null,
-      status: r.estado,
-      rejectComment: r.rechazo,
-      approver: r.aprobador,
-      canCancel: mine && r.estado === 'Pendiente',
+      typeLabel: r.type,
+      element: r.element,
+      sub: `${r.id} · ${r.type} · ${r.action}${mine ? approvedBy : ''}`,
+      requester: DISPLAY_NAMES[r.requester] ?? r.requester,
+      date: r.date,
+      dueDate: r.expiresAt,
+      due: r.status === 'pending' ? this.due(r.expiresAt) : null,
+      status: r.status,
+      rejectComment: r.rejectionReason,
+      approver: r.approver,
+      canCancel: mine && r.status === 'pending',
       link: { path: '/requests', query: { id: r.id } },
     };
   }

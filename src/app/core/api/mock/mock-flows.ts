@@ -14,14 +14,14 @@ const version = (number: number, status: FlowVersion['status'], seal: FlowVersio
 /** Versiones de las demás combinaciones (el flujo editable de demostración es solo 1-1). */
 const STATIC_VERSIONS: Record<string, FlowVersion[]> = {
   '1-2': [
-    version(3, 'current', 'Sellada', '02/09/2026', 'Luis Mora', '02/09/2026 → —'),
-    version(2, 'retired', 'Sellada', '10/05/2026', 'Ana Pérez', '10/05/2026 → 02/09/2026'),
-    version(1, 'retired', 'Sellada', '12/01/2026', 'Luis Mora', '12/01/2026 → 10/05/2026'),
+    version(3, 'current', 'sealed', '02/09/2026', 'Luis Mora', '02/09/2026 → —'),
+    version(2, 'retired', 'sealed', '10/05/2026', 'Ana Pérez', '10/05/2026 → 02/09/2026'),
+    version(1, 'retired', 'sealed', '12/01/2026', 'Luis Mora', '12/01/2026 → 10/05/2026'),
   ],
-  '2-1': [version(1, 'current', 'Sin sellar', '18/11/2026', 'Luis Mora', '18/11/2026 → —')],
+  '2-1': [version(1, 'current', 'unsealed', '18/11/2026', 'Luis Mora', '18/11/2026 → —')],
   '2-2': [
-    version(3, 'current', 'Firma inválida', '30/10/2026', 'Ana Pérez', '30/10/2026 → —'),
-    version(2, 'retired', 'Sellada', '03/04/2026', 'Luis Mora', '03/04/2026 → 30/10/2026'),
+    version(3, 'current', 'invalid', '30/10/2026', 'Ana Pérez', '30/10/2026 → —'),
+    version(2, 'retired', 'sealed', '03/04/2026', 'Luis Mora', '03/04/2026 → 30/10/2026'),
   ],
   '3-2': [],
 };
@@ -56,19 +56,19 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
       if (key !== '1-1') {
         const base = STATIC_VERSIONS[key] ?? [];
         // Borrador local de la combinación (demostración): siguiente número, en edición.
-        return this.localDrafts.has(key) ? [version((base[0]?.number ?? 0) + 1, 'edit', 'Sin sellar', '—', '—', '—'), ...base] : base;
+        return this.localDrafts.has(key) ? [version((base[0]?.number ?? 0) + 1, 'edit', 'unsealed', '—', '—', '—'), ...base] : base;
       }
       const flow = this.db.flow;
       const list: FlowVersion[] = [];
       if (flow.status === 'editing' || flow.status === 'review') {
-        list.push(version(2, flow.status === 'editing' ? 'edit' : 'review', 'Sin sellar', '—', '—', '—'));
+        list.push(version(2, flow.status === 'editing' ? 'edit' : 'review', 'unsealed', '—', '—', '—'));
       }
       if (flow.status === 'published') {
         const day = flow.publishedAt ?? '';
-        list.push(version(2, 'current', 'Sellada', day, flow.approvedBy ?? '', `${day} → —`));
-        list.push(version(1, 'retired', 'Sellada', '15/10/2026', 'Luis Mora', `15/10/2026 → ${day}`));
+        list.push(version(2, 'current', 'sealed', day, flow.approvedBy ?? '', `${day} → —`));
+        list.push(version(1, 'retired', 'sealed', '15/10/2026', 'Luis Mora', `15/10/2026 → ${day}`));
       } else {
-        list.push(version(1, 'current', 'Sellada', '15/10/2026', 'Luis Mora', '15/10/2026 → —'));
+        list.push(version(1, 'current', 'sealed', '15/10/2026', 'Luis Mora', '15/10/2026 → —'));
       }
       return list;
     });
@@ -103,8 +103,8 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
       this.db.flowDraft = source === 'empty' ? structuredClone(EMPTY_FLOW) : structuredClone(this.db.flowBaseline);
       this.db.flowResources = structuredClone(this.db.baselineResources);
       this.db.flow = {
-        status: 'editing', devolucion: '', openedBy: me.nombre, openedId: me.id, openedAt: formatDmy(this.now()),
-        editors: [me.id], editorNames: me.nombre, last: formatDmyHm(this.now()), vence: formatDmy(addDays(this.now(), 15)), sentAt: '',
+        status: 'editing', returnComment: '', openedBy: me.name, openedId: me.id, openedAt: formatDmy(this.now()),
+        editors: [me.id], editorNames: me.name, last: formatDmyHm(this.now()), expiresAt: formatDmy(addDays(this.now(), 15)), sentAt: '',
       };
       return this.db.flow;
     });
@@ -125,7 +125,7 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
   submit(): Observable<FlowState> {
     return this.respond(() => {
       this.requireStatus('editing');
-      this.db.flow = { ...this.db.flow, status: 'review', devolucion: '', sentAt: formatDmy(this.now()) };
+      this.db.flow = { ...this.db.flow, status: 'review', returnComment: '', sentAt: formatDmy(this.now()) };
       return this.db.flow;
     });
   }
@@ -134,7 +134,7 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
     return this.respond(() => {
       this.requireStatus('review');
       this.requireNotEditor();
-      this.db.flow = { ...this.db.flow, status: 'editing', devolucion: `${comment} — ${this.me().nombre}, ${formatDmy(this.now())}` };
+      this.db.flow = { ...this.db.flow, status: 'editing', returnComment: `${comment} — ${this.me().name}, ${formatDmy(this.now())}` };
       return this.db.flow;
     });
   }
@@ -147,7 +147,7 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
       if (scenario === 'error') throw new MockApiError(500, 'El motor no pudo cargar la versión');
       this.db.flowBaseline = structuredClone(this.db.flowDraft);
       this.db.baselineResources = structuredClone(this.db.flowResources);
-      this.db.flow = { ...this.db.flow, status: 'published', approvedBy: this.me().nombre, publishedAt: formatDmy(this.now()) };
+      this.db.flow = { ...this.db.flow, status: 'published', approvedBy: this.me().name, publishedAt: formatDmy(this.now()) };
       return this.db.flow;
     });
   }
@@ -173,7 +173,7 @@ export class MockWorkflowApi extends MockBase implements WorkflowApi {
     const me = this.me();
     const flow = this.db.flow;
     const editors = flow.editors.includes(me.id) ? flow.editors : [...flow.editors, me.id];
-    const names = flow.editors.includes(me.id) ? flow.editorNames : `${flow.editorNames}, ${me.nombre}`;
+    const names = flow.editors.includes(me.id) ? flow.editorNames : `${flow.editorNames}, ${me.name}`;
     this.db.flow = { ...flow, editors, editorNames: names, last: formatDmyHm(this.now()) };
   }
 }

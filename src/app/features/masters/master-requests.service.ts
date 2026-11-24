@@ -30,7 +30,7 @@ export class MasterRequests {
   private readonly status = inject(SystemStatusStore);
 
   /** Puede pedir cambios (capacidad Solicitar y sistema de firma disponible). */
-  readonly canEdit = computed(() => (this.auth.me()?.puedeSolicitar ?? false) && !this.status.keyUnavailable());
+  readonly canEdit = computed(() => (this.auth.me()?.canRequest ?? false) && !this.status.keyUnavailable());
 
   load(): void {
     this.store.load();
@@ -38,12 +38,12 @@ export class MasterRequests {
 
   /** Solicitud pendiente sobre el mismo elemento, si existe. */
   pendingFor(element: string): ChangeRequest | undefined {
-    return this.store.items().find((r) => r.estado === 'Pendiente' && r.elemento === element);
+    return this.store.items().find((r) => r.status === 'pending' && r.element === element);
   }
 
   create(change: MasterChange): Observable<ChangeRequest> {
     return this.store
-      .create({ tipo: change.type, accion: change.action, elemento: change.element, actual: change.current, propuesto: change.proposed, comentario: change.comment ?? '' })
+      .create({ type: change.type, action: change.action, element: change.element, current: change.current, proposed: change.proposed, comment: change.comment ?? '' })
       .pipe(tap((r) => this.toast.success(`Solicitud ${r.id} creada · no rige hasta su aprobación`)));
   }
 }

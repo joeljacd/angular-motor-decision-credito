@@ -14,17 +14,17 @@ const PRODUCTS = [
   entity('4', 'Tarjeta Joven', true, 0), entity('5', 'Hipotecario', false, 0),
 ];
 const ACTIONS: ActionMaster[] = [
-  { code: 'C', name: 'COBIS', severity: 10, color: 'VERDE', stops: false, active: true },
-  { code: 'E', name: 'ECA', severity: 20, color: 'AMARILLO', stops: false, active: true },
-  { code: 'B', name: 'SOLICITUD BLOQUEADA', severity: 30, color: 'ROJO', stops: true, active: true },
-  { code: 'R', name: 'RECHAZO TOTAL', severity: 40, color: 'ROJO', stops: true, active: true },
-  { code: 'M', name: 'REVISIÓN MANUAL', severity: 50, color: 'GRIS', stops: false, active: false },
+  { code: 'C', name: 'COBIS', severity: 10, color: 'green', stops: false, active: true },
+  { code: 'E', name: 'ECA', severity: 20, color: 'yellow', stops: false, active: true },
+  { code: 'B', name: 'SOLICITUD BLOQUEADA', severity: 30, color: 'red', stops: true, active: true },
+  { code: 'R', name: 'RECHAZO TOTAL', severity: 40, color: 'red', stops: true, active: true },
+  { code: 'M', name: 'REVISIÓN MANUAL', severity: 50, color: 'gray', stops: false, active: false },
 ];
 const CATALOGS: CatalogHeader[] = [
-  { code: 'NIVELES_ESTUDIO_ACEPTADOS', name: 'Niveles de estudio aceptados', source: 'Manual', items: 5 },
-  { code: 'CANTONES_ACEPTADOS', name: 'Cantones aceptados', source: 'Archivo', items: 8 },
-  { code: 'ACTIVIDADES_ECONOMICAS', name: 'Actividades económicas financiables', source: 'Servicio', items: 4 },
-  { code: 'PROVINCIAS_RIESGO', name: 'Provincias con riesgo elevado', source: 'Manual', items: 0 },
+  { code: 'NIVELES_ESTUDIO_ACEPTADOS', name: 'Niveles de estudio aceptados', source: 'manual', items: 5 },
+  { code: 'CANTONES_ACEPTADOS', name: 'Cantones aceptados', source: 'file', items: 8 },
+  { code: 'ACTIVIDADES_ECONOMICAS', name: 'Actividades económicas financiables', source: 'service', items: 4 },
+  { code: 'PROVINCIAS_RIESGO', name: 'Provincias con riesgo elevado', source: 'manual', items: 0 },
 ];
 const ROLES: RoleMapping[] = [
   { code: 'GG-CRED-SOLICITANTES', name: 'Solicitantes de crédito', canRequest: true, canApprove: false, canAudit: false, active: true },

@@ -3,9 +3,9 @@ import { ActiveState, Profile } from '../auth/auth.models';
 import { OptionKey } from '../auth/permissions';
 
 export interface ProfileDraft {
-  nombre: string;
-  desc: string;
-  estado: ActiveState;
+  name: string;
+  description: string;
+  status: ActiveState;
   opts: OptionKey[];
 }
 
@@ -17,5 +17,5 @@ export abstract class ProfilesApi {
   /** PUT /profiles/{id} */
   abstract update(id: number, profile: ProfileDraft): Observable<Profile>;
   /** PATCH /profiles/{id}  { estado } */
-  abstract setStatus(id: number, estado: ActiveState): Observable<Profile>;
+  abstract setStatus(id: number, status: ActiveState): Observable<Profile>;
 }
