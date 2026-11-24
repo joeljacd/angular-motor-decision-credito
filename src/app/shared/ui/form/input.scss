@@ -1,0 +1,8 @@
+@use './control';
+
+:host { display: block; }
+.box { @include control.ui-box; }
+input { @include control.ui-native; &.mono { font-family: var(--font-mono); } }
+.affix { @include control.ui-affix; }
+.affix.start { border-right: 1px solid var(--color-divider); }
+.affix.end { border-left: 1px solid var(--color-divider); }

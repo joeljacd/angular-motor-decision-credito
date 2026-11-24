@@ -1,0 +1,245 @@
+</style>
+<script src="96d038b5-4aff-46de-b8ed-e4afad147d0e"></script>
+<style>body{margin:0;background:var(--color-bg);transition:background .25s,color .25s}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@keyframes bzSlide{0%{left:-35%}100%{left:100%}}@keyframes bzShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}@keyframes bzFill{0%{width:0}35%{width:42%}70%{width:78%}100%{width:100%}}@keyframes bzSheet{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}</style>
+</helmet>
+
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh;display:flex;background:var(--color-bg)">
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1 1 55%;position:relative;overflow:hidden;background:var(--bz-field);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:40px 48px;background-image:linear-gradient(var(--bz-field-line) 1px,transparent 1px),linear-gradient(90deg,var(--bz-field-line) 1px,transparent 1px);background-size:48px 48px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="blueprint" style="width:44px;height:44px;display:grid;place-items:center;border-color:var(--bz-field-soft);font-family:var(--font-heading);font-weight:600;font-size:20px;color:#fff"><i class="corner tl" style="color:var(--bz-field-soft)"></i><i class="corner tr" style="color:var(--bz-field-soft)"></i><i class="corner bl" style="color:var(--bz-field-soft)"></i><i class="corner br" style="color:var(--bz-field-soft)"></i>BA</div>
+      <div style="display:flex;flex-direction:column;line-height:1.15"><span style="font-family:var(--font-heading);font-weight:600;font-size:20px;letter-spacing:.02em">Banco Amazonas</span><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--bz-field-muted)">Motor de Decisión de Crédito</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px;max-width:640px;margin:auto 0">
+      <span style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--bz-field-muted)">Administrador de configuración · Control de cuatro ojos</span>
+      <h1 style="font-size:clamp(40px,5vw,62px);line-height:.98;margin:0;color:#fff;letter-spacing:-.02em;text-wrap:balance">Ningún cambio rige sin una segunda aprobación.</h1>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--bz-field-line)">
+        <sc-for list="{{ flowSteps }}" as="f" hint-placeholder-count="4">
+          <div style="padding:16px 14px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--bz-field-line)">
+            <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--bz-field-soft)">{{ f.n }}</span>
+            <span style="font-family:var(--font-heading);font-weight:600;font-size:20px;color:#fff">{{ f.t }}</span>
+            <span style="font-size:12px;color:var(--bz-field-muted);line-height:1.35">{{ f.d }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <span style="font-size:12px;color:var(--bz-field-soft)">© 2026 Banco Amazonas S.A. · Uso exclusivo del personal autorizado</span>
+  </div>
+  </sc-if>
+  <div style="flex:1 1 45%;position:relative;display:grid;place-items:center;padding:72px 24px 32px">
+    <button class="btn btn-secondary" title="Cambiar tema" sc-camel-on-click="{{ toggleTheme }}" style="position:absolute;top:20px;right:20px;height:36px;gap:8px;padding:0 12px;font-size:13px;white-space:nowrap"><sc-if value="{{ isDark }}"><svg sc-camel-view-box="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg></sc-if><sc-if value="{{ isLight }}"><svg sc-camel-view-box="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></sc-if>{{ themeLabel }}</button>
+    <form sc-camel-on-submit="{{ onLogin }}" style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:18px;animation:bzIn .4s ease both">
+      <div>
+        <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Acceso seguro</span>
+        <h2 style="font-size:40px;margin:4px 0 6px">Iniciar sesión</h2>
+        <p class="text-muted" style="margin:0;font-size:14px">Ingresa con tus credenciales de red del banco (Active Directory).</p>
+      </div>
+      <div class="field">
+        <label>Usuario de red</label>
+        <div style="display:flex;align-items:stretch">
+          <span style="display:flex;align-items:center;padding:0 10px;font-size:13px;font-family:ui-monospace,Menlo,monospace;color:var(--color-neutral-700);border:1px solid var(--color-divider);border-right:0;background:var(--color-neutral-200)">BAMAZONAS\</span>
+          <input class="input" placeholder="usuario" autocomplete="username" value="{{ loginUser }}" sc-camel-on-change="{{ onLoginUser }}">
+        </div>
+        <div style="font-size:12px;color:var(--color-neutral-700);margin-top:5px">Demostración: mfcevallos · lmora · aperez · cruiz</div>
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input class="input" type="password" placeholder="••••••••" autocomplete="current-password" value="{{ loginPass }}" sc-camel-on-change="{{ onLoginPass }}">
+      </div>
+      <sc-if value="{{ loginErr }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;color:var(--bz-error);background:var(--bz-error-bg);border:1px solid var(--bz-error);padding:8px 12px">{{ loginErr }}</div>
+      </sc-if>
+      <button type="submit" class="btn btn-primary blueprint" disabled="{{ loginLoading }}" style="height:44px;font-size:16px;letter-spacing:.04em;display:flex;gap:10px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>{{ loginLabel }}</button>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--color-neutral-700)"><svg sc-camel-view-box="0 0 24 24" width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Autenticación corporativa · Conexión cifrada</div>
+    </form>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--color-bg)">
+  <header style="position:sticky;top:0;z-index:40;height:60px;flex:none;display:flex;align-items:center;gap:14px;padding:0 18px;background:var(--color-surface);border-bottom:1px solid var(--color-divider)">
+    <sc-if value="{{ narrow }}"><button class="btn btn-secondary btn-icon" title="Menú" sc-camel-on-click="{{ openDrawer }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button></sc-if>
+    <div style="display:flex;align-items:center;gap:10px;min-width:0">
+      <div class="blueprint" style="width:32px;height:32px;flex:none;display:grid;place-items:center;background:var(--color-accent);border-color:var(--color-accent);font-family:var(--font-heading);font-weight:600;font-size:15px;color:#fff"><i class="corner tl"></i><i class="corner br"></i>BA</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1;white-space:nowrap"><span style="font-family:var(--font-heading);font-weight:600;font-size:17px">Motor de Decisión de Crédito</span><span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent)">Banco Amazonas · Administrador</span></div>
+    </div>
+    <sc-if value="{{ wide }}">
+      <div title="El ambiente es de solo lectura" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;margin-left:8px;border:1px solid var(--color-divider);background:var(--color-neutral-100);font-size:13px;color:var(--color-neutral-700);white-space:nowrap"><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase">Ambiente</span><span style="width:6px;height:6px;background:var(--bz-success)"></span><span style="color:var(--color-text);font-weight:500">Producción</span><svg sc-camel-view-box="0 0 24 24" width="13" height="13" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+    </sc-if>
+    <div style="flex:1"></div>
+    <sc-if value="{{ canApprove }}">
+      <button class="btn btn-secondary" sc-camel-on-click="{{ goPending }}" style="height:34px;gap:8px;padding:0 10px;white-space:nowrap"><svg sc-camel-view-box="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg><sc-if value="{{ wide }}"><span style="font-family:var(--font-body);font-weight:500;font-size:13px">Pendientes de aprobar</span></sc-if><span style="min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;background:var(--color-accent);color:#fff;font-size:12px;font-family:var(--font-body);font-weight:600">{{ pendingCount }}</span></button>
+    </sc-if>
+    <div class="seg" style="height:34px;flex:none"><label class="seg-opt" style="padding:0 10px;font-size:12px;font-weight:600"><input type="radio" checked="{{ langEs }}" sc-camel-on-change="{{ setEs }}">ES</label><label class="seg-opt" style="padding:0 10px;font-size:12px;font-weight:600"><input type="radio" checked="{{ langEn }}" sc-camel-on-change="{{ setEn }}">EN</label></div>
+    <button class="btn btn-secondary btn-icon" title="{{ themeTitle }}" sc-camel-on-click="{{ toggleTheme }}" style="width:34px;height:34px"><sc-if value="{{ isDark }}"><svg sc-camel-view-box="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg></sc-if><sc-if value="{{ isLight }}"><svg sc-camel-view-box="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></sc-if></button>
+    <div style="position:relative;flex:none">
+      <button sc-camel-on-click="{{ toggleHdr }}" title="Ver el portal como otro usuario" style="display:flex;align-items:center;gap:10px;height:42px;padding:0 8px 0 4px;border:1px solid {{ hdrBd }};background:{{ hdrBg }};cursor:pointer;color:var(--color-text)" style-hover="background:var(--color-accent-100)">
+        <span style="width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--color-accent);color:#fff;font-family:var(--font-heading);font-weight:600;font-size:14px">{{ me.ini }}</span>
+        <sc-if value="{{ wide }}"><span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;white-space:nowrap"><span style="font-size:13px;font-weight:500">{{ me.nombre }}</span><span style="font-size:11px;color:var(--color-accent-700)">{{ me.perfil }}</span></span></sc-if>
+        <svg sc-camel-view-box="0 0 24 24" width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="m6 9 6 6 6-6"></path></svg>
+      </button>
+      <sc-if value="{{ hdrOpen }}">
+        <div sc-camel-on-click="{{ closeHdr }}" style="position:fixed;inset:0;z-index:60"></div>
+        <div class="blueprint" style="position:absolute;right:0;top:calc(100% + 10px);width:380px;max-width:calc(100vw - 24px);z-index:61;background:var(--color-surface);box-shadow:var(--shadow-lg);animation:bzIn .16s ease both;display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="padding:14px 16px 10px;border-bottom:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:600;font-size:18px">Ver el portal como…</div><div style="font-size:12px;color:var(--color-neutral-700)">Cada perfil define el menú y las acciones. Cambia de usuario para comparar.</div></div>
+          <sc-for list="{{ demoUsers }}" as="du">
+            <button sc-camel-on-click="{{ du.pick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:11px 16px;border:0;border-bottom:1px solid var(--color-divider);background:{{ du.bg }};cursor:pointer;text-align:left;color:var(--color-text)" style-hover="background:var(--color-accent-100)">
+              <span style="width:38px;height:38px;flex:none;display:grid;place-items:center;border:1px solid {{ du.avBd }};background:{{ du.avBg }};color:{{ du.avFg }};font-family:var(--font-heading);font-weight:600;font-size:15px">{{ du.ini }}</span>
+              <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                <span style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span style="font-size:14px;font-weight:500">{{ du.nombre }}</span><span style="font-size:11px;color:var(--color-neutral-700);white-space:nowrap">{{ du.screens }}</span></span>
+                <span style="display:flex;flex-wrap:wrap;gap:4px"><span style="font-size:11px;font-weight:600;padding:1px 7px;background:{{ du.pBg }};color:{{ du.pFg }}">{{ du.perfil }}</span><sc-for list="{{ du.caps }}" as="c"><span style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;background:var(--color-neutral-200);color:var(--color-neutral-800)">{{ c }}</span></sc-for></span>
+              </span>
+              <sc-if value="{{ du.current }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:var(--color-accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+            </button>
+          </sc-for>
+          <sc-if value="{{ canProfiles }}"><button sc-camel-on-click="{{ goProfiles }}" style="padding:11px 16px;border:0;background:transparent;text-align:left;cursor:pointer;font:600 14px var(--font-heading);color:var(--color-accent-700)" style-hover="background:var(--color-accent-100)">Administrar perfiles →</button></sc-if>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:-1px;height:3px;overflow:hidden;background:var(--color-accent-100)"><div style="position:absolute;top:0;bottom:0;width:35%;background:var(--color-accent);animation:bzSlide .9s ease-in-out infinite"></div></div></sc-if>
+  </header>
+
+  <div style="flex:1;display:flex;min-height:0">
+    <sc-if value="{{ drawerBackdrop }}"><div sc-camel-on-click="{{ closeDrawer }}" style="position:fixed;inset:0;z-index:45;background:color-mix(in srgb,#000 45%,transparent)"></div></sc-if>
+    <aside style="width:{{ siderW }}px;position:{{ siderPos }};transform:{{ siderX }};top:60px;left:0;height:calc(100vh - 60px);flex:none;z-index:50;background:var(--bz-side);border-right:1px solid var(--bz-side-border);display:flex;flex-direction:column;transition:width .22s ease,transform .22s ease">
+      <button class="btn" title="{{ collapseTitle }}" sc-camel-on-click="{{ toggleCollapse }}" style="position:absolute;top:14px;right:-13px;width:26px;height:26px;padding:0;background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-divider);box-shadow:var(--shadow-sm);z-index:2" style-hover="background:var(--color-accent-100)"><svg sc-camel-view-box="0 0 24 24" width="15" height="15" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform:{{ chevRot }};transition:transform .22s"><path d="m15 18-6-6 6-6"></path></svg></button>
+      <nav style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;padding:16px 10px">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="7">
+          <sc-if value="{{ n.isLabel }}"><button sc-camel-on-click="{{ n.toggle }}" style="flex:none;display:flex;align-items:center;justify-content:space-between;gap:6px;border:0;background:transparent;cursor:{{ n.cursor }};font:500 10px var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);padding:14px 12px 6px;white-space:nowrap;text-align:left">{{ n.label }}<sc-if value="{{ n.chev }}"><svg sc-camel-view-box="0 0 24 24" width="12" height="12" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform:{{ n.chevRot }}"><path d="m6 9 6 6 6-6"></path></svg></sc-if></button></sc-if>
+          <sc-if value="{{ n.isDiv }}"><span style="flex:none;height:1px;background:var(--bz-side-border);margin:8px 6px"></span></sc-if>
+          <sc-if value="{{ n.isItem }}">
+          <button title="{{ n.label }}" sc-camel-on-click="{{ n.go }}" style="position:relative;flex:none;display:flex;align-items:center;justify-content:{{ navJustify }};gap:11px;height:{{ n.h }}px;padding:0 {{ n.pad }};border:1px solid {{ n.border }};background:{{ n.bg }};color:{{ n.color }};font-family:var(--font-body);font-size:{{ n.fs }}px;font-weight:500;cursor:pointer;white-space:nowrap;text-align:left" style-hover="background:var(--color-accent-100);color:var(--color-accent-700)">
+            <sc-if value="{{ n.i.home }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg></sc-if>
+            <sc-if value="{{ n.i.flow }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><rect width="8" height="8" x="3" y="3" rx="1"></rect><path d="M7 11v4a2 2 0 0 0 2 2h4"></path><rect width="8" height="8" x="13" y="13" rx="1"></rect></svg></sc-if>
+            <sc-if value="{{ n.i.req }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M13 6h3a2 2 0 0 1 2 2v7"></path><path d="M6 9v12"></path></svg></sc-if>
+            <sc-if value="{{ n.i.db }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg></sc-if>
+            <sc-if value="{{ n.i.hist }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg></sc-if>
+            <sc-if value="{{ n.i.shield }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></sc-if>
+            <sc-if value="{{ n.i.users }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></sc-if>
+            <sc-if value="{{ n.i.idcard }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M16 10h2"></path><path d="M16 14h2"></path><path d="M6.17 15a3 3 0 0 1 5.66 0"></path><circle cx="9" cy="11" r="2"></circle><rect x="2" y="5" width="20" height="14" rx="2"></rect></svg></sc-if>
+            <sc-if value="{{ n.i.layers }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"></path><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path></svg></sc-if>
+            <sc-if value="{{ n.i.grid }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M3 9h18"></path><path d="M3 15h18"></path><path d="M9 3v18"></path><path d="M15 3v18"></path></svg></sc-if>
+            <sc-if value="{{ n.i.flag }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" x2="4" y1="22" y2="15"></line></svg></sc-if>
+            <sc-if value="{{ n.i.sliders }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line></svg></sc-if>
+            <sc-if value="{{ n.i.list }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M3 12h.01"></path><path d="M3 18h.01"></path><path d="M3 6h.01"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M8 6h13"></path></svg></sc-if>
+            <sc-if value="{{ n.i.key }}"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg></sc-if>
+            <sc-if value="{{ n.i.dot }}"><span style="width:5px;height:5px;flex:none;background:currentColor;opacity:.5"></span></sc-if>
+            <sc-if value="{{ expanded }}"><span style="flex:1">{{ n.label }}</span></sc-if>
+            <sc-if value="{{ n.badge }}"><span style="min-width:18px;height:18px;padding:0 4px;display:grid;place-items:center;font-size:11px;font-weight:600;background:{{ n.badgeBg }};color:#fff;position:{{ n.badgePos }};top:4px;right:4px">{{ n.badge }}</span></sc-if>
+            <sc-if value="{{ n.chev }}"><svg sc-camel-view-box="0 0 24 24" width="14" height="14" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform:{{ n.chevRot }}"><path d="m6 9 6 6 6-6"></path></svg></sc-if>
+          </button>
+          </sc-if>
+        </sc-for>
+      </nav>
+      <div style="position:relative;padding:10px;border-top:1px solid var(--bz-side-border)">
+        <sc-if value="{{ avatarOpen }}" hint-placeholder-val="{{ false }}">
+          <div sc-camel-on-click="{{ closeAvatar }}" style="position:fixed;inset:0;z-index:60"></div>
+          <div class="blueprint" style="position:absolute;left:{{ popLeft }};bottom:{{ popBottom }};width:260px;z-index:61;background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-lg);padding:6px;display:flex;flex-direction:column;animation:bzIn .16s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div style="padding:10px 10px 12px;border-bottom:1px solid var(--color-divider);margin-bottom:4px;display:flex;flex-direction:column;gap:2px"><span style="font-family:var(--font-heading);font-weight:600;font-size:16px">{{ me.nombre }}</span><span style="font-size:12px;color:var(--color-neutral-700)">BAMAZONAS\{{ me.id }}</span></div>
+            <button sc-camel-on-click="{{ openMe }}" style="display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border:0;background:transparent;font:inherit;font-size:14px;color:var(--color-text);cursor:pointer;text-align:left" style-hover="background:var(--color-accent-100);color:var(--color-accent-800)"><svg sc-camel-view-box="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Ver información de usuario</button>
+            <div style="height:1px;background:var(--color-divider);margin:4px 0"></div>
+            <button sc-camel-on-click="{{ logout }}" style="display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border:0;background:transparent;font:inherit;font-size:14px;color:var(--color-text);cursor:pointer;text-align:left" style-hover="background:var(--color-accent-100);color:var(--color-accent-800)"><svg sc-camel-view-box="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>Cerrar sesión</button>
+          </div>
+        </sc-if>
+        <button sc-camel-on-click="{{ toggleAvatar }}" title="{{ me.nombre }}" style="width:100%;display:flex;align-items:center;justify-content:{{ navJustify }};gap:12px;padding:6px;border:1px solid transparent;background:transparent;cursor:pointer;color:var(--color-text);text-align:left" style-hover="background:var(--color-neutral-200)">
+          <span class="blueprint" style="width:38px;height:38px;flex:none;display:grid;place-items:center;background:var(--color-accent);border-color:var(--color-accent);font-family:var(--font-heading);font-weight:600;font-size:16px;letter-spacing:.04em;color:#fff"><i class="corner tl"></i><i class="corner br"></i>{{ me.ini }}</span>
+          <sc-if value="{{ expanded }}"><span style="flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2"><span style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ me.nombre }}</span><span style="font-size:11px;color:var(--color-neutral-700);white-space:nowrap">{{ me.rolesLabel }}</span></span><svg sc-camel-view-box="0 0 24 24" width="16" height="16" style="flex:none;fill:none;stroke:var(--color-neutral-600);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="m18 15-6-6-6 6"></path></svg></sc-if>
+        </button>
+      </div>
+    </aside>
+
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+      <sc-if value="{{ showAlerts }}">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 24px;background:var(--bz-error);color:#fff">
+          <svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;margin-top:1px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+          <div style="flex:1;display:flex;flex-direction:column;gap:2px;font-size:13px;line-height:1.4"><sc-for list="{{ alerts }}" as="al"><span>{{ al }}</span></sc-for></div>
+          <button sc-camel-on-click="{{ goIntegrity }}" style="flex:none;height:28px;padding:0 10px;border:1px solid rgba(255,255,255,.6);background:transparent;color:#fff;font:600 13px var(--font-heading);cursor:pointer;white-space:nowrap" style-hover="background:rgba(255,255,255,.14)">Ver Integridad →</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ lock }}">
+        <div style="display:flex;gap:12px;align-items:center;padding:10px 24px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);border-bottom:1px solid var(--bz-warning);font-size:13px">
+          <svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"></path><path d="m21 2-9.6 9.6"></path><circle cx="7.5" cy="15.5" r="5.5"></circle></svg>
+          <span><strong>503 · Llave no disponible.</strong> El servicio no puede firmar cambios en este momento; la edición está deshabilitada.</span>
+        </div>
+      </sc-if>
+      <main style="flex:1;padding:24px 28px 48px;min-width:0">
+        <div style="max-width:1600px;margin:0 auto">
+          <sc-if value="{{ loading }}">
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div style="height:14px;width:140px;background:linear-gradient(90deg,var(--color-neutral-200),var(--color-neutral-100),var(--color-neutral-200));background-size:200% 100%;animation:bzShimmer 1.2s linear infinite"></div>
+              <div style="height:34px;width:320px;background:linear-gradient(90deg,var(--color-neutral-200),var(--color-neutral-100),var(--color-neutral-200));background-size:200% 100%;animation:bzShimmer 1.2s linear infinite"></div>
+              <div style="border:1px solid var(--color-divider);background:var(--color-surface);padding:16px 20px;display:flex;flex-direction:column;gap:14px"><sc-for list="{{ skel }}" as="sk"><div style="display:flex;gap:16px;align-items:center"><span style="height:12px;width:{{ sk.a }};background:linear-gradient(90deg,var(--color-neutral-200),var(--color-neutral-100),var(--color-neutral-200));background-size:200% 100%;animation:bzShimmer 1.2s linear infinite"></span><span style="flex:1"></span><span style="height:12px;width:{{ sk.b }};background:linear-gradient(90deg,var(--color-neutral-200),var(--color-neutral-100),var(--color-neutral-200));background-size:200% 100%;animation:bzShimmer 1.2s linear infinite"></span></div></sc-for></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ sc.inicio }}"><dc-import name="Inicio" me="{{ me }}" flow="{{ flow }}" reqs="{{ reqs }}" set-reqs="{{ setReqs }}" alerts="{{ alerts }}" go="{{ go }}" toast="{{ toast }}" lock="{{ lock }}" hint-size="100%,600px"></dc-import></sc-if>
+          <sc-if value="{{ sc.flujos }}"><dc-import name="Flujos" me="{{ me }}" flow="{{ flow }}" set-flow="{{ setFlow }}" set-draft="{{ setDraft }}" baseline="{{ baseline }}" reqs="{{ reqs }}" set-reqs="{{ setReqs }}" go="{{ go }}" toast="{{ toast }}" lock="{{ lock }}" hint-size="100%,600px"></dc-import></sc-if>
+          <sc-if value="{{ sc.editor }}"><dc-import name="Editor Borrador" me="{{ me }}" flow="{{ flow }}" set-flow="{{ setFlow }}" draft="{{ draft }}" set-draft="{{ setDraft }}" vars="{{ vars }}" set-vars="{{ setVars }}" catalogs="{{ catalogs }}" set-catalogs="{{ setCatalogs }}" fields="{{ fields }}" set-fields="{{ setFields }}" baseline="{{ baseline }}" params="{{ params }}" go="{{ go }}" toast="{{ toast }}" conflict="{{ conflict }}" lock="{{ lock }}" sim409="{{ sim409 }}" hint-size="100%,800px"></dc-import></sc-if>
+          <sc-if value="{{ sc.revision }}"><dc-import name="Revision" me="{{ me }}" flow="{{ flow }}" set-flow="{{ setFlow }}" draft="{{ draft }}" baseline="{{ baseline }}" vars="{{ vars }}" fields="{{ fields }}" catalogs="{{ catalogs }}" base-res="{{ baseRes }}" params="{{ params }}" go="{{ go }}" toast="{{ toast }}" hint-size="100%,800px"></dc-import></sc-if>
+          <sc-if value="{{ sc.solicitudes }}"><dc-import name="Solicitudes" me="{{ me }}" reqs="{{ reqs }}" set-reqs="{{ setReqs }}" params="{{ params }}" go="{{ go }}" toast="{{ toast }}" lock="{{ lock }}" hint-size="100%,700px"></dc-import></sc-if>
+          <sc-if value="{{ sc.maestros }}"><dc-import name="Maestros" section="{{ masterSection }}" me="{{ me }}" reqs="{{ reqs }}" set-reqs="{{ setReqs }}" draft="{{ draft }}" go="{{ go }}" toast="{{ toast }}" conflict="{{ conflict }}" lock="{{ lock }}" sim409="{{ sim409 }}" hint-size="100%,700px"></dc-import></sc-if>
+          <sc-if value="{{ sc.historial }}"><dc-import name="Historial" me="{{ me }}" go="{{ go }}" toast="{{ toast }}" hint-size="100%,700px"></dc-import></sc-if>
+          <sc-if value="{{ sc.usuarios }}"><dc-import name="Usuarios" me="{{ me }}" users="{{ users }}" set-users="{{ setUsers }}" profiles="{{ profiles }}" toast="{{ toast }}" lock="{{ lock }}" hint-size="100%,700px"></dc-import></sc-if>
+          <sc-if value="{{ sc.perfiles }}"><dc-import name="Perfiles" me="{{ me }}" profiles="{{ profiles }}" set-profiles="{{ setProfiles }}" users="{{ users }}" toast="{{ toast }}" lock="{{ lock }}" hint-size="100%,700px"></dc-import></sc-if>
+          <sc-if value="{{ forbiddenView }}">
+            <div class="blueprint" style="max-width:580px;margin:48px auto;background:var(--color-surface);padding:28px;display:flex;flex-direction:column;gap:12px;animation:bzIn .2s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+              <span style="align-self:flex-start;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:2px 8px;background:var(--bz-error-bg);color:var(--bz-error);border:1px solid var(--bz-error)">403</span>
+              <h2 style="margin:0">No tienes permiso para esta pantalla</h2>
+              <p style="margin:0;font-size:14px;color:var(--color-neutral-700)">Tu perfil «{{ me.perfil }}» no incluye esta opción{{ inactiveNote }}. Cambia de usuario desde el avatar del encabezado o pide a un administrador que ajuste tu perfil.</p>
+              <sc-if value="{{ hasHome }}"><button class="btn btn-primary" sc-camel-on-click="{{ goHome }}" style="align-self:flex-start;height:38px;padding:0 16px;white-space:nowrap">Ir a mi inicio</button></sc-if>
+            </div>
+          </sc-if>
+          <sc-if value="{{ sc.integridad }}"><dc-import name="Integridad" me="{{ me }}" reqs="{{ reqs }}" set-reqs="{{ setReqs }}" go="{{ go }}" toast="{{ toast }}" lock="{{ lock }}" hint-size="100%,700px"></dc-import></sc-if>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<sc-if value="{{ booting }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:var(--color-bg)">
+  <div class="blueprint" style="width:min(420px,100%);background:var(--color-surface);padding:28px;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow-md);animation:bzIn .25s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;display:grid;place-items:center;background:var(--color-accent);color:#fff;font-family:var(--font-heading);font-weight:600;font-size:18px">BA</div><div style="display:flex;flex-direction:column;line-height:1.15"><span style="font-family:var(--font-heading);font-weight:600;font-size:18px">Banco Amazonas</span><span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent)">Motor de Decisión de Crédito</span></div></div>
+    <div><div style="font-family:var(--font-heading);font-weight:600;font-size:24px">Preparando tu espacio de trabajo</div><div style="font-size:13px;color:var(--color-neutral-700)">{{ bootStep }}</div></div>
+    <div style="position:relative;height:6px;background:var(--color-accent-100);overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;background:var(--color-accent);animation:bzFill 1.6s ease-out forwards"></div></div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasModal }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;overflow-y:auto;align-items:start;padding-top:min(12vh,100px)">
+  <sc-if value="{{ m409 }}">
+  <div class="dialog blueprint" style="width:min(460px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:2px 8px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);border:1px solid var(--bz-warning)">409</span><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Conflicto de concurrencia</span></div>
+    <div class="dialog-title" style="font-size:24px">Otro usuario modificó este elemento</div>
+    <div class="dialog-body">Recarga para ver la versión actual. Tus cambios no se guardaron y no se sobrescribió nada.</div>
+    <div class="dialog-actions"><button class="btn btn-secondary" sc-camel-on-click="{{ closeModal }}" style="height:38px;padding:0 16px">Cerrar</button><button class="btn btn-primary" sc-camel-on-click="{{ reload }}" style="height:38px;padding:0 18px">Recargar</button></div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ m403 }}">
+  <div class="dialog blueprint" style="width:min(440px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:2px 8px;background:var(--bz-error-bg);color:var(--bz-error);border:1px solid var(--bz-error)">403</span><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Acceso denegado</span></div>
+    <div class="dialog-title" style="font-size:24px">No tienes permiso para esta acción</div>
+    <div class="dialog-body">Tu rol ({{ me.rolesLabel }}) no incluye esta capacidad. Si la necesitas, solicítala al administrador de identidades.</div>
+    <div class="dialog-actions"><button class="btn btn-primary" sc-camel-on-click="{{ closeModal }}" style="height:38px;padding:0 18px">Entendido</button></div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ mMe }}">
+  <div class="dialog blueprint" style="width:min(460px,100%);background:var(--color-surface);gap:0;padding:0;animation:bzIn .2s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="position:relative;padding:24px;background:var(--bz-field);color:#fff;display:flex;align-items:center;gap:16px">
+      <span style="width:64px;height:64px;flex:none;display:grid;place-items:center;background:var(--color-accent);border:1px solid var(--bz-field-soft);font-family:var(--font-heading);font-weight:600;font-size:28px">{{ me.ini }}</span>
+      <div style="display:flex;flex-direction:column;line-height:1.2"><span style="font-family:var(--font-heading);font-weight:600;font-size:26px">{{ me.nombre }}</span><span style="font-size:13px;color:var(--bz-field-muted)">{{ me.cargo }}</span></div>
+      <button class="btn btn-ghost btn-icon" title="Cerrar" sc-camel-on-click="{{ closeModal }}" style="position:absolute;top:10px;right:10px;color:#fff"><svg sc-camel-view-box="0 0 24 24" width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr"><sc-for list="{{ meRows }}" as="r"><div style="padding:14px 20px;border-bottom:1px solid var(--color-divider);border-right:1px solid var(--color-divider);display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ r.k }}</span><span style="font-size:14px;overflow-wrap:anywhere">{{ r.v }}</span></div></sc-for></div>
+    <div style="display:flex;justify-content:flex-end;padding:16px 20px"><button class="btn btn-primary" sc-camel-on-click="{{ closeModal }}" style="height:38px;padding:0 18px">Listo</button></div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ toastMsg }}" hint-placeholder-val="{{ false }}">
+  <div class="blueprint" style="position:fixed;right:24px;bottom:24px;z-index:220;display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--color-text);color:var(--color-bg);border-color:var(--color-text);box-shadow:var(--shadow-lg);font-size:14px;line-height:1.3;white-space:nowrap;max-width:calc(100vw - 48px);animation:bzIn .2s ease both"><i class="corner tl" style="color:var(--color-neutral-500)"></i><i class="corner br" style="color:var(--color-neutral-500)"></i><svg sc-camel-view-box="0 0 24 24" width="16" height="16" style="flex:none;fill:none;stroke:var(--bz-success);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M20 6 9 17l-5-5"></path></svg>{{ toastMsg }}</div>
+</sc-if>
+</sc-if></x-dc>

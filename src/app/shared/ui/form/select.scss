@@ -1,0 +1,14 @@
+@use './control';
+
+:host { display: block; }
+.box { @include control.ui-box; position: relative; }
+select {
+  @include control.ui-native;
+  appearance: none;
+  cursor: pointer;
+  padding-right: 32px;
+  text-overflow: ellipsis;
+}
+.compact { min-height: 32px; }
+.compact select { padding: 4px 28px 4px 8px; }
+.chev { position: absolute; right: 9px; top: 50%; translate: 0 -50%; pointer-events: none; color: var(--color-neutral-700); }

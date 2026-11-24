@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@keyframes bzSheet{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}@keyframes bzFlash{0%,60%{background:var(--bz-warning-bg)}100%{background:transparent}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:16px;font-family:var(--font-body);color:var(--color-text)">
+
+  <div style="position:sticky;top:60px;z-index:20;margin:-24px -28px 0;padding:14px 28px 12px;background:var(--color-surface);border-bottom:1px solid var(--color-divider);display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-neutral-700)"><a href="#" onClick="{{ goFlows }}" style="color:var(--color-neutral-700);text-decoration:none">Flujos</a><span>›</span><span style="color:var(--color-text);font-weight:500">1 Solicitudes Web / 1 Auto Plan</span></div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+      <h1 style="margin:0;font-size:30px;white-space:nowrap">{{ hdr.title }}</h1>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px;font-size:12px;font-weight:600;white-space:nowrap;background:{{ hdr.tagBg }};color:{{ hdr.tagFg }}"><span style="width:6px;height:6px;background:currentColor"></span>{{ hdr.tag }}</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px;font-size:12px;white-space:nowrap;border:1px solid var(--color-divider);color:var(--color-neutral-700)">{{ hdr.sello }}</span>
+      <div style="flex:1"></div>
+      <sc-if value="{{ showEditBtns }}">
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <button class="btn btn-secondary" onClick="{{ doValidate }}" style="height:36px;padding:0 12px;white-space:nowrap"><svg viewBox="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>Validar</button>
+          <button class="btn btn-secondary" onClick="{{ goDiff }}" style="height:36px;padding:0 12px;white-space:nowrap"><svg viewBox="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M13 6h3a2 2 0 0 1 2 2v7"></path><path d="M11 18H8a2 2 0 0 1-2-2V9"></path></svg>Ver diferencias</button>
+          <button class="btn btn-secondary" disabled="{{ lock }}" onClick="{{ askDiscard }}" style="height:36px;padding:0 12px;white-space:nowrap;color:var(--bz-error);border-color:var(--bz-error)">Descartar</button>
+          <button class="btn btn-primary" disabled="{{ lock }}" onClick="{{ askSend }}" style="height:36px;padding:0 14px;white-space:nowrap"><svg viewBox="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>Enviar a revisión</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ showApproveBtns }}">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" onClick="{{ goDiff }}" style="height:36px;padding:0 12px;white-space:nowrap">Ver diferencias</button>
+          <button class="btn btn-secondary" disabled="{{ approveDisabled }}" onClick="{{ goReturn }}" style="height:36px;padding:0 12px;white-space:nowrap">Devolver</button>
+          <span onMouseEnter="{{ tipOn }}" onMouseLeave="{{ tipOff }}" style="position:relative;display:inline-flex">
+            <button class="btn btn-primary" disabled="{{ approveDisabled }}" onClick="{{ goApprove }}" style="height:36px;padding:0 14px;white-space:nowrap">Aprobar y publicar</button>
+            <sc-if value="{{ showTip }}"><span style="position:absolute;top:calc(100% + 8px);right:0;width:250px;padding:8px 10px;background:var(--color-text);color:var(--color-bg);font-size:12px;line-height:1.35;box-shadow:var(--shadow-md);z-index:5">No puedes aprobar un cambio que solicitaste o editaste</span></sc-if>
+          </span>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--color-neutral-700)">
+      <sc-for list="{{ metaItems }}" as="mi"><span style="white-space:nowrap">{{ mi.k }} <strong style="color:var(--color-text);font-weight:500">{{ mi.v }}</strong></span></sc-for>
+      <sc-if value="{{ showVence }}"><span style="white-space:nowrap;padding:0 6px;background:{{ venceBg }};color:{{ venceFg }}">Vence {{ flow.vence }} · {{ venceDias }}</span></sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ nRevision }}">
+    <div style="display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--bz-info-bg);color:var(--bz-info);border:1px solid var(--bz-info);font-size:13px"><svg viewBox="0 0 24 24" width="16" height="16" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span><strong>En revisión:</strong> no se puede editar hasta que un aprobador lo devuelva.</span></div>
+  </sc-if>
+  <sc-if value="{{ nReadonly }}">
+    <div style="display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--color-neutral-100);border:1px solid var(--color-divider);font-size:13px;color:var(--color-neutral-700)"><svg viewBox="0 0 24 24" width="16" height="16" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg><span>{{ nReadonly }}</span></div>
+  </sc-if>
+  <sc-if value="{{ nDevolucion }}">
+    <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);border:1px solid var(--bz-warning)"><svg viewBox="0 0 24 24" width="18" height="18" style="flex:none;margin-top:2px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg><div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600">Devuelto con comentario</span><span style="font-size:14px;color:var(--color-text)">{{ nDevolucion }}</span></div></div>
+  </sc-if>
+
+  <section style="border:1px solid var(--color-divider);background:var(--color-surface)">
+    <button onClick="{{ toggleCfg }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 16px;border:0;background:transparent;cursor:pointer;color:var(--color-text);text-align:left"><svg viewBox="0 0 24 24" width="15" height="15" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform:{{ cfgRot }}"><path d="m6 9 6 6 6-6"></path></svg><span style="font-family:var(--font-heading);font-weight:600;font-size:16px">Configuración del flujo</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ cfgSummary }}</span></button>
+    <sc-if value="{{ cfgOpen }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:4px 16px 16px;align-items:end">
+        <div class="field"><label>Detener al encontrar una acción que detiene</label><div class="seg" style="display:flex"><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" disabled="{{ ro }}" checked="{{ detSi }}" onChange="{{ setDetSi }}">Sí</label><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" disabled="{{ ro }}" checked="{{ detNo }}" onChange="{{ setDetNo }}">No</label></div></div>
+        <div class="field"><label>Vigencia desde (informativa)</label><input class="input" disabled="{{ ro }}" value="{{ data.desde }}" onChange="{{ onDesde }}" placeholder="dd/MM/yyyy"></div>
+        <div class="field"><label>Vigencia hasta (informativa)</label><input class="input" disabled="{{ ro }}" value="{{ data.hasta }}" onChange="{{ onHasta }}" placeholder="Sin fecha de fin"></div>
+      </div>
+    </sc-if>
+  </section>
+
+  <div style="display:flex;gap:0;border-bottom:1px solid var(--color-divider);overflow-x:auto;overflow-y:hidden">
+    <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="4">
+      <button onClick="{{ tb.go }}" style="display:flex;align-items:center;gap:8px;height:42px;padding:0 16px;border:0;border-bottom:2px solid {{ tb.bd }};margin-bottom:-1px;background:transparent;cursor:pointer;font:500 14px var(--font-body);color:{{ tb.color }};white-space:nowrap">{{ tb.label }}<span style="font-size:11px;padding:1px 6px;background:var(--color-neutral-200);color:var(--color-neutral-700)">{{ tb.count }}</span></button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ tabCP }}" hint-placeholder-val="{{ true }}">
+  <div style="display:grid;grid-template-columns:{{ gridCols }};gap:16px;align-items:start">
+
+    <aside style="border:1px solid var(--color-divider);background:var(--color-surface);display:flex;flex-direction:column;min-width:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid var(--color-divider)"><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">Estructura</span>
+        <sc-if value="{{ canEdit }}"><div style="display:flex;gap:4px"><button class="btn btn-ghost" onClick="{{ newCat }}" style="font-size:12px;padding:3px 6px;white-space:nowrap">+ Categoría</button><button class="btn btn-ghost" onClick="{{ newPolSel }}" style="font-size:12px;padding:3px 6px;white-space:nowrap">+ Política</button></div></sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;padding:6px 0">
+        <sc-for list="{{ treeRows }}" as="r" hint-placeholder-count="10">
+          <div draggable="{{ r.drag }}" onDragStart="{{ r.ds }}" onDragOver="{{ r.dov }}" onDragLeave="{{ r.dl }}" onDrop="{{ r.drop }}" onDragEnd="{{ dragEnd }}" onClick="{{ r.pick }}" style="display:flex;align-items:center;gap:8px;min-height:{{ r.h }}px;padding:0 10px 0 {{ r.pl }}px;cursor:pointer;background:{{ r.bg }};color:{{ r.color }};border-top:2px solid {{ r.dropBd }};opacity:{{ r.op }}" style-hover="background:var(--color-accent-100)">
+            <sc-if value="{{ r.drag }}"><svg viewBox="0 0 24 24" width="12" height="12" style="flex:none;fill:currentColor;opacity:.45;cursor:grab"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg></sc-if>
+            <sc-if value="{{ r.isCat }}">
+              <span style="width:22px;height:22px;flex:none;display:grid;place-items:center;border:1px solid var(--color-divider);font:600 12px var(--font-heading)">{{ r.ord }}</span>
+              <span style="flex:1;min-width:0;font-family:var(--font-heading);font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.code }} · {{ r.label }}</span>
+              <sc-if value="{{ r.inactive }}"><span style="font-size:10px;padding:1px 5px;background:var(--color-neutral-200);color:var(--color-neutral-700)">Inactiva</span></sc-if>
+              <span title="Regla de detención" style="font-size:10px;padding:1px 5px;white-space:nowrap;border:1px solid {{ r.detBd }};color:{{ r.detFg }}">{{ r.det }}</span>
+            </sc-if>
+            <sc-if value="{{ r.isPol }}">
+              <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--color-accent-700);flex:none">{{ r.code }}</span>
+              <span style="flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span>
+              <sc-if value="{{ r.inactive }}"><span style="font-size:10px;padding:1px 5px;background:var(--color-neutral-200);color:var(--color-neutral-700)">Inactiva</span></sc-if>
+              <span style="display:flex;gap:2px;flex:none"><sc-for list="{{ r.acts }}" as="a"><span style="width:14px;height:14px;display:grid;place-items:center;font:700 9px var(--font-body);background:{{ a.bg }};color:{{ a.fg }}">{{ a.k }}</span></sc-for></span>
+            </sc-if>
+            <sc-if value="{{ r.isAdd }}"><span style="font-size:12px;color:var(--color-accent-700)">+ Política en {{ r.label }}</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ canEdit }}"><div style="padding:8px 12px;border-top:1px solid var(--color-divider);font-size:11px;color:var(--color-neutral-700)">Arrastra para reordenar. Soltar una política en otra categoría equivale a «Mover».</div></sc-if>
+    </aside>
+
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <sc-if value="{{ selCat }}">
+        <section class="blueprint" style="background:var(--color-surface);padding:18px 20px;display:flex;flex-direction:column;gap:16px;animation:bzIn .18s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Categoría</span><h3 style="margin:0">{{ catTitle }}</h3><sc-if value="{{ dirty }}"><span style="font-size:11px;padding:1px 6px;background:var(--bz-warning-bg);color:var(--bz-warning-fg)">Sin guardar</span></sc-if></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px">
+            <div class="field"><label>Código (1 a 4 dígitos)</label><input class="input" disabled="{{ codeLocked }}" value="{{ pf.code }}" onChange="{{ onPf.code }}" style="font-family:ui-monospace,Menlo,monospace"><sc-if value="{{ pfErr.code }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ pfErr.code }}</div></sc-if></div>
+            <div class="field" style="grid-column:span 2"><label>Nombre</label><input class="input" disabled="{{ ro }}" value="{{ pf.nombre }}" onChange="{{ onPf.nombre }}"><sc-if value="{{ pfErr.nombre }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ pfErr.nombre }}</div></sc-if></div>
+            <div class="field"><label>Orden</label><input class="input" type="number" min="1" disabled="{{ ro }}" value="{{ pf.orden }}" onChange="{{ onPf.orden }}"><sc-if value="{{ pfErr.orden }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ pfErr.orden }}</div></sc-if></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end">
+            <div class="field"><label>Estado</label><label style="display:flex;align-items:center;gap:10px;height:36px;cursor:pointer;font-size:14px"><input type="checkbox" disabled="{{ ro }}" checked="{{ pf.activa }}" onChange="{{ onPf.activa }}" style="width:16px;height:16px;accent-color:var(--color-accent)">Activa</label></div>
+            <div class="field" style="grid-column:span 2"><label>Regla de detención</label><div class="seg" style="display:flex"><sc-for list="{{ detOpts }}" as="o"><label class="seg-opt" style="flex:1;justify-content:center;white-space:nowrap"><input type="radio" disabled="{{ ro }}" checked="{{ o.on }}" onChange="{{ o.pick }}">{{ o.label }}</label></sc-for></div><div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">{{ detHint }}</div></div>
+          </div>
+          <sc-if value="{{ canEdit }}">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-top:14px;border-top:1px solid var(--color-divider)">
+              <button class="btn btn-secondary" disabled="{{ catDelBlocked }}" onClick="{{ askDelCat }}" style="height:36px;padding:0 12px;color:var(--bz-error);white-space:nowrap">Eliminar</button>
+              <sc-if value="{{ catDelBlocked }}"><span style="font-size:12px;color:var(--color-neutral-700)">{{ catDelMsg }}</span></sc-if>
+              <div style="flex:1"></div>
+              <button class="btn btn-secondary" disabled="{{ notDirty }}" onClick="{{ resetPf }}" style="height:36px;padding:0 12px;white-space:nowrap">Deshacer</button>
+              <button class="btn btn-primary" onClick="{{ savePf }}" style="height:36px;padding:0 14px;white-space:nowrap">{{ saveLabel }}</button>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ selPol }}">
+        <section class="blueprint" style="background:var(--color-surface);padding:18px 20px;display:flex;flex-direction:column;gap:16px;animation:bzIn .18s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Política</span><h3 style="margin:0">{{ polTitle }}</h3><sc-if value="{{ dirty }}"><span style="font-size:11px;padding:1px 6px;background:var(--bz-warning-bg);color:var(--bz-warning-fg)">Sin guardar</span></sc-if><div style="flex:1"></div>
+            <sc-if value="{{ canEditExisting }}"><button class="btn btn-ghost" onClick="{{ askMove }}" style="font-size:13px;padding:4px 8px;white-space:nowrap">Mover a categoría…</button><button class="btn btn-ghost" onClick="{{ askDelPol }}" style="font-size:13px;padding:4px 8px;color:var(--bz-error)">Eliminar</button></sc-if>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;align-items:end">
+            <div class="field"><label>Código</label><input class="input" disabled="{{ codeLocked }}" value="{{ pf.code }}" onChange="{{ onPf.code }}" placeholder="PA-NNN" style="font-family:ui-monospace,Menlo,monospace"><sc-if value="{{ pfErr.code }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ pfErr.code }}</div></sc-if></div>
+            <div class="field" style="grid-column:span 2"><label>Nombre</label><input class="input" disabled="{{ ro }}" value="{{ pf.nombre }}" onChange="{{ onPf.nombre }}"><sc-if value="{{ pfErr.nombre }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ pfErr.nombre }}</div></sc-if></div>
+            <div class="field"><label>Orden</label><input class="input" type="number" min="1" disabled="{{ ro }}" value="{{ pf.orden }}" onChange="{{ onPf.orden }}"><sc-if value="{{ pfErr.orden }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ pfErr.orden }}</div></sc-if></div>
+            <div class="field"><label>Estado</label><label style="display:flex;align-items:center;gap:10px;height:36px;cursor:pointer;font-size:14px"><input type="checkbox" disabled="{{ ro }}" checked="{{ pf.activa }}" onChange="{{ onPf.activa }}" style="width:16px;height:16px;accent-color:var(--color-accent)">Activa</label></div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;border:1px solid var(--color-divider)">
+            <div style="display:grid;grid-template-columns:110px 140px 90px minmax(0,1fr);gap:12px;padding:8px 12px;border-bottom:1px solid var(--color-divider);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)"><span>Resultado</span><span>Acción</span><span>Código</span><span>Mensaje de retorno</span></div>
+            <sc-for list="{{ resRows }}" as="rr" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:110px 140px 90px minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px;border-bottom:1px solid var(--color-divider)">
+                <span style="font-weight:500;font-size:14px;padding-top:6px">{{ rr.label }}</span>
+                <div style="display:flex;gap:4px"><sc-for list="{{ rr.chips }}" as="ch"><button title="{{ ch.title }}" disabled="{{ ro }}" onClick="{{ ch.pick }}" style="width:30px;height:30px;display:grid;place-items:center;font:700 13px var(--font-body);cursor:pointer;background:{{ ch.bg }};color:{{ ch.fg }};border:1.5px solid {{ ch.bd }};opacity:{{ ch.op }}">{{ ch.k }}</button></sc-for></div>
+                <div><input class="input" disabled="{{ ro }}" value="{{ rr.cod }}" onChange="{{ rr.onCod }}" style="font-family:ui-monospace,Menlo,monospace;min-height:32px"><sc-if value="{{ rr.errCod }}"><div style="font-size:11px;color:var(--bz-error);margin-top:3px">{{ rr.errCod }}</div></sc-if></div>
+                <div><input class="input" disabled="{{ ro }}" value="{{ rr.msg }}" onChange="{{ rr.onMsg }}" style="min-height:32px"><sc-if value="{{ rr.errMsg }}"><div style="font-size:11px;color:var(--bz-error);margin-top:3px">{{ rr.errMsg }}</div></sc-if></div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ canEdit }}">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:12px;color:var(--color-neutral-700)">{{ actLegend }}</span><div style="flex:1"></div>
+              <button class="btn btn-secondary" disabled="{{ notDirty }}" onClick="{{ resetPf }}" style="height:36px;padding:0 12px;white-space:nowrap">Deshacer</button>
+              <button class="btn btn-primary" onClick="{{ savePf }}" style="height:36px;padding:0 14px;white-space:nowrap">{{ saveLabel }}</button>
+            </div>
+          </sc-if>
+        </section>
+
+        <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex;align-items:center;gap:10px;padding:14px 20px 10px"><h4 style="margin:0">Editor de lógica</h4><span style="font-size:12px;color:var(--color-neutral-700)">{{ logicCount }}</span></div>
+          <div style="margin:0 20px 12px;padding:12px 14px;background:var(--bz-code-bg);border:1px solid var(--color-divider);display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Frase legible · se actualiza en vivo</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:14px;line-height:1.5;color:var(--color-text);overflow-wrap:anywhere">{{ polPhrase }}</span></div>
+          <sc-if value="{{ isNewPol }}"><div style="padding:0 20px 18px;font-size:13px;color:var(--color-neutral-700)">Guarda la política para construir su lógica.</div></sc-if>
+          <div style="display:flex;flex-direction:column;padding:0 0 10px">
+            <sc-for list="{{ logicRows }}" as="lr">
+              <sc-if value="{{ lr.isGroup }}">
+                <div draggable="{{ lr.drag }}" onDragStart="{{ lr.ds }}" onDragOver="{{ lr.dov }}" onDragLeave="{{ lr.dl }}" onDrop="{{ lr.drop }}" onDragEnd="{{ dragEnd }}" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-height:44px;padding:6px 20px 6px {{ lr.pl }}px;background-image:repeating-linear-gradient(90deg,var(--color-divider) 0 1px,transparent 1px 24px);background-size:{{ lr.gw }}px 100%;background-repeat:no-repeat;background-position:26px 0;border-top:2px solid {{ lr.dropBd }};animation:{{ lr.anim }}">
+                  <sc-if value="{{ lr.drag }}"><svg viewBox="0 0 24 24" width="12" height="12" style="flex:none;fill:currentColor;opacity:.45;cursor:grab"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg></sc-if>
+                  <sc-if value="{{ lr.conn }}"><span style="font:700 10px var(--font-body);padding:1px 5px;background:var(--color-neutral-200);color:var(--color-neutral-700)">{{ lr.conn }}</span></sc-if>
+                  <span style="font-family:var(--font-heading);font-weight:600;font-size:14px;white-space:nowrap">{{ lr.label }}</span>
+                  <div class="seg" style="height:28px"><label class="seg-opt" style="padding:0 10px;font-weight:700;font-size:12px"><input type="radio" disabled="{{ ro }}" checked="{{ lr.isY }}" onChange="{{ lr.setY }}">Y</label><label class="seg-opt" style="padding:0 10px;font-weight:700;font-size:12px"><input type="radio" disabled="{{ ro }}" checked="{{ lr.isO }}" onChange="{{ lr.setO }}">O</label></div>
+                  <span style="font-size:12px;color:var(--color-neutral-700);white-space:nowrap">{{ lr.hint }}</span>
+                  <div style="flex:1"></div>
+                  <sc-if value="{{ canEdit }}">
+                    <button class="btn btn-ghost" onClick="{{ lr.addCond }}" style="font-size:12px;padding:3px 6px;white-space:nowrap">+ Condición</button>
+                    <button class="btn btn-ghost" onClick="{{ lr.addGroup }}" style="font-size:12px;padding:3px 6px;white-space:nowrap">+ Subgrupo</button>
+                    <button class="btn btn-ghost" title="{{ lr.delTitle }}" onClick="{{ lr.del }}" style="font-size:12px;padding:3px 6px;white-space:nowrap;color:var(--bz-error)">{{ lr.delLabel }}</button>
+                  </sc-if>
+                </div>
+              </sc-if>
+              <sc-if value="{{ lr.isEmpty }}">
+                <div style="padding:8px 20px 10px {{ lr.pl }}px;background-image:repeating-linear-gradient(90deg,var(--color-divider) 0 1px,transparent 1px 24px);background-size:{{ lr.gw }}px 100%;background-repeat:no-repeat;background-position:26px 0"><div style="padding:10px 12px;border:1px dashed var(--color-neutral-400);font-size:13px;color:var(--color-neutral-700)">Grupo vacío — agrega una condición o un subgrupo.</div></div>
+              </sc-if>
+              <sc-if value="{{ lr.isCond }}">
+                <div draggable="{{ lr.drag }}" onDragStart="{{ lr.ds }}" onDragOver="{{ lr.dov }}" onDragLeave="{{ lr.dl }}" onDrop="{{ lr.drop }}" onDragEnd="{{ dragEnd }}" onClick="{{ lr.edit }}" style="display:flex;align-items:center;gap:8px;min-height:40px;padding:4px 20px 4px {{ lr.pl }}px;cursor:{{ lr.cursor }};background-color:{{ lr.bg }};background-image:repeating-linear-gradient(90deg,var(--color-divider) 0 1px,transparent 1px 24px);background-size:{{ lr.gw }}px 100%;background-repeat:no-repeat;background-position:26px 0;border-top:2px solid {{ lr.dropBd }};animation:{{ lr.anim }}" style-hover="background-color:var(--color-accent-100)">
+                  <sc-if value="{{ lr.drag }}"><svg viewBox="0 0 24 24" width="12" height="12" style="flex:none;fill:currentColor;opacity:.45;cursor:grab"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg></sc-if>
+                  <sc-if value="{{ lr.conn }}"><span style="font:700 10px var(--font-body);padding:1px 5px;background:var(--color-neutral-200);color:var(--color-neutral-700)">{{ lr.conn }}</span></sc-if>
+                  <span style="font-size:11px;color:var(--color-neutral-600);flex:none">{{ lr.num }}</span>
+                  <sc-if value="{{ lr.sens }}"><svg viewBox="0 0 24 24" width="13" height="13" style="flex:none;fill:none;stroke:var(--color-accent-700);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><title>Variable sensible</title><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></sc-if>
+                  <span style="flex:1;min-width:0;font-family:ui-monospace,Menlo,monospace;font-size:13px;overflow-wrap:anywhere;color:{{ lr.phColor }}">{{ lr.phrase }}</span>
+                  <sc-if value="{{ lr.bad }}"><span style="font-size:11px;padding:1px 6px;background:var(--bz-error-bg);color:var(--bz-error);white-space:nowrap">{{ lr.bad }}</span></sc-if>
+                  <span style="font-size:10px;letter-spacing:.08em;padding:1px 6px;border:1px solid var(--color-divider);color:var(--color-neutral-700);flex:none">{{ lr.kind }}</span>
+                  <sc-if value="{{ canEdit }}"><button class="btn btn-ghost btn-icon" title="Eliminar condición" onClick="{{ lr.del }}" style="width:28px;height:28px;color:var(--color-neutral-700)"><svg viewBox="0 0 24 24" width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button></sc-if>
+                </div>
+              </sc-if>
+              <sc-if value="{{ lr.isForm }}">
+                <div style="padding:4px 20px 12px {{ lr.pl }}px;background-image:repeating-linear-gradient(90deg,var(--color-divider) 0 1px,transparent 1px 24px);background-size:{{ lr.gw }}px 100%;background-repeat:no-repeat;background-position:26px 0">
+                  <div class="blueprint" style="padding:14px;background:var(--color-surface);box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:12px;animation:bzIn .15s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;align-items:start">
+                      <div class="field" style="position:relative"><label>Variable</label>
+                        <div style="position:relative"><svg viewBox="0 0 24 24" width="14" height="14" style="position:absolute;left:9px;top:11px;fill:none;stroke:var(--color-neutral-600);stroke-width:1.5;stroke-linecap:round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="input" value="{{ ef.varQ }}" onChange="{{ ef.onVarQ }}" onFocus="{{ ef.openVar }}" placeholder="Buscar variable" style="padding-left:30px;font-family:ui-monospace,Menlo,monospace;font-size:13px"></div>
+                        <sc-if value="{{ ef.varOpen }}">
+                          <div style="position:absolute;left:0;right:0;top:100%;z-index:10;max-height:240px;overflow-y:auto;background:var(--color-surface);border:1px solid var(--color-divider);box-shadow:var(--shadow-lg)">
+                            <sc-for list="{{ ef.varList }}" as="vo"><button onClick="{{ vo.pick }}" style="width:100%;display:flex;align-items:center;gap:8px;padding:7px 10px;border:0;background:transparent;cursor:pointer;text-align:left;color:var(--color-text)" style-hover="background:var(--color-accent-100)"><span style="flex:1;font-family:ui-monospace,Menlo,monospace;font-size:12px">{{ vo.code }}</span><sc-if value="{{ vo.sens }}"><svg viewBox="0 0 24 24" width="12" height="12" style="fill:none;stroke:var(--color-accent-700);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></sc-if><span style="font-size:10px;padding:1px 5px;background:var(--color-neutral-200);color:var(--color-neutral-700)">{{ vo.tipo }}</span></button></sc-for>
+                            <sc-if value="{{ ef.noVars }}"><div style="padding:10px;font-size:12px;color:var(--color-neutral-700)">Sin coincidencias</div></sc-if>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ ef.err.v }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ ef.err.v }}</div></sc-if>
+                        <sc-if value="{{ ef.varInfo }}"><div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">{{ ef.varInfo }}</div></sc-if>
+                      </div>
+                      <div class="field"><label>Tipo de regla</label><div class="seg" style="display:flex"><sc-for list="{{ ef.kinds }}" as="kd"><label class="seg-opt" style="flex:1;justify-content:center;font-size:12px"><input type="radio" checked="{{ kd.on }}" onChange="{{ kd.pick }}">{{ kd.label }}</label></sc-for></div></div>
+                    </div>
+                    <sc-if value="{{ ef.isRango }}">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+                        <div class="field"><label>Desde</label><input class="input" value="{{ ef.f.desde }}" onChange="{{ ef.onDesde }}" placeholder="{{ ef.ph }}" style="font-family:ui-monospace,Menlo,monospace"><sc-if value="{{ ef.err.desde }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ ef.err.desde }}</div></sc-if></div>
+                        <div class="field"><label>Hasta</label><input class="input" value="{{ ef.f.hasta }}" onChange="{{ ef.onHasta }}" placeholder="{{ ef.ph }}" style="font-family:ui-monospace,Menlo,monospace"><sc-if value="{{ ef.err.hasta }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ ef.err.hasta }}</div></sc-if></div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ ef.isCat }}">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+                        <div class="field"><label>Catálogo</label><select class="input" value="{{ ef.f.cat }}" onChange="{{ ef.onCat }}"><option value="">Selecciona un catálogo</option><sc-for list="{{ catalogCodes }}" as="cc"><option value="{{ cc }}">{{ cc }}</option></sc-for></select><sc-if value="{{ ef.err.cat }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ ef.err.cat }}</div></sc-if></div>
+                        <div class="field"><label>Modo</label><div class="seg" style="display:flex"><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ ef.modoP }}" onChange="{{ ef.setModoP }}">Pertenece</label><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ ef.modoN }}" onChange="{{ ef.setModoN }}">No pertenece</label></div></div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ ef.isFijo }}">
+                      <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px">
+                        <div class="field"><label>Operador</label><select class="input" value="{{ ef.f.op }}" onChange="{{ ef.onOp }}" style="font-family:ui-monospace,Menlo,monospace"><option value="=">=</option><option value="&lt;&gt;">&lt;&gt;</option><option value="&gt;">&gt;</option><option value="&gt;=">&gt;=</option><option value="&lt;">&lt;</option><option value="&lt;=">&lt;=</option></select></div>
+                        <div class="field"><label>Valor</label><input class="input" value="{{ ef.f.val }}" onChange="{{ ef.onVal }}" placeholder="{{ ef.ph }}" style="font-family:ui-monospace,Menlo,monospace"><sc-if value="{{ ef.err.val }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ ef.err.val }}</div></sc-if></div>
+                      </div>
+                    </sc-if>
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-top:10px;border-top:1px solid var(--color-divider)">
+                      <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-neutral-700);flex:1;min-width:200px">{{ ef.phrase }}</span>
+                      <button class="btn btn-secondary" onClick="{{ ef.cancel }}" style="height:32px;padding:0 12px">Cancelar</button>
+                      <button class="btn btn-primary" onClick="{{ ef.apply }}" style="height:32px;padding:0 14px">Aplicar</button>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ valCol }}">
+      <aside style="position:{{ valPos }};top:{{ valTop }};right:{{ valRight }};bottom:{{ valBottom }};width:{{ valW }};z-index:30;border:1px solid var(--color-divider);background:var(--color-surface);box-shadow:{{ valShadow }};display:flex;flex-direction:column;min-width:0;max-height:{{ valMaxH }};animation:bzSheet .2s ease both">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--color-divider)"><h4 style="margin:0;flex:1">Validación</h4><button class="btn btn-ghost btn-icon" title="Cerrar" onClick="{{ closeVal }}" style="width:28px;height:28px;color:var(--color-text)"><svg viewBox="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--color-divider)">
+          <div style="padding:10px 14px;border-right:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:600;font-size:28px;line-height:1;color:var(--bz-error)">{{ valErr }}</div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Errores · bloquean</div></div>
+          <div style="padding:10px 14px"><div style="font-family:var(--font-heading);font-weight:600;font-size:28px;line-height:1;color:var(--bz-warning-fg)">{{ valWarn }}</div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Advertencias</div></div>
+        </div>
+        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+          <sc-for list="{{ valItems }}" as="vi">
+            <button onClick="{{ vi.go }}" style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;border:0;border-bottom:1px solid var(--color-divider);background:transparent;cursor:pointer;text-align:left;color:var(--color-text)" style-hover="background:var(--color-neutral-100)">
+              <span style="width:8px;height:8px;flex:none;margin-top:6px;background:{{ vi.c }}"></span>
+              <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13px;font-weight:500">{{ vi.msg }}</span><span style="font-size:11px;font-family:ui-monospace,Menlo,monospace;color:var(--color-neutral-700);overflow-wrap:anywhere">{{ vi.loc }}</span></span>
+            </button>
+          </sc-for>
+          <div style="display:flex;gap:10px;align-items:center;padding:10px 14px;font-size:12px;color:var(--color-neutral-700)"><span style="width:8px;height:8px;flex:none;background:var(--bz-success)"></span>{{ sizeLine }}</div>
+        </div>
+      </aside>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ tabOther }}">
+    <dc-import name="Editor Recursos" tab="{{ tab }}" ro="{{ ro }}" vars="{{ vars }}" set-vars="{{ setVars }}" catalogs="{{ catalogs }}" set-catalogs="{{ setCatalogs }}" fields="{{ fields }}" set-fields="{{ setFields }}" draft="{{ data }}" sel-cat="{{ selCatalog }}" open-policy="{{ openPolicy }}" toast="{{ toast }}" conflict="{{ conflict }}" sim409="{{ sim409 }}" hint-size="100%,600px"></dc-import>
+  </sc-if>
+</div>
+
+<sc-if value="{{ hasModal }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;overflow-y:auto;align-items:start;padding-top:min(12vh,100px)">
+  <div class="dialog blueprint" style="width:min(480px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="dialog-title" style="font-size:24px">{{ md.title }}</div>
+    <div class="dialog-body" style="text-wrap:pretty">{{ md.body }}</div>
+    <sc-if value="{{ md.isMove }}">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:12px">
+        <div class="field"><label>Categoría destino</label><select class="input" value="{{ mv.cat }}" onChange="{{ mv.onCat }}"><sc-for list="{{ mv.opts }}" as="o"><option value="{{ o.code }}">{{ o.label }}</option></sc-for></select></div>
+        <div class="field"><label>Orden</label><input class="input" type="number" min="1" value="{{ mv.orden }}" onChange="{{ mv.onOrden }}"></div>
+      </div>
+    </sc-if>
+    <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ md.ok }}" style="height:38px;padding:0 18px;background:{{ md.bg }};border-color:{{ md.bg }}">{{ md.cta }}</button></div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ACT={C:{n:'COBIS',sev:10,bg:'var(--bz-act-c)',fg:'var(--bz-act-c-fg)'},E:{n:'ECA',sev:20,bg:'var(--bz-act-e)',fg:'var(--bz-act-e-fg)'},B:{n:'SOLICITUD BLOQUEADA',sev:30,bg:'var(--bz-act-r)',fg:'var(--bz-act-r-fg)',stop:true},R:{n:'RECHAZO TOTAL',sev:40,bg:'var(--bz-act-r)',fg:'var(--bz-act-r-fg)',stop:true}};
+const RES=[['cumple','Cumple'],['nocumple','No cumple'],['falta','Falta dato']];
+const OPD={'=':'=','<>':'<>','>':'>','>=':'≥','<':'<','<=':'≤'};
+const condPh=c=>{if(c.k==='RANGO'){if(c.desde&&c.hasta)return `${c.v} entre ${c.desde} y ${c.hasta}`;if(c.desde)return `${c.v} ≥ ${c.desde}`;if(c.hasta)return `${c.v} ≤ ${c.hasta}`;return `${c.v||'?'} (sin límites)`;}
+  if(c.k==='CATALOGO')return `${c.v||'?'} ${c.modo==='no pertenece'?'no pertenece a':'pertenece a'} ${c.cat||'?'}`;return `${c.v||'?'} ${OPD[c.op]||c.op} ${c.val||'?'}`;};
+const ph=(n,top=true)=>{if(n.t==='c')return condPh(n);if(!n.ch.length)return top?'(grupo raíz vacío)':'( )';const s=n.ch.map(x=>ph(x,false)).join(` ${n.op} `);return top||n.ch.length<2?s:`( ${s} )`;};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const fpol=(d,code)=>{for(const c of d.cats){const p=c.pols.find(p=>p.code===code);if(p)return {c,p};}return {};};
+const fnode=(n,id,parent=null,idx=0)=>{if(n.id===id)return {node:n,parent,idx};if(n.t==='g')for(let i=0;i<n.ch.length;i++){const r=fnode(n.ch[i],id,n,i);if(r)return r;}return null;};
+const cnt=n=>{let c=0,g=0;(n.ch||[]).forEach(x=>{if(x.t==='c')c++;else{g++;const r=cnt(x);c+=r.c;g+=r.g;}});return {c,g};};
+const isDesc=(n,id)=>n.id===id||(n.ch||[]).some(x=>isDesc(x,id));
+const plural=(c,g)=>[c?`${c} ${c===1?'condición':'condiciones'}`:'',g?`${g} ${g===1?'subgrupo':'subgrupos'}`:''].filter(Boolean).join(' y ')||'nada';
+const RX={MONEY:/^-?\d+(\.\d{1,2})?$/,NUMBER:/^-?\d+(\.\d+)?$/,DATE:/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/};
+const MSG={MONEY:'MONEY usa punto decimal y hasta 2 decimales (ej. 800.00)',NUMBER:'Debe ser un número',DATE:'Usa el formato configurado MM/dd/yyyy'};
+const toNum=(v,t)=>t==='DATE'?(()=>{const [m,d,y]=v.split('/');return +new Date(+y,+m-1,+d);})():parseFloat(v);
+const PH={MONEY:'0.00',NUMBER:'0',DATE:'MM/dd/yyyy',TEXT:'Texto'};
+const valCond=(f,vars)=>{const e={};const vi=vars.find(v=>v.code===f.v);const t=vi?vi.tipo:'TEXT';
+  if(!f.v)e.v='Selecciona una variable';else if(!vi)e.v=`La variable ${f.v} no existe en este borrador`;
+  const chk=(k,val)=>{if(val&&RX[t]&&!RX[t].test(val))e[k]=MSG[t];};
+  if(f.k==='RANGO'){if(!f.desde&&!f.hasta)e.desde='Ingresa al menos «desde» o «hasta»';chk('desde',f.desde);chk('hasta',f.hasta);
+    if(!e.desde&&!e.hasta&&f.desde&&f.hasta&&t!=='TEXT'&&toNum(f.desde,t)>toNum(f.hasta,t))e.hasta='«Desde» no puede ser mayor que «Hasta»';}
+  if(f.k==='CATALOGO'&&!f.cat)e.cat='Selecciona un catálogo';
+  if(f.k==='FIJO'){if(!f.val)e.val='Ingresa un valor';else chk('val',f.val);}
+  return e;};
+let _k=0;const eid=()=>'e'+Date.now().toString(36)+(++_k);
+
+class Component extends DCLogic {
+  state={w:typeof window!=='undefined'?window.innerWidth:1440,tab:'cp',cfgOpen:false,sel:{t:'pol',code:'PA-006'},pf:null,pfTouched:false,valOpen:false,ec:null,modal:null,mv:{},dropId:null,hl:null,tip:false,selCatalog:null};
+  componentDidMount(){this._r=()=>this.setState({w:window.innerWidth});window.addEventListener('resize',this._r);const p=this.props.params||{};if(p.validate)this.setState({valOpen:true});}
+  componentWillUnmount(){window.removeEventListener('resize',this._r);}
+  data(){const p=this.props.params||{};return (p.readonly&&p.version===1)?this.props.baseline:this.props.draft;}
+  mut(fn){const d=clone(this.props.draft);fn(d);this.props.setDraft&&this.props.setDraft(d);}
+  formFor(sel,d){if(sel.t==='cat'){if(sel.isNew)return {code:'',nombre:'',orden:String(d.cats.length+1),activa:true,det:'heredada'};const c=d.cats.find(c=>c.code===sel.code);return c?{code:c.code,nombre:c.nombre,orden:String(c.orden),activa:c.activa,det:c.det}:null;}
+    if(sel.isNew){const c=d.cats.find(c=>c.code===sel.cat);const n=d.cats.reduce((a,c)=>a+c.pols.length,0)+1;return {code:'PA-0'+String(n).padStart(2,'0'),nombre:'',orden:String((c?c.pols.length:0)+1),activa:true,res:{cumple:{a:'C',cod:'000',msg:''},nocumple:{a:'E',cod:'',msg:''},falta:{a:'E',cod:'',msg:''}}};}
+    const {p}=fpol(d,sel.code);return p?{code:p.code,nombre:p.nombre,orden:String(p.orden),activa:p.activa,res:clone(p.res)}:null;}
+  pick(sel){this.setState({sel,pf:null,pfTouched:false,ec:null});}
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const me=P.me||{id:'aperez',puedeSolicitar:true,puedeAprobar:true},flow=P.flow||{status:'edicion',editors:['aperez'],openedId:'aperez',vence:'05/12/2026'},params=P.params||{};
+    const d=this.data()||{cats:[]},vars=P.vars||[],catalogs=P.catalogs||[],fields=P.fields||[];
+    const viewV1=params.readonly&&params.version===1;
+    const ro=viewV1||params.readonly||flow.status!=='edicion'||!!P.lock||!me.puedeSolicitar;
+    const canEdit=!ro;
+    const myEdit=(flow.editors||[]).includes(me.id)||flow.openedId===me.id;
+    // header
+    let hdr;
+    if(viewV1)hdr={title:'Versión 1',tag:flow.status==='publicada'?'Retirada':'Publicada vigente',tagBg:flow.status==='publicada'?'var(--color-neutral-200)':'var(--bz-success-bg)',tagFg:flow.status==='publicada'?'var(--color-neutral-700)':'var(--bz-success)',sello:'Sellada'};
+    else if(flow.status==='publicada')hdr={title:'Versión 2',tag:'Publicada vigente',tagBg:'var(--bz-success-bg)',tagFg:'var(--bz-success)',sello:'Sellada'};
+    else if(flow.status==='revision')hdr={title:'Versión 2 · Borrador',tag:'En revisión',tagBg:'var(--bz-info-bg)',tagFg:'var(--bz-info)',sello:'Sin sellar'};
+    else hdr={title:'Versión 2 · Borrador',tag:flow.status==='none'?'Descartado':'En edición',tagBg:'var(--bz-warning-bg)',tagFg:'var(--bz-warning-fg)',sello:'Sin sellar'};
+    const metaItems=viewV1?[{k:'Publicada el',v:'15/10/2026 09:30'},{k:'Aprobada por',v:'Luis Mora'},{k:'Vigencia desde',v:'15/10/2026'}]:
+      [{k:'Abierto por',v:`${flow.openedBy||'Ana Pérez'} · ${flow.openedAt||'20/11/2026'}`},{k:'Editores',v:flow.editorNames||'Ana Pérez'},{k:'Última actividad',v:flow.last||'22/11/2026 10:42'}].concat(flow.status==='revision'?[{k:'Enviado a revisión',v:flow.sentAt||'22/11/2026'}]:[]);
+    const days=13;
+    // tree
+    const dropBd=id=>s.dropId===id?'var(--color-accent)':'transparent';
+    const dnd=(kind,key,extra)=>canEdit?{drag:true,ds:e=>{this._drag={kind,key,...extra};e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',key)}catch(_){}} ,
+      dov:e=>{if(!this._drag)return;e.preventDefault();if(s.dropId!==kind+key)set({dropId:kind+key});},dl:()=>{},drop:e=>{e.preventDefault();this.onDrop(kind,key,extra);}}:{drag:false,ds:null,dov:null,dl:null,drop:null};
+    const treeRows=[];
+    [...d.cats].sort((a,b)=>a.orden-b.orden).forEach(c=>{
+      const selC=s.sel.t==='cat'&&s.sel.code===c.code;
+      treeRows.push({isCat:true,key:'c'+c.code,code:c.code,label:c.nombre,ord:c.orden,inactive:!c.activa,h:40,pl:10,
+        det:c.det==='heredada'?'Det. heredada':(c.det==='si'?'Det. propia: sí':'Det. propia: no'),detBd:c.det==='heredada'?'var(--color-divider)':'var(--color-accent-300)',detFg:c.det==='heredada'?'var(--color-neutral-700)':'var(--color-accent-700)',
+        bg:selC?'var(--color-accent-100)':'var(--color-neutral-100)',color:selC?'var(--color-accent-700)':'var(--color-text)',dropBd:dropBd('cat'+c.code),op:c.activa?1:.7,
+        pick:()=>this.pick({t:'cat',code:c.code}),...dnd('cat',c.code,{})});
+      [...c.pols].sort((a,b)=>a.orden-b.orden).forEach(p=>{const selP=s.sel.t==='pol'&&s.sel.code===p.code;
+        treeRows.push({isPol:true,key:'p'+p.code,code:p.code,label:p.nombre,inactive:!p.activa,h:34,pl:canEdit?26:34,
+          acts:RES.map(([k])=>({k:p.res[k].a,bg:ACT[p.res[k].a].bg,fg:ACT[p.res[k].a].fg})),
+          bg:selP?'var(--color-accent-100)':'transparent',color:selP?'var(--color-accent-700)':'var(--color-text)',dropBd:dropBd('pol'+p.code),op:p.activa&&c.activa?1:.6,
+          pick:()=>this.pick({t:'pol',code:p.code}),...dnd('pol',p.code,{cat:c.code})});});
+      if(canEdit)treeRows.push({isAdd:true,key:'a'+c.code,label:c.code,h:28,pl:34,bg:'transparent',color:'inherit',dropBd:'transparent',op:1,drag:false,pick:()=>this.pick({t:'pol',cat:c.code,isNew:true})});
+    });
+    // selection + form
+    const sel=s.sel;let curCat=null,curPol=null,curPolCat=null;
+    if(sel.t==='cat'&&!sel.isNew)curCat=d.cats.find(c=>c.code===sel.code);
+    if(sel.t==='pol'&&!sel.isNew){const r=fpol(d,sel.code);curPol=r.p;curPolCat=r.c;}
+    const base=this.formFor(sel,d)||{};const pf=s.pf||base;
+    const dirty=!!s.pf&&JSON.stringify(s.pf)!==JSON.stringify(base);
+    const setPf=o=>this.setState(st=>({pf:{...(st.pf||base),...o},pfTouched:true}));
+    const pfErr={};
+    if(sel.t==='cat'){if(!/^\d{1,4}$/.test(pf.code||''))pfErr.code='Usa de 1 a 4 dígitos';else if(sel.isNew&&d.cats.some(c=>c.code===pf.code))pfErr.code=`El código ${pf.code} ya existe en este flujo`;}
+    if(sel.t==='pol'){if(!/^PA-\d{3}[A-Z]?$/.test(pf.code||''))pfErr.code='Formato PA-NNN (ej. PA-009)';else if(sel.isNew&&fpol(d,pf.code).p)pfErr.code=`La política ${pf.code} ya existe`;}
+    if(!(pf.nombre||'').trim())pfErr.nombre='El nombre es obligatorio';
+    if(!/^[1-9]\d*$/.test(String(pf.orden||'')))pfErr.orden='Entero mayor a 0';
+    const showErr=s.pfTouched||sel.isNew?pfErr:{};
+    const resErr={};
+    const resRows=pf.res?RES.map(([k,l])=>{const r=pf.res[k];const ec=s.pfTouched&&!/^\d{3}$/.test(r.cod)?'3 dígitos':'';const em=s.pfTouched&&!r.msg.trim()?'Obligatorio':'';if(ec||em)resErr[k]=1;
+      return {label:l,cod:r.cod,msg:r.msg,errCod:ec,errMsg:em,onCod:e=>setPf({res:{...pf.res,[k]:{...r,cod:e.target.value}}}),onMsg:e=>setPf({res:{...pf.res,[k]:{...r,msg:e.target.value}}}),
+        chips:Object.entries(ACT).map(([ak,a])=>{const on=r.a===ak;return {k:ak,title:`${ak} · ${a.n} · severidad ${a.sev}${a.stop?' · detiene':''}`,bg:on?a.bg:'transparent',fg:on?a.fg:'var(--color-neutral-700)',bd:on?a.bg:'var(--color-divider)',op:ro&&!on?.45:1,pick:()=>setPf({res:{...pf.res,[k]:{...r,a:ak}}})};})};}):[];
+    const savePf=()=>{this.setState({pfTouched:true});if(Object.keys(pfErr).length)return;
+      if(pf.res&&RES.some(([k])=>!/^\d{3}$/.test(pf.res[k].cod)||!pf.res[k].msg.trim()))return;
+      if(P.sim409){P.conflict&&P.conflict();return;}
+      if(sel.t==='cat'){this.mut(dd=>{if(sel.isNew)dd.cats.push({code:pf.code,nombre:pf.nombre.trim(),orden:+pf.orden,activa:pf.activa,det:pf.det,pols:[]});else{const c=dd.cats.find(c=>c.code===sel.code);Object.assign(c,{nombre:pf.nombre.trim(),orden:+pf.orden,activa:pf.activa,det:pf.det});}});
+        this.setState({sel:{t:'cat',code:pf.code},pf:null,pfTouched:false});}
+      else{this.mut(dd=>{if(sel.isNew){const c=dd.cats.find(c=>c.code===sel.cat);c.pols.push({code:pf.code,nombre:pf.nombre.trim(),orden:+pf.orden,activa:pf.activa,res:pf.res,root:{id:eid(),t:'g',op:'Y',ch:[]}});}
+        else{const {p}=fpol(dd,sel.code);Object.assign(p,{nombre:pf.nombre.trim(),orden:+pf.orden,activa:pf.activa,res:pf.res});}});
+        this.setState({sel:{t:'pol',code:pf.code},pf:null,pfTouched:false});}
+      P.toast&&P.toast(sel.isNew?`${sel.t==='cat'?'Categoría':'Política'} ${pf.code} creada en el borrador`:'Cambios guardados en el borrador');};
+    const onPf={code:e=>setPf({code:e.target.value.toUpperCase()}),nombre:e=>setPf({nombre:e.target.value}),orden:e=>setPf({orden:e.target.value}),activa:e=>setPf({activa:e.target.checked})};
+    // logic
+    const logicRows=[];const pol=curPol;
+    if(pol){
+      const walk=(g,depth,parent,idx,path)=>{const isRoot=!parent;const {c,g:gg}=cnt(g);const flash=s.hl===g.id;
+        logicRows.push({isGroup:true,key:g.id,label:isRoot?'Grupo raíz':'Subgrupo',isY:g.op==='Y',isO:g.op==='O',pl:20+depth*24,gw:depth*24,conn:!isRoot&&idx>0?parent.op:'',
+          hint:g.op==='Y'?'todas deben cumplirse':'basta con una',anim:flash?'bzFlash 1.6s ease':'none',dropBd:dropBd('node'+g.id),
+          setY:()=>this.setOp(g.id,'Y'),setO:()=>this.setOp(g.id,'O'),addCond:()=>this.addCond(g.id),addGroup:()=>this.addGroup(g.id),
+          delLabel:isRoot?'Vaciar':'Eliminar',delTitle:isRoot?'El grupo raíz no se puede borrar, solo vaciar':'Eliminar subgrupo',
+          del:()=>{if(isRoot&&!g.ch.length)return;set({modal:{type:isRoot?'empty':'delGroup',id:g.id,msg:`Se eliminarán ${plural(c,gg)}.`}});},
+          ...(isRoot?{...dnd('node',g.id,{}),drag:false}:dnd('node',g.id,{}))});
+        if(!g.ch.length)logicRows.push({isEmpty:true,key:g.id+'e',pl:20+(depth+1)*24,gw:(depth+1)*24});
+        g.ch.forEach((x,i)=>{if(x.t==='g')walk(x,depth+1,g,i,path+` › Grupo ${x.op}`);else{
+          const vi=vars.find(v=>v.code===x.v);const editing=s.ec&&s.ec.id===x.id;const e=valCond(x,vars);const flashC=s.hl===x.id;
+          logicRows.push({isCond:true,key:x.id,pl:20+(depth+1)*24,gw:(depth+1)*24,conn:i>0?g.op:'',num:`#${i+1}`,phrase:condPh(editing?s.ec.f:x),sens:!!(vi&&vi.sens),
+            kind:x.k==='CATALOGO'?'CATÁLOGO':x.k,bad:Object.keys(e).length?(e.v?'Variable inexistente':'Inválida'):'',phColor:Object.keys(e).length?'var(--bz-error)':'var(--color-text)',
+            bg:editing?'var(--color-accent-100)':'transparent',cursor:canEdit?'pointer':'default',anim:flashC?'bzFlash 1.6s ease':'none',dropBd:dropBd('n'+x.id),
+            edit:()=>{if(!canEdit||editing)return;set({ec:{id:x.id,f:{...x},varQ:x.v,varOpen:false,touched:true}});},
+            del:e2=>{e2.stopPropagation();this.mutPol(pol.code,root=>{const r=fnode(root,x.id);r.parent.ch.splice(r.idx,1);});if(editing)set({ec:null});},
+            ...dnd('n',x.id,{})});
+          if(editing)logicRows.push({isForm:true,key:x.id+'f',pl:20+(depth+1)*24,gw:(depth+1)*24});}});};
+      walk(pol.root,0,null,0,'');
+    }
+    // condition form
+    let ef={};
+    if(s.ec){const f=s.ec.f;const vi=vars.find(v=>v.code===f.v);const t=vi?vi.tipo:'TEXT';const err=s.ec.touched?valCond(f,vars):{};
+      const setF=o=>this.setState(st=>({ec:{...st.ec,f:{...st.ec.f,...o},touched:true}}));const q=(s.ec.varQ||'').toUpperCase();
+      const vl=vars.filter(v=>!q||v.code.includes(q)||v.nombre.toUpperCase().includes(q));
+      ef={f,err,varQ:s.ec.varQ,varOpen:s.ec.varOpen,noVars:!vl.length,ph:PH[t],
+        varList:vl.map(v=>({code:v.code,tipo:v.tipo,sens:v.sens,pick:()=>this.setState(st=>({ec:{...st.ec,f:{...st.ec.f,v:v.code},varQ:v.code,varOpen:false,touched:true}}))})),
+        varInfo:vi?`${vi.nombre} · ${vi.tipo}${vi.sens?' · sensible':''}`:'',
+        onVarQ:e=>this.setState(st=>({ec:{...st.ec,varQ:e.target.value,varOpen:true}})),openVar:()=>this.setState(st=>({ec:{...st.ec,varOpen:true}})),
+        kinds:[['RANGO','Rango'],['CATALOGO','Catálogo'],['FIJO','Fijo']].map(([k,l])=>({label:l,on:f.k===k,pick:()=>setF({k})})),
+        isRango:f.k==='RANGO',isCat:f.k==='CATALOGO',isFijo:f.k==='FIJO',modoP:f.modo!=='no pertenece',modoN:f.modo==='no pertenece',
+        setModoP:()=>setF({modo:'pertenece'}),setModoN:()=>setF({modo:'no pertenece'}),
+        onDesde:e=>setF({desde:e.target.value.trim()}),onHasta:e=>setF({hasta:e.target.value.trim()}),onCat:e=>setF({cat:e.target.value}),onOp:e=>setF({op:e.target.value}),onVal:e=>setF({val:e.target.value}),
+        phrase:condPh(f),
+        cancel:()=>{if(s.ec.isNew)this.mutPol(pol.code,root=>{const r=fnode(root,s.ec.id);if(r)r.parent.ch.splice(r.idx,1);});set({ec:null});},
+        apply:()=>{const e=valCond(f,vars);if(Object.keys(e).length)return this.setState(st=>({ec:{...st.ec,touched:true}}));if(P.sim409){P.conflict&&P.conflict();return;}
+          const clean={...f};if(clean.k!=='RANGO'){delete clean.desde;delete clean.hasta;}if(clean.k!=='CATALOGO'){delete clean.cat;delete clean.modo;}if(clean.k!=='FIJO'){delete clean.op;delete clean.val;}
+          this.mutPol(pol.code,root=>{const r=fnode(root,s.ec.id);r.parent.ch[r.idx]=clean;});set({ec:null});P.toast&&P.toast('Condición aplicada en el borrador');}};}
+    // validation
+    const items=[];const vset=new Set(vars.map(v=>v.code));const used=new Set();
+    d.cats.forEach(c=>c.pols.forEach(p=>{const b=`Categoría ${c.code} › ${p.code}`;
+      if(!p.root.ch.length)items.push({sev:'e',msg:'Política con grupo raíz vacío',loc:b+' › Grupo raíz',to:{pol:p.code,node:p.root.id}});
+      const w=(g,path)=>g.ch.forEach((x,i)=>{if(x.t==='g'){const pp=`${path} › Grupo ${x.op}`;if(!x.ch.length)items.push({sev:'w',msg:'Subgrupo vacío',loc:b+pp,to:{pol:p.code,node:x.id}});w(x,pp);}
+        else{used.add(x.v);const loc=`${b}${path} › Condición ${i+1}`;if(!vset.has(x.v))items.push({sev:'e',msg:`Condición sobre variable inexistente (${x.v})`,loc,to:{pol:p.code,node:x.id}});
+          else{const e=valCond(x,vars);const k=Object.keys(e)[0];if(k)items.push({sev:'e',msg:e[k],loc,to:{pol:p.code,node:x.id}});}}});
+      w(p.root,` › Grupo ${p.root.op}`);
+      RES.forEach(([k,l])=>{if(!p.res[k].a)items.push({sev:'e',msg:`Resultado «${l}» sin acción`,loc:b,to:{pol:p.code}});});
+      if(p.activa&&!c.activa)items.push({sev:'w',msg:'Política en categoría inactiva',loc:b,to:{pol:p.code}});}));
+    vars.filter(v=>used.has(v.code)).forEach(v=>{const r=v.origen==='request'?v.ruta:v.campo;if(!fields.some(f=>f.ruta===r))items.push({sev:'e',msg:`Variable ${v.code} sin campo del request declarado (${r})`,loc:`Variables › ${v.code}`,to:{tab:'var'}});});
+    catalogs.filter(c=>!c.items.length).forEach(c=>items.push({sev:'w',msg:`Catálogo ${c.code} sin elementos`,loc:`Catálogos › ${c.code}`,to:{tab:'cat',cat:c.code}}));
+    items.sort((a,b)=>a.sev===b.sev?0:a.sev==='e'?-1:1);
+    const nErr=items.filter(i=>i.sev==='e').length,nWarn=items.length-nErr;
+    const kb=Math.round(JSON.stringify(d).length*58/1024);
+    const valItems=items.map(it=>({msg:it.msg,loc:it.loc,c:it.sev==='e'?'var(--bz-error)':'var(--bz-warning)',
+      go:()=>{if(it.to.tab){set({tab:it.to.tab,selCatalog:it.to.cat||null});return;}this.setState({tab:'cp',sel:{t:'pol',code:it.to.pol},pf:null,pfTouched:false,ec:null,hl:it.to.node||null});clearTimeout(this._hl);this._hl=setTimeout(()=>this.setState({hl:null}),1700);}}));
+    const colMode=s.w>=1400,narrowGrid=s.w<1000;
+    const gridCols=narrowGrid?'minmax(0,1fr)':(s.valOpen&&colMode&&s.tab==='cp'?'272px minmax(0,1fr) 300px':'272px minmax(0,1fr)');
+    // modal
+    let md={};const m=s.modal;
+    if(m){if(m.type==='send')md={title:'¿Enviar a revisión?',body:`El borrador quedará en solo lectura. Un aprobador distinto de ${flow.editorNames||'Ana Pérez'} deberá revisarlo y publicarlo. Vence el ${flow.vence} si no hay actividad.`,cta:'Enviar a revisión',bg:'var(--color-accent)',ok:()=>{P.setFlow&&P.setFlow({status:'revision',sentAt:'22/11/2026 11:05',devolucion:null});set({modal:null,valOpen:false});P.toast&&P.toast('Borrador enviado a revisión');}};
+      if(m.type==='discard')md={title:'¿Descartar el borrador?',body:'Se eliminará la versión 2 y todos sus cambios. La versión 1 sigue vigente. Esta acción no se puede deshacer.',cta:'Descartar borrador',bg:'var(--bz-error)',ok:()=>{P.setFlow&&P.setFlow({status:'none'});set({modal:null});P.toast&&P.toast('Borrador descartado');P.go&&P.go('flujos');}};
+      if(m.type==='delGroup'||m.type==='empty')md={title:m.type==='empty'?'¿Vaciar el grupo raíz?':'¿Eliminar subgrupo?',body:m.msg,cta:m.type==='empty'?'Vaciar':'Eliminar',bg:'var(--bz-error)',ok:()=>{this.mutPol(pol.code,root=>{if(m.type==='empty')root.ch=[];else{const r=fnode(root,m.id);r.parent.ch.splice(r.idx,1);}});set({modal:null,ec:null});}};
+      if(m.type==='delCat')md={title:`¿Eliminar la categoría ${curCat&&curCat.code}?`,body:'La categoría no tiene políticas. Se quitará del borrador.',cta:'Eliminar',bg:'var(--bz-error)',ok:()=>{this.mut(dd=>{dd.cats=dd.cats.filter(c=>c.code!==sel.code);});set({modal:null,sel:{t:'cat',code:d.cats[0].code},pf:null});}};
+      if(m.type==='delPol')md={title:`¿Eliminar ${pol&&pol.code}?`,body:'La política y su lógica se quitarán del borrador.',cta:'Eliminar',bg:'var(--bz-error)',ok:()=>{this.mut(dd=>{dd.cats.forEach(c=>{c.pols=c.pols.filter(p=>p.code!==sel.code);});});set({modal:null,sel:{t:'cat',code:curPolCat.code},pf:null});P.toast&&P.toast('Política eliminada del borrador');}};
+      if(m.type==='move')md={isMove:true,title:`Mover ${pol&&pol.code} a categoría…`,body:'La política conserva su lógica y resultados.',cta:'Mover',bg:'var(--color-accent)',ok:()=>{this.movePol(pol.code,s.mv.cat,+s.mv.orden||1);set({modal:null});}};}
+    const catPolCount=curCat?curCat.pols.length:0;
+    return {
+      goFlows:e=>{e.preventDefault();P.go&&P.go('flujos');},hdr,metaItems,flow,showVence:!viewV1&&flow.status!=='publicada',venceDias:`${days} días`,venceBg:days<3?'var(--bz-orange-bg)':'var(--color-neutral-200)',venceFg:days<3?'var(--bz-orange)':'var(--color-neutral-700)',
+      showEditBtns:!viewV1&&flow.status==='edicion'&&me.puedeSolicitar,showApproveBtns:!viewV1&&flow.status==='revision'&&me.puedeAprobar,approveDisabled:myEdit,
+      showTip:s.tip&&myEdit,tipOn:()=>set({tip:true}),tipOff:()=>set({tip:false}),lock:!!P.lock,
+      goDiff:()=>P.go&&P.go('revision',{from:'editor'}),goApprove:()=>P.go&&P.go('revision',{open:'approve'}),goReturn:()=>P.go&&P.go('revision',{open:'return'}),
+      doValidate:()=>{set({valOpen:true,tab:'cp'});P.toast&&P.toast(nErr?`Validación: ${nErr} errores, ${nWarn} advertencias`:`Validación sin errores · ${nWarn} advertencias`);},
+      askSend:()=>{if(nErr){set({valOpen:true,tab:'cp'});P.toast&&P.toast(`Corrige ${nErr} errores antes de enviar`);return;}set({modal:{type:'send'}});},
+      askDiscard:()=>set({modal:{type:'discard'}}),
+      nRevision:!viewV1&&flow.status==='revision',nReadonly:viewV1?'Vista de solo lectura de la versión 1. Para cambiarla, abre un borrador desde Flujos.':(flow.status==='publicada'&&!viewV1?'Versión publicada: no se edita. Para cambiarla, abre un borrador nuevo.':''),
+      nDevolucion:!viewV1&&flow.status==='edicion'?flow.devolucion:'',
+      cfgOpen:s.cfgOpen,toggleCfg:()=>set({cfgOpen:!s.cfgOpen}),cfgRot:s.cfgOpen?'none':'rotate(-90deg)',
+      cfgSummary:`Detener: ${d.detener?'sí':'no'} · Vigencia ${d.desde||'—'} → ${d.hasta||'sin fin'}`,data:d,ro,canEdit,
+      detSi:!!d.detener,detNo:!d.detener,setDetSi:()=>this.mut(dd=>{dd.detener=true;}),setDetNo:()=>this.mut(dd=>{dd.detener=false;}),
+      onDesde:e=>{const v=e.target.value;this.mut(dd=>{dd.desde=v;});},onHasta:e=>{const v=e.target.value;this.mut(dd=>{dd.hasta=v;});},
+      tabs:[['cp','Categorías y políticas',d.cats.reduce((a,c)=>a+c.pols.length,0)],['var','Variables',vars.length],['req','Campos del request',fields.length],['cat','Catálogos',catalogs.length]].map(([k,l,n])=>({label:l,count:n,bd:s.tab===k?'var(--color-accent)':'transparent',color:s.tab===k?'var(--color-accent-700)':'var(--color-neutral-700)',go:()=>set({tab:k})})),
+      tab:s.tab,tabCP:s.tab==='cp',tabOther:s.tab!=='cp',gridCols,treeRows,dragEnd:()=>{this._drag=null;set({dropId:null});},
+      newCat:()=>this.pick({t:'cat',isNew:true}),newPolSel:()=>this.pick({t:'pol',cat:(curPolCat||curCat||d.cats[0]).code,isNew:true}),
+      selCat:sel.t==='cat'&&!!(curCat||sel.isNew),selPol:sel.t==='pol'&&!!(curPol||sel.isNew),
+      catTitle:sel.isNew?'Nueva categoría':`${curCat&&curCat.code} · ${curCat&&curCat.nombre}`,polTitle:sel.isNew?`Nueva política en categoría ${sel.cat}`:`${curPol&&curPol.code} · ${curPol&&curPol.nombre}`,
+      codeLocked:ro||!sel.isNew,pf,pfErr:showErr,onPf,dirty,notDirty:!dirty,resetPf:()=>set({pf:null,pfTouched:false}),savePf,saveLabel:sel.isNew?'Crear en el borrador':'Guardar cambios',
+      detOpts:[['heredada','Heredada del flujo'],['si','Propia: sí'],['no','Propia: no']].map(([k,l])=>({label:l,on:pf.det===k,pick:()=>setPf({det:k})})),
+      detHint:pf.det==='heredada'?`Usa la regla del flujo (actualmente: ${d.detener?'detener':'no detener'}).`:(pf.det==='si'?'Esta categoría detiene la evaluación al encontrar una acción que detiene.':'Esta categoría nunca detiene la evaluación.'),
+      catDelBlocked:catPolCount>0,catDelMsg:`Tiene ${catPolCount} ${catPolCount===1?'política':'políticas'}; muévelas o elimínalas primero`,askDelCat:()=>set({modal:{type:'delCat'}}),
+      canEditExisting:canEdit&&!sel.isNew,askMove:()=>set({modal:{type:'move'},mv:{cat:curPolCat.code,orden:String(curPol.orden)}}),askDelPol:()=>set({modal:{type:'delPol'}}),
+      resRows,actLegend:'C COBIS · E ECA · B Solicitud bloqueada (detiene) · R Rechazo total (detiene)',
+      isNewPol:sel.t==='pol'&&!!sel.isNew,polPhrase:pol?ph(s.ec?(()=>{const r=clone(pol.root);const n=fnode(r,s.ec.id);if(n&&n.parent)n.parent.ch[n.idx]={...s.ec.f,id:s.ec.id,t:'c'};return r;})():pol.root):'—',
+      logicCount:pol?(()=>{const r=cnt(pol.root);return `${plural(r.c,r.g)} · grupo raíz ${pol.root.op}`;})():'',logicRows,ef,catalogCodes:catalogs.map(c=>c.code),
+      valCol:s.valOpen&&s.tab==='cp',valPos:colMode&&!narrowGrid?'sticky':'fixed',valTop:colMode&&!narrowGrid?'200px':'60px',valRight:colMode&&!narrowGrid?'auto':'0',valBottom:colMode&&!narrowGrid?'auto':'0',valW:colMode&&!narrowGrid?'auto':'min(360px,100vw)',
+      valShadow:colMode&&!narrowGrid?'none':'var(--shadow-lg)',valMaxH:colMode&&!narrowGrid?'calc(100vh - 220px)':'none',closeVal:()=>set({valOpen:false}),
+      valItems,valErr:nErr,valWarn:nWarn,sizeLine:`Configuración compilada: ${(kb/1024).toFixed(2).replace('.',',')} MB de 1 MB máximo`,
+      vars,setVars:P.setVars,catalogs,setCatalogs:P.setCatalogs,fields,setFields:P.setFields,selCatalog:s.selCatalog,toast:P.toast,conflict:P.conflict,sim409:P.sim409,
+      openPolicy:code=>this.setState({tab:'cp',sel:{t:'pol',code},pf:null,ec:null}),
+      hasModal:!!s.modal,md,closeModal:()=>set({modal:null}),
+      mv:{cat:s.mv.cat,orden:s.mv.orden,opts:d.cats.map(c=>({code:c.code,label:`${c.code} · ${c.nombre}`})),onCat:e=>set({mv:{...s.mv,cat:e.target.value}}),onOrden:e=>set({mv:{...s.mv,orden:e.target.value}})},
+    };
+  }
+  mutPol(code,fn){this.mut(d=>{const {p}=fpol(d,code);fn(p.root);});}
+  setOp(id,op){if(!this.props.draft)return;const code=this.state.sel.code;this.mutPol(code,root=>{fnode(root,id).node.op=op;});}
+  addCond(gid){const code=this.state.sel.code;const id=eid();const c={id,t:'c',v:'',k:'FIJO',op:'=',val:''};
+    this.mutPol(code,root=>{fnode(root,gid).node.ch.push(c);});this.setState({ec:{id,isNew:true,f:{...c},varQ:'',varOpen:true,touched:false}});}
+  addGroup(gid){const code=this.state.sel.code;this.mutPol(code,root=>{const g=fnode(root,gid).node;g.ch.push({id:eid(),t:'g',op:g.op==='Y'?'O':'Y',ch:[]});});}
+  movePol(code,toCat,orden){this.mut(d=>{let pol;d.cats.forEach(c=>{const i=c.pols.findIndex(p=>p.code===code);if(i>=0){pol=c.pols.splice(i,1)[0];c.pols.sort((a,b)=>a.orden-b.orden).forEach((p,j)=>p.orden=j+1);}});
+      const c=d.cats.find(c=>c.code===toCat);c.pols.sort((a,b)=>a.orden-b.orden);c.pols.splice(Math.max(0,Math.min(orden-1,c.pols.length)),0,pol);c.pols.forEach((p,j)=>p.orden=j+1);});
+    const c=(this.props.draft.cats.find(c=>c.code===toCat)||{});this.props.toast&&this.props.toast(`${code} movida a ${toCat} · ${c.nombre||''}`);this.setState({pf:null});}
+  onDrop(kind,key,extra){const dr=this._drag;this._drag=null;this.setState({dropId:null});if(!dr||dr.key===key&&dr.kind===kind)return;
+    if(dr.kind==='cat'&&kind==='cat'){this.mut(d=>{d.cats.sort((a,b)=>a.orden-b.orden);const i=d.cats.findIndex(c=>c.code===dr.key);const [c]=d.cats.splice(i,1);const j=d.cats.findIndex(c=>c.code===key);d.cats.splice(j,0,c);d.cats.forEach((c,k)=>c.orden=k+1);});this.props.toast&&this.props.toast('Orden de categorías actualizado');return;}
+    if(dr.kind==='pol'&&kind==='pol'){const tgt=fpol(this.props.draft,key);this.movePol(dr.key,extra.cat,tgt.p.orden);return;}
+    if(dr.kind==='pol'&&kind==='cat'){const c=this.props.draft.cats.find(c=>c.code===key);this.movePol(dr.key,key,c.pols.length+1);return;}
+    if((dr.kind==='n'||dr.kind==='node')&&(kind==='n'||kind==='node')){const code=this.state.sel.code;let bad=false;
+      this.mutPol(code,root=>{const src=fnode(root,dr.key);if(!src)return;if(src.node.t==='g'&&isDesc(src.node,key)){bad=true;return;}
+        src.parent.ch.splice(src.idx,1);const t=fnode(root,key);if(!t)return;
+        if(kind==='node'&&t.node.t==='g')t.node.ch.push(src.node);else t.parent.ch.splice(t.idx,0,src.node);});
+      if(bad)this.props.toast&&this.props.toast('No puedes mover un grupo dentro de sí mismo');}
+  }
+}
+</script>
+</body>
+</html>

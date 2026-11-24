@@ -1,0 +1,28 @@
+:host { position: sticky; top: 0; z-index: 40; display: block; }
+header {
+  height: 60px; display: flex; align-items: center; gap: 14px; padding: 0 18px;
+  background: var(--color-surface); border-bottom: 1px solid var(--color-divider);
+}
+.loading { position: absolute; left: 0; right: 0; bottom: -1px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.logo {
+  width: 32px; height: 32px; flex: none; display: grid; place-items: center;
+  background: var(--color-accent); border-color: var(--color-accent); color: #fff;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 15px;
+}
+.titles { display: flex; flex-direction: column; line-height: 1.1; white-space: nowrap; min-width: 0; }
+.name { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 17px; overflow: hidden; text-overflow: ellipsis; }
+.sub { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-700); }
+.env {
+  display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin-left: 8px;
+  border: 1px solid var(--color-divider); background: var(--color-neutral-100);
+  font-size: 13px; color: var(--color-neutral-700); white-space: nowrap;
+}
+.env-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.env-dot { width: 6px; height: 6px; background: var(--color-success); }
+.env-value { color: var(--color-text); font-weight: 500; }
+.grow { flex: 1; }
+.pending { gap: 8px; font-family: var(--font-body); }
+.pending-text { font-weight: 500; font-size: 13px; }
+.count { min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; background: var(--color-accent); color: #fff; font-size: 12px; font-weight: 600; }
+@media (max-width: 700px) { .titles .sub { display: none; } header { gap: 8px; padding: 0 10px; } }

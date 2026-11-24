@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@keyframes bzSheet{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px">
+    <div style="flex:1;min-width:260px">
+      <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Maestros</span>
+      <h1 style="margin:2px 0 4px;font-size:40px">{{ cfg.title }}</h1>
+      <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:680px;text-wrap:pretty">{{ cfg.desc }}</p>
+    </div>
+    <sc-if value="{{ cfg.canNew }}"><button class="btn btn-primary blueprint" disabled="{{ noEdit }}" onClick="{{ newRow }}" style="height:40px;padding:0 16px;white-space:nowrap"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>+ {{ cfg.newLabel }}</button></sc-if>
+  </div>
+
+  <sc-if value="{{ isCP }}">
+    <div style="display:flex;border-bottom:1px solid var(--color-divider);overflow-x:auto;overflow-y:hidden"><sc-for list="{{ subTabs }}" as="tb"><button onClick="{{ tb.go }}" style="display:flex;align-items:center;gap:8px;height:42px;padding:0 16px;border:0;border-bottom:2px solid {{ tb.bd }};margin-bottom:-1px;background:transparent;cursor:pointer;font:500 14px var(--font-body);color:{{ tb.color }};white-space:nowrap">{{ tb.label }}<span style="font-size:11px;padding:1px 6px;background:var(--color-neutral-200);color:var(--color-neutral-700)">{{ tb.n }}</span></button></sc-for></div>
+  </sc-if>
+  <sc-if value="{{ isRoles }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 16px;border:1px solid var(--bz-success);background:var(--bz-success-bg)"><svg viewBox="0 0 24 24" width="20" height="20" style="flex:none;fill:none;stroke:var(--bz-success);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg><span style="font-weight:600;color:var(--bz-success)">Tabla de roles sellada</span><span style="font-size:13px;color:var(--color-text)">Última verificación 22/11/2026 08:00 · llave kms-ba-prod-03 · 4 registros</span></div>
+  </sc-if>
+
+  <sc-if value="{{ isParams }}">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end">
+      <div class="seg"><label class="seg-opt" style="padding:8px 16px"><input type="radio" checked="{{ pGlobal }}" onChange="{{ setGlobal }}">Global</label><label class="seg-opt" style="padding:8px 16px"><input type="radio" checked="{{ pCombo }}" onChange="{{ setCombo }}">Por canal + producto</label></div>
+      <sc-if value="{{ pCombo }}"><div class="field" style="min-width:280px"><label>Canal + producto</label><select class="input" value="{{ combo }}" onChange="{{ onCombo }}"><sc-for list="{{ combos }}" as="c"><option value="{{ c.k }}">{{ c.l }}</option></sc-for></select></div></sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isMatrix }}">
+    <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="overflow-x:auto"><table class="table" style="min-width:720px">
+        <thead><tr><th style="padding-left:18px">Canal \ Producto</th><sc-for list="{{ mxCols }}" as="c"><th style="text-align:center">{{ c }}</th></sc-for></tr></thead>
+        <tbody><sc-for list="{{ mxRows }}" as="r"><tr>
+          <td style="padding:14px 10px 14px 18px;font-weight:500;white-space:nowrap">{{ r.label }}</td>
+          <sc-for list="{{ r.cells }}" as="c"><td style="padding:10px;text-align:center"><div style="display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+            <button title="{{ c.title }}" disabled="{{ c.dis }}" onClick="{{ c.toggle }}" style="position:relative;width:40px;height:22px;border:1px solid {{ c.bd }};background:{{ c.bg }};cursor:pointer;padding:0;opacity:{{ c.op }}"><span style="position:absolute;top:2px;left:{{ c.knob }};width:16px;height:16px;background:{{ c.kb }};transition:left .15s"></span></button>
+            <sc-if value="{{ c.pend }}"><a href="#" onClick="{{ c.goPend }}" style="font-size:10px;padding:1px 5px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);text-decoration:none;white-space:nowrap">Cambio pendiente</a></sc-if>
+          </div></td></sc-for>
+        </tr></sc-for></tbody>
+      </table></div>
+      <div style="padding:10px 18px;border-top:1px solid var(--color-divider);font-size:12px;color:var(--color-neutral-700)">Cada interruptor crea una solicitud de cambio; la matriz refleja lo vigente.</div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isTable }}" hint-placeholder-val="{{ true }}">
+    <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--color-divider)">
+        <div style="position:relative;width:260px;max-width:100%"><svg viewBox="0 0 24 24" width="14" height="14" style="position:absolute;left:9px;top:11px;fill:none;stroke:var(--color-neutral-600);stroke-width:1.5;stroke-linecap:round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="input" placeholder="Filtrar" value="{{ q }}" onChange="{{ onQ }}" style="padding-left:30px"></div>
+        <sc-if value="{{ cfg.stateFilter }}"><select class="input" value="{{ fs }}" onChange="{{ onFs }}" style="width:180px"><option value="">Todos los estados</option><option value="si">{{ cfg.onLabel }}</option><option value="no">{{ cfg.offLabel }}</option></select></sc-if>
+        <div style="flex:1"></div><span style="font-size:13px;color:var(--color-neutral-700)">{{ total }} registros vigentes</span>
+      </div>
+      <div style="overflow-x:auto"><table class="table" style="min-width:760px">
+        <thead><tr><sc-for list="{{ heads }}" as="h"><th onClick="{{ h.sort }}" style="cursor:pointer;white-space:nowrap;padding-left:{{ h.pl }}">{{ h.label }} <span style="opacity:{{ h.op }}">{{ h.arrow }}</span></th></sc-for><th style="text-align:right;padding-right:18px">Acciones</th></tr></thead>
+        <tbody><sc-for list="{{ pageRows }}" as="r" hint-placeholder-count="5"><tr style="opacity:{{ r.op }}">
+          <sc-for list="{{ r.cells }}" as="c"><td style="padding:11px 10px 11px {{ c.pl }};font-family:{{ c.ff }};font-size:{{ c.fz }}">
+            <sc-if value="{{ c.isText }}">{{ c.t }}</sc-if>
+            <sc-if value="{{ c.isTag }}"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;white-space:nowrap;background:{{ c.bg }};color:{{ c.fg }}">{{ c.t }}</span></sc-if>
+            <sc-if value="{{ c.isChip }}"><span style="display:inline-flex;align-items:center;gap:8px"><span style="width:24px;height:24px;display:grid;place-items:center;font:700 13px var(--font-body);background:{{ c.bg }};color:{{ c.fg }}">{{ c.t }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ c.sub }}</span></span></sc-if>
+            <sc-if value="{{ c.isCheck }}"><span style="display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:#fff;font-size:12px;font-weight:700">{{ c.t }}</span></sc-if>
+          </td></sc-for>
+          <td style="padding:11px 18px 11px 10px"><div style="display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:4px">
+            <sc-if value="{{ r.pend }}"><a href="#" onClick="{{ r.goPend }}" title="Ver la solicitud pendiente" style="font-size:11px;padding:2px 6px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);text-decoration:none;white-space:nowrap">Cambio pendiente · {{ r.pend }}</a></sc-if>
+            <sc-for list="{{ r.acts }}" as="a"><button class="btn btn-ghost" disabled="{{ a.dis }}" onClick="{{ a.go }}" style="font-size:13px;padding:3px 8px;white-space:nowrap;color:{{ a.color }}">{{ a.label }}</button></sc-for>
+          </div></td>
+        </tr></sc-for></tbody>
+      </table></div>
+      <sc-if value="{{ empty }}"><div style="padding:40px 20px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center"><span style="font-family:var(--font-heading);font-weight:600;font-size:20px">Sin resultados</span><button class="btn btn-secondary" onClick="{{ clearQ }}" style="height:34px;padding:0 12px">Limpiar filtros</button></div></sc-if>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;border-top:1px solid var(--color-divider)">
+        <span style="font-size:13px;color:var(--color-neutral-700)">Mostrando {{ pg.from }}–{{ pg.to }} de {{ total }}</span>
+        <div style="display:flex;gap:4px"><button class="btn btn-secondary" disabled="{{ pg.prevDis }}" onClick="{{ pg.prev }}" style="height:30px;padding:0 10px">‹</button><sc-for list="{{ pg.nums }}" as="n"><button class="btn btn-secondary" onClick="{{ n.go }}" style="min-width:30px;height:30px;padding:0 8px;background:{{ n.bg }};color:{{ n.fg }};border-color:{{ n.bd }}">{{ n.n }}</button></sc-for><button class="btn btn-secondary" disabled="{{ pg.nextDis }}" onClick="{{ pg.next }}" style="height:30px;padding:0 10px">›</button></div>
+      </div>
+    </section>
+  </sc-if>
+</div>
+
+<sc-if value="{{ sheet }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeSheet }}" style="position:fixed;inset:0;z-index:140;background:color-mix(in srgb,#000 35%,transparent)"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(460px,100vw);z-index:141;background:var(--color-surface);border-left:1px solid var(--color-divider);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;animation:bzSheet .2s ease both;color:var(--color-text)">
+    <div style="display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--color-divider)"><div style="flex:1"><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">{{ sh.kicker }}</span><h3 style="margin:0">{{ sh.title }}</h3></div><button class="btn btn-ghost btn-icon" title="Cerrar" onClick="{{ closeSheet }}" style="color:var(--color-text)"><svg viewBox="0 0 24 24" width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+    <div style="display:flex;gap:10px;align-items:flex-start;margin:16px 20px 0;padding:10px 12px;background:var(--bz-info-bg);color:var(--bz-info);font-size:13px"><svg viewBox="0 0 24 24" width="16" height="16" style="flex:none;margin-top:1px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg><span>Este cambio no rige hasta que otro aprobador lo apruebe.</span></div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+      <sc-for list="{{ sh.fields }}" as="f">
+        <sc-if value="{{ f.isInput }}"><div class="field"><label>{{ f.label }}</label><input class="input" disabled="{{ f.dis }}" value="{{ f.v }}" onChange="{{ f.on }}" placeholder="{{ f.ph }}" style="font-family:{{ f.ff }}"><sc-if value="{{ f.err }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ f.err }}</div></sc-if><sc-if value="{{ f.hint }}"><div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">{{ f.hint }}</div></sc-if></div></sc-if>
+        <sc-if value="{{ f.isSelect }}"><div class="field"><label>{{ f.label }}</label><select class="input" disabled="{{ f.dis }}" value="{{ f.v }}" onChange="{{ f.on }}"><sc-for list="{{ f.opts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select><sc-if value="{{ f.err }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ f.err }}</div></sc-if></div></sc-if>
+        <sc-if value="{{ f.isCheck }}"><div><label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer"><input type="checkbox" disabled="{{ f.dis }}" checked="{{ f.v }}" onChange="{{ f.on }}" style="width:16px;height:16px;accent-color:var(--color-accent)">{{ f.label }}</label><sc-if value="{{ f.err }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ f.err }}</div></sc-if></div></sc-if>
+      </sc-for>
+      <div class="field"><label>Comentario para el aprobador</label><textarea class="input" value="{{ sh.comment }}" onChange="{{ onComment }}" placeholder="Motivo del cambio" style="min-height:70px"></textarea></div>
+      <sc-if value="{{ sh.dup }}"><div style="padding:10px 12px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);border:1px solid var(--bz-warning);font-size:13px">Ya hay una solicitud pendiente sobre este elemento: <a href="#" onClick="{{ sh.goDup }}" style="font-family:ui-monospace,Menlo,monospace;color:var(--bz-warning-fg)">{{ sh.dup }}</a></div></sc-if>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--color-divider)"><div style="flex:1"></div><button class="btn btn-secondary" onClick="{{ closeSheet }}" style="height:38px;padding:0 14px">Cancelar</button><button class="btn btn-primary" disabled="{{ sh.dup }}" onClick="{{ sh.submit }}" style="height:38px;padding:0 16px">Crear solicitud de cambio</button></div>
+  </aside>
+</sc-if>
+
+<sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;align-items:start;padding-top:min(12vh,100px)">
+  <div class="dialog blueprint" style="width:min(480px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="dialog-title" style="font-size:24px">{{ md.title }}</div>
+    <div class="dialog-body" style="text-wrap:pretty">{{ md.body }}</div>
+    <sc-if value="{{ md.list }}"><div style="display:flex;flex-direction:column;border:1px solid var(--color-divider);max-height:200px;overflow-y:auto"><sc-for list="{{ md.list }}" as="li"><span style="padding:7px 10px;border-bottom:1px solid var(--color-divider);font-size:13px;font-family:ui-monospace,Menlo,monospace">{{ li }}</span></sc-for></div></sc-if>
+    <sc-if value="{{ md.dup }}"><div style="padding:10px 12px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);border:1px solid var(--bz-warning);font-size:13px">Ya hay una solicitud pendiente sobre este elemento: <a href="#" onClick="{{ md.goDup }}" style="font-family:ui-monospace,Menlo,monospace;color:var(--bz-warning-fg)">{{ md.dup }}</a></div></sc-if>
+    <sc-if value="{{ md.note }}"><div style="padding:10px 12px;background:var(--bz-info-bg);color:var(--bz-info);font-size:13px">Este cambio no rige hasta que otro aprobador lo apruebe.</div></sc-if>
+    <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">{{ md.cancel }}</button><sc-if value="{{ md.ok }}"><button class="btn btn-primary" disabled="{{ md.dup }}" onClick="{{ md.ok }}" style="height:38px;padding:0 18px">Crear solicitud de cambio</button></sc-if></div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const yn=b=>b?'Sí':'No';
+const COLORS={VERDE:['var(--bz-act-c)','var(--bz-act-c-fg)'],AMARILLO:['var(--bz-act-e)','var(--bz-act-e-fg)'],ROJO:['var(--bz-act-r)','var(--bz-act-r-fg)'],GRIS:['var(--bz-act-g)','var(--bz-act-g-fg)']};
+const DATA={
+ canales:[{code:'1',nombre:'Solicitudes Web',hab:true,vers:2},{code:'2',nombre:'Agencias',hab:true,vers:3},{code:'3',nombre:'Banca Móvil',hab:true,vers:0},{code:'4',nombre:'Call Center',hab:false,vers:0},{code:'5',nombre:'Corresponsales',hab:false,vers:0},{code:'6',nombre:'Fuerza de ventas',hab:true,vers:1}],
+ productos:[{code:'1',nombre:'Auto Plan',hab:true,vers:2},{code:'2',nombre:'Consumo',hab:true,vers:5},{code:'3',nombre:'Microcrédito',hab:true,vers:0},{code:'4',nombre:'Tarjeta Joven',hab:true,vers:0},{code:'5',nombre:'Hipotecario',hab:false,vers:0}],
+ acciones:[{code:'C',nombre:'COBIS',sev:10,color:'VERDE',det:false,activa:true},{code:'E',nombre:'ECA',sev:20,color:'AMARILLO',det:false,activa:true},{code:'B',nombre:'SOLICITUD BLOQUEADA',sev:30,color:'ROJO',det:true,activa:true},{code:'R',nombre:'RECHAZO TOTAL',sev:40,color:'ROJO',det:true,activa:true},{code:'M',nombre:'REVISIÓN MANUAL',sev:50,color:'GRIS',det:false,activa:false}],
+ catalogos:[{code:'NIVELES_ESTUDIO_ACEPTADOS',nombre:'Niveles de estudio aceptados',fuente:'Manual',n:5},{code:'CANTONES_ACEPTADOS',nombre:'Cantones aceptados',fuente:'Archivo',n:8},{code:'ACTIVIDADES_ECONOMICAS',nombre:'Actividades económicas financiables',fuente:'Servicio',n:4},{code:'PROVINCIAS_RIESGO',nombre:'Provincias con riesgo elevado',fuente:'Manual',n:0}],
+ roles:[{code:'GG-CRED-SOLICITANTES',nombre:'Solicitantes de crédito',sol:true,apr:false,aud:false,activo:true},{code:'GG-CRED-APROBADORES',nombre:'Aprobadores de configuración',sol:true,apr:true,aud:false,activo:true},{code:'GG-AUDITORIA-INTERNA',nombre:'Auditoría interna',sol:false,apr:false,aud:true,activo:true},{code:'GG-CRED-ADMIN-LEGACY',nombre:'Administradores (heredado)',sol:true,apr:true,aud:false,activo:false}],
+ parametros:[{code:'FORMATO_FECHA',valor:'MM/dd/yyyy',desc:'Formato de fechas del request'},{code:'DIAS_VENCIMIENTO',valor:'15',desc:'Días sin actividad para vencer solicitudes y borradores'},{code:'TAMANO_MAX_CONFIG',valor:'1 MB',desc:'Tamaño máximo de la configuración compilada'},{code:'TIMEOUT_EVALUACION_MS',valor:'800',desc:'Tiempo máximo de evaluación por solicitud'}]};
+const OVR={'1-1':{TIMEOUT_EVALUACION_MS:'1200'},'2-2':{FORMATO_FECHA:'dd/MM/yyyy'}};
+const COMBOS=[['1-1','1 Solicitudes Web / 1 Auto Plan'],['1-2','1 Solicitudes Web / 2 Consumo'],['2-1','2 Agencias / 1 Auto Plan'],['2-2','2 Agencias / 2 Consumo'],['3-2','3 Banca Móvil / 2 Consumo']];
+const MX_ON=['1-1','1-2','2-1','2-2','3-2','6-2'];
+const CFG={
+ canales:{title:'Canales',desc:'Código de 1 a 4 dígitos. Un canal con versiones no se elimina: solo se solicita deshabilitarlo.',tipo:'Canal',newLabel:'Canal',canNew:true,stateFilter:true,onLabel:'Habilitado',offLabel:'Deshabilitado',stateKey:'hab',
+  cols:[['code','Código'],['nombre','Nombre'],['hab','Habilitado'],['vers','Versiones']],el:r=>`${r.code} ${r.nombre}`},
+ productos:{title:'Productos',desc:'Código de 1 a 4 dígitos. Un producto con versiones no se elimina: solo se solicita deshabilitarlo.',tipo:'Producto',newLabel:'Producto',canNew:true,stateFilter:true,onLabel:'Habilitado',offLabel:'Deshabilitado',stateKey:'hab',
+  cols:[['code','Código'],['nombre','Nombre'],['hab','Habilitado'],['vers','Versiones']],el:r=>`${r.code} ${r.nombre}`},
+ acciones:{title:'Acciones',desc:'Resultado que devuelve una política. La severidad es única; las acciones que detienen cortan la evaluación según la regla de detención.',tipo:'Acción',newLabel:'Acción',canNew:true,stateFilter:true,onLabel:'Activa',offLabel:'Inactiva',stateKey:'activa',
+  cols:[['code','Acción'],['sev','Severidad'],['color','Color'],['det','Detiene'],['activa','Activa']],el:r=>`${r.code} · ${r.nombre}`},
+ catalogos:{title:'Catálogos',desc:'Cabeceras de catálogos. Los elementos se versionan dentro de cada borrador de flujo.',tipo:'Catálogo',newLabel:'Catálogo',canNew:true,stateFilter:false,cols:[['code','Código'],['nombre','Nombre'],['fuente','Fuente'],['n','Elementos (vigente)']],el:r=>r.code},
+ roles:{title:'Roles',desc:'Mapeo de grupos del proveedor de identidad a capacidades. Siempre debe existir al menos un rol aprobador activo.',tipo:'Rol',newLabel:'Rol',canNew:true,stateFilter:true,onLabel:'Activo',offLabel:'Inactivo',stateKey:'activo',
+  cols:[['code','Id de rol (IdP)'],['nombre','Nombre'],['sol','Solicitar'],['apr','Aprobar'],['aud','Auditar'],['activo','Activo']],el:r=>r.code},
+ parametros:{title:'Parámetros',desc:'Valores globales del motor y sobrescrituras por canal + producto. La vista por combinación indica qué valor rige.',tipo:'Parámetro',canNew:false,stateFilter:false,
+  cols:[['code','Parámetro'],['valor','Valor'],['desc','Descripción']],el:r=>r.code},
+ canalproducto:{title:'Canal–producto',desc:'Combinaciones habilitadas para configurar flujos. Cada cambio de interruptor crea una solicitud.',canNew:false}};
+class Component extends DCLogic {
+  state={sub:'canales',q:'',fs:'',sortK:null,sortD:1,page:1,sheet:null,form:{},touched:false,comment:'',modal:null,pMode:'global',combo:'1-1'};
+  componentDidUpdate(pp){if(pp.section!==this.props.section)this.setState({q:'',fs:'',sortK:null,page:1,sheet:null,modal:null});}
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const isCP=!P.section||['canales','productos','canalproducto'].includes(P.section);const sec=isCP?s.sub:P.section,cfg0=CFG[sec]||CFG.canales,cfg=isCP?{...cfg0,title:'Canales y productos',desc:'Códigos de 1 a 4 dígitos y las combinaciones habilitadas entre ellos. Un canal o producto con versiones no se elimina: solo se solicita deshabilitarlo.',canNew:sec!=='canalproducto'}:cfg0,me=P.me||{id:'aperez',puedeSolicitar:true},reqs=P.reqs||[];
+    const noEdit=!!P.lock||!me.puedeSolicitar;
+    const pending=el=>reqs.find(r=>r.estado==='Pendiente'&&r.elemento===el);
+    const goReq=id=>e=>{e&&e.preventDefault&&e.preventDefault();set({sheet:null,modal:null});P.go&&P.go('solicitudes',{id});};
+    const nextId=()=>'SC-0'+(Math.max(...reqs.map(r=>+r.id.slice(3)))+1);
+    const create=(tipo,accion,elemento,actual,propuesto,comentario)=>{if(P.sim409){P.conflict&&P.conflict();return false;}const id=nextId();
+      P.setReqs&&P.setReqs(rs=>[{id,tipo,elemento,accion,solicitante:me.id,fecha:'22/11/2026',vence:'07/12/2026',estado:'Pendiente',actual,propuesto,comentario:comentario||''},...rs]);P.toast&&P.toast(`Solicitud ${id} creada · no rige hasta su aprobación`);return true;};
+    const usage={};((P.draft||{cats:[]}).cats).forEach(c=>c.pols.forEach(p=>[['cumple','Cumple'],['nocumple','No cumple'],['falta','Falta dato']].forEach(([k,l])=>{const a=p.res[k].a;(usage[a]=usage[a]||[]).push(`${p.code} (${l}) · 1 Solicitudes Web / 1 Auto Plan`);})));
+    // rows
+    let base=sec==='parametros'&&s.pMode==='combo'?DATA.parametros.map(p=>{const o=(OVR[s.combo]||{})[p.code];return {code:p.code,global:p.valor,ovr:o||'—',rige:o?'Sobrescrito':'Global',desc:p.desc};}):(DATA[sec]||[]);
+    const cols=sec==='parametros'&&s.pMode==='combo'?[['code','Parámetro'],['global','Valor global'],['ovr','Sobrescrito'],['rige','Rige']]:(cfg.cols||[]);
+    const q=s.q.toLowerCase();let list=base.filter(r=>(!q||Object.values(r).some(v=>String(v).toLowerCase().includes(q)))&&(!s.fs||!cfg.stateKey||(s.fs==='si')===!!r[cfg.stateKey]));
+    if(s.sortK)list=[...list].sort((a,b)=>(a[s.sortK]>b[s.sortK]?1:a[s.sortK]<b[s.sortK]?-1:0)*s.sortD);
+    const size=5,pages=Math.max(1,Math.ceil(list.length/size)),p=Math.min(s.page,pages);
+    const formFrom=r=>({...r});
+    const openEdit=(r,isNew)=>set({sheet:{isNew,row:r},form:isNew?(sec==='acciones'?{code:'',nombre:'',sev:'',color:'GRIS',det:false,activa:true}:sec==='roles'?{code:'',nombre:'',sol:false,apr:false,aud:false,activo:true}:sec==='catalogos'?{code:'',nombre:'',fuente:'Manual'}:{code:'',nombre:'',hab:true}):formFrom(r),touched:false,comment:''});
+    const confirm=(title,body,ok,extra={})=>set({modal:{title,body,ok,note:true,cancel:'Cancelar',...extra}});
+    const block=(title,body,list)=>set({modal:{title,body,list,note:false,cancel:'Entendido'}});
+    const cell=(k,r)=>{const v=r[k];const pl='10px';
+      if(k==='code'&&sec==='acciones'){const c=COLORS[r.color];return {isChip:true,t:r.code,sub:r.nombre,bg:c[0],fg:c[1],pl:'18px'};}
+      if(k==='color'){const c=COLORS[v];return {isTag:true,t:v,bg:c[0],fg:c[1],pl};}
+      if(['hab','activa','activo','det'].includes(k))return {isTag:true,t:yn(v),bg:v?(k==='det'?'var(--bz-error-bg)':'var(--bz-success-bg)'):'var(--color-neutral-200)',fg:v?(k==='det'?'var(--bz-error)':'var(--bz-success)'):'var(--color-neutral-700)',pl};
+      if(['sol','apr','aud'].includes(k))return {isCheck:true,t:v?'✓':'',bg:v?'var(--color-accent)':'transparent',bd:v?'var(--color-accent)':'var(--color-neutral-400)',pl};
+      if(k==='rige')return {isTag:true,t:v,bg:v==='Global'?'var(--color-neutral-200)':'var(--color-accent-100)',fg:v==='Global'?'var(--color-neutral-700)':'var(--color-accent-800)',pl};
+      return {isText:true,t:String(v),pl:k===cols[0][0]?'18px':pl,ff:k==='code'||k==='valor'||k==='global'||k==='ovr'?'ui-monospace,Menlo,monospace':'inherit',fz:k==='code'||k==='desc'?'13px':'14px'};};
+    const approvers=DATA.roles.filter(r=>r.activo&&r.apr);
+    const pageRows=list.slice((p-1)*size,p*size).map(r=>{const el=sec==='parametros'&&s.pMode==='combo'?`${r.code} · ${COMBOS.find(c=>c[0]===s.combo)[1]}`:cfg.el(r);const pend=pending(el);const acts=[];
+      if(me.puedeSolicitar){
+        if(sec==='parametros'&&s.pMode==='combo'){acts.push({label:r.rige==='Sobrescrito'?'Editar sobrescritura':'Sobrescribir',go:()=>set({sheet:{isNew:false,row:r,ovr:true},form:{code:r.code,valor:r.ovr==='—'?r.global:r.ovr},touched:false,comment:''})});
+          if(r.rige==='Sobrescrito')acts.push({label:'Usar global',go:()=>confirm(`¿Quitar la sobrescritura de ${r.code}?`,`Regirá el valor global ${r.global} para esta combinación.`,()=>{if(create('Parámetro','Quitar sobrescritura',el,{Valor:r.ovr},{Valor:`${r.global} (global)`}))set({modal:null});})});}
+        else acts.push({label:'Editar',go:()=>openEdit(r,false)});
+        if(sec==='canales'||sec==='productos'){
+          if(r.hab&&r.vers>0)acts.push({label:'Solicitar deshabilitar',color:'var(--bz-error)',go:()=>confirm(`¿Solicitar deshabilitar ${el}?`,`Tiene ${r.vers} versiones, por eso no se puede eliminar. Al aprobarse, el motor dejará de evaluar sus combinaciones.`,()=>{if(create(cfg.tipo,'Deshabilitar',el,{Habilitado:'Sí'},{Habilitado:'No'}))set({modal:null});},{dup:pend&&pend.id,goDup:pend&&goReq(pend.id)})});
+          else if(r.vers===0)acts.push({label:'Solicitar eliminar',color:'var(--bz-error)',go:()=>confirm(`¿Solicitar eliminar ${el}?`,'No tiene versiones asociadas.',()=>{if(create(cfg.tipo,'Baja',el,{Nombre:r.nombre},{}))set({modal:null});},{dup:pend&&pend.id,goDup:pend&&goReq(pend.id)})});
+          if(!r.hab)acts.push({label:'Solicitar habilitar',go:()=>confirm(`¿Solicitar habilitar ${el}?`,'Quedará disponible para configurar flujos.',()=>{if(create(cfg.tipo,'Habilitar',el,{Habilitado:'No'},{Habilitado:'Sí'}))set({modal:null});},{dup:pend&&pend.id,goDup:pend&&goReq(pend.id)})});}
+        if(sec==='acciones'&&r.activa)acts.push({label:'Desactivar',color:'var(--bz-error)',go:()=>{const u=usage[r.code]||[];if(u.length)return block(`No se puede desactivar ${r.code}`,`La acción ${r.code} · ${r.nombre} está en uso en ${u.length} resultados de políticas:`,u);
+          confirm(`¿Solicitar desactivar ${r.code}?`,'No está en uso en ninguna versión.',()=>{if(create('Acción','Desactivar',el,{Activa:'Sí'},{Activa:'No'}))set({modal:null});});}});
+        if(sec==='roles'&&r.activo)acts.push({label:'Desactivar',color:'var(--bz-error)',go:()=>{if(r.apr&&approvers.length===1&&approvers[0].code===r.code)return block('No se puede desactivar este rol','Es el único rol aprobador activo. Sin él, ningún cambio podría aprobarse. Activa o crea otro rol aprobador primero.');
+          confirm(`¿Solicitar desactivar ${r.code}?`,'Los usuarios de este grupo perderán sus capacidades al aprobarse.',()=>{if(create('Rol','Desactivar',el,{Activo:'Sí'},{Activo:'No'}))set({modal:null});},{dup:pend&&pend.id,goDup:pend&&goReq(pend.id)});}});}
+      return {cells:cols.map(([k])=>cell(k,r)),pend:pend&&pend.id,goPend:pend&&goReq(pend.id),op:cfg.stateKey&&!r[cfg.stateKey]?.65:1,acts:acts.map(a=>({color:'var(--color-accent-700)',dis:noEdit,...a}))};});
+    // sheet
+    let sh={};
+    if(s.sheet){const f=s.form,isNew=s.sheet.isNew,row=s.sheet.row||{};const err={};
+      const setF=(k,cb)=>e=>this.setState(st=>({form:{...st.form,[k]:cb?e.target.checked:e.target.value}}));
+      const el=s.sheet.ovr?`${f.code} · ${COMBOS.find(c=>c[0]===s.combo)[1]}`:(isNew?null:cfg.el(row));const pend=el&&pending(el);
+      let fields=[];
+      if(sec==='canales'||sec==='productos'){if(!/^\d{1,4}$/.test(f.code||''))err.code='Código de 1 a 4 dígitos';else if(isNew&&DATA[sec].some(r=>r.code===f.code))err.code='Ese código ya existe';if(!(f.nombre||'').trim())err.nombre='Obligatorio';
+        fields=[{isInput:true,k:'code',label:'Código',dis:!isNew,ff:'ui-monospace,Menlo,monospace',ph:'1 a 4 dígitos'},{isInput:true,k:'nombre',label:'Nombre'},{isCheck:true,k:'hab',label:'Habilitado'}];}
+      if(sec==='acciones'){if(!/^[A-Z]$/.test(f.code||''))err.code='Una letra mayúscula';else if(isNew&&DATA.acciones.some(r=>r.code===f.code))err.code='Esa letra ya está en uso';if(!(f.nombre||'').trim())err.nombre='Obligatorio';
+        const o=DATA.acciones.find(a=>String(a.sev)===String(f.sev)&&a.code!==row.code);if(!/^\d{1,3}$/.test(String(f.sev||'')))err.sev='Entero de 1 a 999';else if(o)err.sev=`La severidad ${f.sev} ya está asignada a ${o.code}`;
+        fields=[{isInput:true,k:'code',label:'Código (letra)',dis:!isNew,ff:'ui-monospace,Menlo,monospace'},{isInput:true,k:'nombre',label:'Nombre'},{isInput:true,k:'sev',label:'Severidad (única)',hint:'Mayor severidad prevalece al combinar resultados.'},{isSelect:true,k:'color',label:'Color',opts:Object.keys(COLORS)},{isCheck:true,k:'det',label:'Detiene la evaluación'},{isCheck:true,k:'activa',label:'Activa'}];
+        if(!isNew&&row.activa&&!f.activa&&(usage[row.code]||[]).length)err.activa=`En uso en ${(usage[row.code]||[]).length} resultados: no se puede desactivar`;}
+      if(sec==='catalogos'){if(!/^[A-Z][A-Z0-9_]{2,}$/.test(f.code||''))err.code='Mayúsculas, dígitos y _';if(!(f.nombre||'').trim())err.nombre='Obligatorio';
+        fields=[{isInput:true,k:'code',label:'Código',dis:!isNew,ff:'ui-monospace,Menlo,monospace'},{isInput:true,k:'nombre',label:'Nombre'},{isSelect:true,k:'fuente',label:'Fuente',opts:['Manual','Archivo','Servicio']}];}
+      if(sec==='roles'){if(!/^GG-[A-Z0-9-]+$/.test(f.code||''))err.code='Formato GG-NOMBRE del proveedor de identidad';if(!(f.nombre||'').trim())err.nombre='Obligatorio';
+        if(!isNew&&row.apr&&approvers.length===1&&approvers[0].code===row.code&&(!f.apr||!f.activo))err.activo='Es el único rol aprobador activo: no puede perder «Aprobar» ni desactivarse';
+        fields=[{isInput:true,k:'code',label:'Id de rol (proveedor de identidad)',dis:!isNew,ff:'ui-monospace,Menlo,monospace'},{isInput:true,k:'nombre',label:'Nombre'},{isCheck:true,k:'sol',label:'Puede solicitar / editar'},{isCheck:true,k:'apr',label:'Puede aprobar'},{isCheck:true,k:'aud',label:'Puede auditar'},{isCheck:true,k:'activo',label:'Activo'}];}
+      if(sec==='parametros'){const v=f.valor||'';if(!v.trim())err.valor='Obligatorio';else if(f.code==='DIAS_VENCIMIENTO'&&!(/^\d+$/.test(v)&&+v>=1&&+v<=90))err.valor='Entero entre 1 y 90';else if(f.code==='FORMATO_FECHA'&&!['MM/dd/yyyy','dd/MM/yyyy','yyyy-MM-dd'].includes(v))err.valor='Formatos admitidos: MM/dd/yyyy, dd/MM/yyyy, yyyy-MM-dd';
+        fields=[{isInput:true,k:'code',label:'Parámetro',dis:true,ff:'ui-monospace,Menlo,monospace'},{isInput:true,k:'valor',label:s.sheet.ovr?`Valor para ${COMBOS.find(c=>c[0]===s.combo)[1]}`:'Valor global',ff:'ui-monospace,Menlo,monospace'}];}
+      const shown=s.touched?err:{};
+      sh={kicker:s.sheet.ovr?'Sobrescritura por canal + producto':cfg.tipo,title:isNew?`Nuevo ${cfg.tipo.toLowerCase()}`:(s.sheet.ovr?f.code:cfg.el(row)),comment:s.comment,dup:pend&&pend.id,goDup:pend&&goReq(pend.id),
+        fields:fields.map(x=>({...x,v:x.isCheck?!!f[x.k]:(f[x.k]??''),dis:x.dis||noEdit,ff:x.ff||'inherit',ph:x.ph||'',err:shown[x.k]||'',hint:x.hint||'',on:setF(x.k,x.isCheck)})),
+        submit:()=>{this.setState({touched:true});if(Object.keys(err).length)return;const lab=Object.fromEntries(fields.map(x=>[x.label,x.isCheck?yn(f[x.k]):String(f[x.k]??'')]));const before=isNew?{}:Object.fromEntries(fields.map(x=>[x.label,x.isCheck?yn(row[x.k]):String((s.sheet.ovr?(row.ovr==='—'?row.global:row.ovr):row[x.k])??'')]));
+          if(create(cfg.tipo,isNew?'Alta':(s.sheet.ovr?'Sobrescribir':'Cambio'),isNew?(sec==='acciones'?`${f.code} · ${f.nombre}`:cfg.el(f)):el,before,lab,s.comment))set({sheet:null});}};}
+    // matrix
+    const mxC=DATA.canales,mxP=DATA.productos;
+    const mxRows=mxC.map(c=>({label:`${c.code} ${c.nombre}`,cells:mxP.map(pp=>{const k=`${c.code}-${pp.code}`;const on=MX_ON.includes(k);const el=`${c.code} ${c.nombre} / ${pp.code} ${pp.nombre}`;const pend=pending(el);const dis=noEdit||!c.hab||!pp.hab||!!pend;
+      return {on,dis,op:!c.hab||!pp.hab?.35:1,bg:on?'var(--color-accent)':'var(--color-neutral-200)',bd:on?'var(--color-accent)':'var(--color-neutral-400)',knob:on?'20px':'2px',kb:on?'#fff':'var(--color-surface)',pend:pend&&pend.id,goPend:pend&&goReq(pend.id),
+        title:!c.hab||!pp.hab?'Canal o producto deshabilitado':(pend?'Hay una solicitud pendiente':(on?'Solicitar deshabilitar':'Solicitar habilitar')),
+        toggle:()=>confirm(`¿Solicitar ${on?'deshabilitar':'habilitar'} ${el}?`,on?'Si la combinación tiene una versión vigente, el motor dejará de evaluarla al aprobarse.':'La combinación quedará disponible para abrir borradores en Flujos.',()=>{if(create('Canal–producto',on?'Deshabilitar':'Habilitar',el,{Canal:`${c.code} ${c.nombre}`,Producto:`${pp.code} ${pp.nombre}`,Habilitado:yn(on)},{Canal:`${c.code} ${c.nombre}`,Producto:`${pp.code} ${pp.nombre}`,Habilitado:yn(!on)}))set({modal:null});})};})}));
+    const md=s.modal||{};
+    return {
+      cfg,noEdit,isCP,subTabs:[['canales','Canales',DATA.canales.length],['productos','Productos',DATA.productos.length],['canalproducto','Canal–producto',MX_ON.length]].map(([k,l,n])=>({label:l,n,bd:s.sub===k?'var(--color-accent)':'transparent',color:s.sub===k?'var(--color-accent-700)':'var(--color-neutral-700)',go:()=>set({sub:k,q:'',fs:'',sortK:null,page:1})})),isRoles:sec==='roles',isParams:sec==='parametros',isMatrix:sec==='canalproducto',isTable:sec!=='canalproducto',
+      pGlobal:s.pMode==='global',pCombo:s.pMode==='combo',setGlobal:()=>set({pMode:'global',page:1}),setCombo:()=>set({pMode:'combo',page:1}),combo:s.combo,onCombo:e=>set({combo:e.target.value}),combos:COMBOS.map(([k,l])=>({k,l})),
+      mxCols:mxP.map(pp=>`${pp.code} ${pp.nombre}`),mxRows,
+      q:s.q,onQ:e=>set({q:e.target.value,page:1}),fs:s.fs,onFs:e=>set({fs:e.target.value,page:1}),clearQ:()=>set({q:'',fs:''}),total:list.length,empty:!list.length,
+      heads:cols.map(([k,l],i)=>({label:l,pl:i===0?'18px':'10px',arrow:s.sortK===k?(s.sortD>0?'▲':'▼'):'↕',op:s.sortK===k?1:.3,sort:()=>set({sortK:k,sortD:s.sortK===k?-s.sortD:1})})),
+      pageRows,pg:{from:list.length?(p-1)*size+1:0,to:Math.min(p*size,list.length),prevDis:p<=1,nextDis:p>=pages,prev:()=>set({page:p-1}),next:()=>set({page:p+1}),
+        nums:Array.from({length:pages},(_,i)=>({n:i+1,go:()=>set({page:i+1}),bg:i+1===p?'var(--color-accent)':'transparent',fg:i+1===p?'#fff':'var(--color-text)',bd:i+1===p?'var(--color-accent)':'var(--color-divider)'}))},
+      newRow:()=>openEdit(null,true),sheet:!!s.sheet,closeSheet:()=>set({sheet:null}),sh,onComment:e=>set({comment:e.target.value}),
+      modal:!!s.modal,md:{...md,list:md.list||null,dup:md.dup||'',ok:md.ok||null},closeModal:()=>set({modal:null}),
+    };
+  }
+}
+</script>
+</body>
+</html>

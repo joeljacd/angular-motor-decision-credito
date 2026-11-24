@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:20px;color:var(--color-text);font-family:var(--font-body)">
+  <div>
+    <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Inicio · Bandeja de pendientes</span>
+    <h1 style="margin:2px 0 4px;font-size:40px">Hola, {{ firstName }}</h1>
+    <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:640px;text-wrap:pretty">Ningún cambio se aplica sin la aprobación de una segunda persona. Las solicitudes y borradores sin actividad vencen a los 15 días.</p>
+  </div>
+
+  <sc-if value="{{ hasAlerts }}">
+    <section class="blueprint" style="border-color:var(--bz-error);background:var(--bz-error-bg);padding:16px 18px;display:flex;gap:14px;align-items:flex-start"><i class="corner tl" style="color:var(--bz-error)"></i><i class="corner tr" style="color:var(--bz-error)"></i><i class="corner bl" style="color:var(--bz-error)"></i><i class="corner br" style="color:var(--bz-error)"></i>
+      <svg viewBox="0 0 24 24" width="22" height="22" style="flex:none;fill:none;stroke:var(--bz-error);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font-family:var(--font-heading);font-weight:600;font-size:18px;color:var(--bz-error)">Alertas de integridad</span><sc-for list="{{ alerts }}" as="al"><span style="font-size:14px;color:var(--color-text)">{{ al }}</span></sc-for></div>
+      <button class="btn btn-secondary" onClick="{{ goIntegrity }}" style="height:34px;padding:0 12px;white-space:nowrap;border-color:var(--bz-error);color:var(--bz-error)">Ir a Integridad</button>
+    </section>
+  </sc-if>
+
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;border-bottom:1px solid var(--color-divider);padding:0 8px;overflow-x:auto;overflow-y:hidden">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="2"><button onClick="{{ tb.go }}" style="display:flex;align-items:center;gap:8px;height:46px;padding:0 14px;border:0;border-bottom:2px solid {{ tb.bd }};margin-bottom:-1px;background:transparent;cursor:pointer;font:500 14px var(--font-body);color:{{ tb.color }};white-space:nowrap">{{ tb.label }}<span style="min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;font-size:11px;font-weight:600;background:{{ tb.nBg }};color:{{ tb.nFg }}">{{ tb.n }}</span></button></sc-for>
+    </div>
+    <sc-if value="{{ tabAprobar }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ hasApprove }}" hint-placeholder-val="{{ true }}">
+      <div style="overflow-x:auto"><table class="table" style="min-width:820px">
+        <thead><tr><th style="padding-left:18px">Tipo</th><th>Elemento</th><th>Solicitante</th><th>Fecha</th><th>Vence en</th><th style="text-align:right;padding-right:18px"></th></tr></thead>
+        <tbody><sc-for list="{{ approveRows }}" as="r" hint-placeholder-count="5"><tr>
+          <td style="padding:12px 10px 12px 18px"><span style="font-size:11px;padding:2px 8px;white-space:nowrap;background:{{ r.tBg }};color:{{ r.tFg }}">{{ r.tipo }}</span></td>
+          <td style="padding:12px 10px"><div style="display:flex;flex-direction:column;line-height:1.3"><span style="font-weight:500">{{ r.elemento }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ r.sub }}</span></div></td>
+          <td style="padding:12px 10px;white-space:nowrap">{{ r.solicitante }}</td>
+          <td style="padding:12px 10px;font-size:13px;color:var(--color-neutral-700)">{{ r.fecha }}</td>
+          <td style="padding:12px 10px"><span style="font-size:12px;padding:2px 8px;white-space:nowrap;background:{{ r.vBg }};color:{{ r.vFg }};font-weight:{{ r.vW }}">{{ r.vence }}</span></td>
+          <td style="padding:12px 18px 12px 10px;text-align:right"><button class="btn btn-primary" onClick="{{ r.go }}" style="height:32px;padding:0 14px">Revisar</button></td>
+        </tr></sc-for></tbody>
+      </table></div>
+      </sc-if>
+      <sc-if value="{{ noApprove }}">
+        <div style="padding:56px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><svg viewBox="0 0 24 24" width="32" height="32" style="fill:none;stroke:var(--bz-success);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg><span style="font-family:var(--font-heading);font-weight:600;font-size:22px">No tienes nada pendiente de aprobar</span><span style="font-size:14px;color:var(--color-neutral-700)">Cuando alguien envíe un borrador o una solicitud, aparecerá aquí.</span><button class="btn btn-secondary" onClick="{{ goFlows }}" style="height:36px;padding:0 14px;margin-top:6px">Ver flujos</button></div>
+      </sc-if>
+    </sc-if>
+    <sc-if value="{{ tabMias }}">
+      <sc-if value="{{ hasMine }}">
+      <div style="overflow-x:auto"><table class="table" style="min-width:820px">
+        <thead><tr><th style="padding-left:18px">Tipo</th><th>Elemento</th><th>Fecha</th><th>Vence</th><th>Estado</th><th style="text-align:right;padding-right:18px"></th></tr></thead>
+        <tbody><sc-for list="{{ mineRows }}" as="r"><tr>
+          <td style="padding:12px 10px 12px 18px;vertical-align:top"><span style="font-size:11px;padding:2px 8px;white-space:nowrap;background:{{ r.tBg }};color:{{ r.tFg }}">{{ r.tipo }}</span></td>
+          <td style="padding:12px 10px;vertical-align:top"><div style="display:flex;flex-direction:column;line-height:1.3;gap:2px"><span style="font-weight:500">{{ r.elemento }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ r.sub }}</span><sc-if value="{{ r.rechazo }}"><span style="font-size:12px;padding:6px 8px;margin-top:4px;background:var(--bz-error-bg);color:var(--color-text);border-left:0">Comentario de {{ r.aprobador }}: «{{ r.rechazo }}»</span></sc-if></div></td>
+          <td style="padding:12px 10px;font-size:13px;color:var(--color-neutral-700);vertical-align:top">{{ r.fecha }}</td>
+          <td style="padding:12px 10px;font-size:13px;vertical-align:top;white-space:nowrap">{{ r.venceTxt }}</td>
+          <td style="padding:12px 10px;vertical-align:top"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;white-space:nowrap;background:{{ r.eBg }};color:{{ r.eFg }}"><span style="width:6px;height:6px;background:currentColor"></span>{{ r.estado }}</span></td>
+          <td style="padding:12px 18px 12px 10px;text-align:right;vertical-align:top;white-space:nowrap"><button class="btn btn-ghost" onClick="{{ r.view }}" style="font-size:13px;padding:3px 8px">Ver</button><sc-if value="{{ r.canCancel }}"><button class="btn btn-ghost" disabled="{{ lock }}" onClick="{{ r.cancel }}" style="font-size:13px;padding:3px 8px;color:var(--bz-error)">Cancelar</button></sc-if></td>
+        </tr></sc-for></tbody>
+      </table></div>
+      </sc-if>
+      <sc-if value="{{ noMine }}"><div style="padding:56px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="font-family:var(--font-heading);font-weight:600;font-size:22px">No has creado solicitudes</span><span style="font-size:14px;color:var(--color-neutral-700)">Los cambios a maestros se piden desde cada pantalla de Maestros.</span><button class="btn btn-secondary" onClick="{{ goMasters }}" style="height:36px;padding:0 14px;margin-top:6px">Ir a Maestros</button></div></sc-if>
+    </sc-if>
+  </section>
+</div>
+
+<sc-if value="{{ confirm }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;align-items:start;padding-top:min(12vh,100px)">
+  <div class="dialog blueprint" style="width:min(440px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="dialog-title" style="font-size:24px">¿Cancelar la solicitud {{ confirm.id }}?</div>
+    <div class="dialog-body">«{{ confirm.elemento }}» dejará de estar pendiente de aprobación. El valor vigente no cambia.</div>
+    <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeConfirm }}" style="height:38px;padding:0 16px">Volver</button><button class="btn btn-primary" onClick="{{ doCancel }}" style="height:38px;padding:0 18px;background:var(--bz-error);border-color:var(--bz-error)">Cancelar solicitud</button></div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAMES={mfcevallos:'María Fernanda Cevallos',lmora:'Luis Mora',aperez:'Ana Pérez',cruiz:'Carla Ruiz'};
+const days=d=>{const [a,b,c]=d.split('/').map(Number);return Math.round((new Date(c,b-1,a)-new Date(2026,10,22))/864e5);};
+const EST={Pendiente:['var(--bz-warning-bg)','var(--bz-warning-fg)'],Aprobada:['var(--bz-success-bg)','var(--bz-success)'],Rechazada:['var(--bz-error-bg)','var(--bz-error)'],Cancelada:['var(--color-neutral-200)','var(--color-neutral-700)'],Vencida:['var(--bz-orange-bg)','var(--bz-orange)'],'En edición':['var(--bz-warning-bg)','var(--bz-warning-fg)'],'En revisión':['var(--bz-info-bg)','var(--bz-info)'],'Publicada':['var(--bz-success-bg)','var(--bz-success)']};
+class Component extends DCLogic {
+  state={tab:null,confirm:null};
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const me=P.me||{id:'aperez',nombre:'Ana Pérez',puedeAprobar:true,puedeSolicitar:true},flow=P.flow||{status:'edicion',editors:['aperez'],openedId:'aperez',vence:'05/12/2026'},reqs=P.reqs||[];
+    const tab=s.tab||((P.params&&P.params.tab)||(me.puedeAprobar?'aprobar':'mias'));
+    const myEdit=(flow.editors||[]).includes(me.id)||flow.openedId===me.id;
+    const vb=d=>{const n=days(d);return {vence:n<0?'Vencida':(n===0?'Hoy':`${n} ${n===1?'día':'días'}`),vBg:n<3?'var(--bz-orange-bg)':'var(--color-neutral-200)',vFg:n<3?'var(--bz-orange)':'var(--color-neutral-700)',vW:n<3?600:400};};
+    const approveRows=[];
+    if(flow.status==='revision'&&!myEdit)approveRows.push({tipo:'Borrador',tBg:'var(--color-accent-100)',tFg:'var(--color-accent-800)',elemento:'1 Solicitudes Web / 1 Auto Plan · Versión 2',sub:'Reglas del flujo · en revisión',solicitante:flow.openedBy||'Ana Pérez',fecha:flow.sentAt||'22/11/2026',...vb(flow.vence),go:()=>P.go&&P.go('revision')});
+    reqs.filter(r=>r.estado==='Pendiente'&&r.solicitante!==me.id).forEach(r=>approveRows.push({tipo:'Solicitud',tBg:'var(--color-neutral-200)',tFg:'var(--color-neutral-800)',elemento:r.elemento,sub:`${r.id} · ${r.tipo} · ${r.accion}`,solicitante:NAMES[r.solicitante],fecha:r.fecha,...vb(r.vence),go:()=>P.go&&P.go('solicitudes',{id:r.id})}));
+    const mineRows=[];
+    if(flow.openedId===me.id&&['edicion','revision'].includes(flow.status)){const e=flow.status==='edicion'?'En edición':'En revisión';mineRows.push({tipo:'Borrador',tBg:'var(--color-accent-100)',tFg:'var(--color-accent-800)',elemento:'1 Solicitudes Web / 1 Auto Plan · Versión 2',sub:flow.devolucion&&flow.status==='edicion'?'Devuelto con comentario':'Reglas del flujo',fecha:flow.openedAt,venceTxt:flow.vence,estado:e,eBg:EST[e][0],eFg:EST[e][1],view:()=>P.go&&P.go('editor'),canCancel:false});}
+    reqs.filter(r=>r.solicitante===me.id).forEach(r=>{const e=EST[r.estado]||EST.Pendiente;mineRows.push({tipo:'Solicitud',tBg:'var(--color-neutral-200)',tFg:'var(--color-neutral-800)',elemento:r.elemento,sub:`${r.id} · ${r.tipo} · ${r.accion}${r.aprobador&&r.estado==='Aprobada'?' · aprobada por '+r.aprobador:''}`,fecha:r.fecha,venceTxt:r.estado==='Pendiente'?`${r.vence} (${vb(r.vence).vence})`:'—',
+      estado:r.estado==='Rechazada'?'Rechazada':r.estado,eBg:e[0],eFg:e[1],rechazo:r.rechazo||'',aprobador:r.aprobador||'',canCancel:r.estado==='Pendiente',view:()=>P.go&&P.go('solicitudes',{id:r.id}),cancel:()=>set({confirm:r})});});
+    const tabs=[];
+    if(me.puedeAprobar)tabs.push({k:'aprobar',label:'Puedo aprobar',n:approveRows.length});
+    tabs.push({k:'mias',label:'Mis solicitudes',n:mineRows.length});
+    return {
+      firstName:(me.nombre||'').split(' ')[0],alerts:P.alerts||[],hasAlerts:(P.alerts||[]).length>0,goIntegrity:()=>P.go&&P.go('integridad'),
+      tabs:tabs.map(t=>({label:t.label,n:t.n,bd:tab===t.k?'var(--color-accent)':'transparent',color:tab===t.k?'var(--color-accent-700)':'var(--color-neutral-700)',nBg:tab===t.k?'var(--color-accent)':'var(--color-neutral-200)',nFg:tab===t.k?'#fff':'var(--color-neutral-700)',go:()=>set({tab:t.k})})),
+      tabAprobar:tab==='aprobar'&&me.puedeAprobar,tabMias:tab==='mias'||!me.puedeAprobar,approveRows,hasApprove:approveRows.length>0,noApprove:!approveRows.length,
+      mineRows,hasMine:mineRows.length>0,noMine:!mineRows.length,lock:!!P.lock,
+      goFlows:()=>P.go&&P.go('flujos'),goMasters:()=>P.go&&P.go('m-canales'),
+      confirm:s.confirm,closeConfirm:()=>set({confirm:null}),
+      doCancel:()=>{const id=s.confirm.id;P.setReqs&&P.setReqs(rs=>rs.map(r=>r.id===id?{...r,estado:'Cancelada'}:r));set({confirm:null});P.toast&&P.toast(`Solicitud ${id} cancelada`);},
+    };
+  }
+}
+</script>
+</body>
+</html>

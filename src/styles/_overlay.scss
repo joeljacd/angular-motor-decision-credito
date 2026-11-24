@@ -1,0 +1,9 @@
+@use '@angular/cdk' as cdk;
+@include cdk.overlay();
+
+// Modales (ModalService → CDK Dialog)
+.ui-modal-backdrop {
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.ui-modal-panel { max-width: 100vw; }
+.cdk-global-overlay-wrapper { overflow-y: auto; padding: 0 16px; }

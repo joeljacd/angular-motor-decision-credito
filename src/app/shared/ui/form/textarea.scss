@@ -1,0 +1,5 @@
+@use './control';
+
+:host { display: block; }
+.box { @include control.ui-box; }
+textarea { @include control.ui-native; resize: vertical; min-height: 90px; line-height: 1.4; }

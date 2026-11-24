@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px">
+    <div style="flex:1;min-width:260px">
+      <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Seguridad · Gestión de accesos</span>
+      <h1 style="margin:2px 0 4px;font-size:40px">Usuarios</h1>
+      <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:620px">Usuarios de Active Directory habilitados en el portal. El perfil asignado define su menú y sus acciones.</p>
+    </div>
+    <button class="btn btn-primary blueprint" disabled="{{ lock }}" onClick="{{ openAdd }}" style="height:40px;padding:0 16px;white-space:nowrap"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>+ Agregar usuario</button>
+  </div>
+
+  <div class="blueprint" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--color-surface)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <sc-for list="{{ stats }}" as="st" hint-placeholder-count="3"><div style="padding:14px 20px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-right:1px solid var(--color-divider)"><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ st.l }}</span><span style="font-family:var(--font-heading);font-weight:600;font-size:32px;line-height:1;color:{{ st.c }}">{{ st.n }}</span></div></sc-for>
+  </div>
+
+  <section class="blueprint" style="background:var(--color-surface);padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="field"><label>Usuario o nombre</label><input class="input" placeholder="Ej. aperez o Ana" value="{{ fd.q }}" onChange="{{ onQ }}" onKeyDown="{{ onKey }}"></div>
+    <div class="field"><label>Perfil</label><select class="input" value="{{ fd.perfil }}" onChange="{{ onPerfil }}"><option value="">Todos los perfiles</option><sc-for list="{{ profOpts }}" as="p"><option value="{{ p.id }}">{{ p.nombre }}</option></sc-for></select></div>
+    <div class="field"><label>Estado</label><select class="input" value="{{ fd.estado }}" onChange="{{ onEstado }}"><option value="">Todos</option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-secondary" onClick="{{ clear }}" style="height:36px;flex:1;white-space:nowrap">Limpiar</button><button class="btn btn-primary" onClick="{{ apply }}" style="height:36px;flex:1;white-space:nowrap">Buscar</button></div>
+  </section>
+
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--color-divider)"><span style="font-size:13px;color:var(--color-neutral-700)">{{ total }} registros</span><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-neutral-700)">Filas<select class="input" value="{{ size }}" onChange="{{ onSize }}" style="width:72px;min-height:32px;padding:4px 8px"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select></div></div>
+    <div style="overflow-x:auto"><table class="table" style="min-width:820px">
+      <thead><tr><th style="padding-left:18px">Usuario AD</th><th>Nombre</th><th>Perfil</th><th>Estado</th><th>Último acceso</th><th style="text-align:right;padding-right:18px">Acciones</th></tr></thead>
+      <tbody><sc-for list="{{ rows }}" as="u" hint-placeholder-count="8"><tr style="opacity:{{ u.op }}">
+        <td style="padding:10px 10px 10px 18px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--color-accent-700)">{{ u.usuario }}</td>
+        <td style="padding:10px"><div style="display:flex;align-items:center;gap:10px"><span style="width:28px;height:28px;flex:none;display:grid;place-items:center;border:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:600;font-size:12px;color:var(--color-accent-700)">{{ u.ini }}</span><div style="display:flex;flex-direction:column;line-height:1.25"><span style="font-weight:500">{{ u.nombre }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ u.correo }}</span></div><sc-if value="{{ u.isMe }}"><span style="font-size:10px;padding:1px 6px;background:var(--color-accent-100);color:var(--color-accent-800)">Tú</span></sc-if></div></td>
+        <td style="padding:10px"><span style="font-size:12px;padding:2px 8px;white-space:nowrap;background:{{ u.pBg }};color:{{ u.pFg }}">{{ u.perfilNombre }}</span></td>
+        <td style="padding:10px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;background:{{ u.eBg }};color:{{ u.eFg }}"><span style="width:6px;height:6px;background:currentColor"></span>{{ u.estado }}</span></td>
+        <td style="padding:10px;font-size:13px;color:var(--color-neutral-700);white-space:nowrap">{{ u.acceso }}</td>
+        <td style="padding:10px 18px 10px 10px"><div style="display:flex;justify-content:flex-end;gap:4px">
+          <button class="btn btn-ghost" disabled="{{ lock }}" onClick="{{ u.edit }}" style="font-size:13px;padding:3px 8px">Editar</button>
+          <button class="btn btn-ghost" disabled="{{ lock }}" onClick="{{ u.toggle }}" style="font-size:13px;padding:3px 8px;white-space:nowrap;color:{{ u.tColor }}">{{ u.tLabel }}</button>
+        </div></td>
+      </tr></sc-for></tbody>
+    </table></div>
+    <sc-if value="{{ empty }}"><div style="padding:40px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="font-family:var(--font-heading);font-weight:600;font-size:20px">Sin resultados</span><button class="btn btn-secondary" onClick="{{ clear }}" style="height:34px;padding:0 12px">Limpiar filtros</button></div></sc-if>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;border-top:1px solid var(--color-divider)">
+      <span style="font-size:13px;color:var(--color-neutral-700)">Mostrando {{ pg.from }}–{{ pg.to }} de {{ total }}</span>
+      <div style="display:flex;gap:4px"><button class="btn btn-secondary" disabled="{{ pg.prevDis }}" onClick="{{ pg.prev }}" style="height:30px;padding:0 10px">‹</button><sc-for list="{{ pg.nums }}" as="n"><button class="btn btn-secondary" onClick="{{ n.go }}" style="min-width:30px;height:30px;padding:0 8px;background:{{ n.bg }};color:{{ n.fg }};border-color:{{ n.bd }}">{{ n.n }}</button></sc-for><button class="btn btn-secondary" disabled="{{ pg.nextDis }}" onClick="{{ pg.next }}" style="height:30px;padding:0 10px">›</button></div>
+    </div>
+  </section>
+</div>
+
+<sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;overflow-y:auto;align-items:start;padding-top:min(10vh,80px)">
+  <div class="dialog blueprint" style="width:min(520px,100%);background:var(--color-surface);gap:16px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <sc-if value="{{ mAdd }}">
+      <div><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Nuevo registro</span><div class="dialog-title" style="font-size:26px">Agregar usuario</div></div>
+      <div style="font-size:13px;color:var(--bz-info);background:var(--bz-info-bg);padding:10px 12px">El usuario se autentica con Active Directory; no se genera contraseña. Valida el usuario de red para traer sus datos.</div>
+      <div class="field"><label>Usuario de red (AD)</label><div style="display:flex;gap:8px"><input class="input" placeholder="Ej. amolina" value="{{ f.usuario }}" onChange="{{ onUsuario }}" style="font-family:ui-monospace,Menlo,monospace"><button class="btn btn-secondary" disabled="{{ f.validating }}" onClick="{{ validate }}" style="flex:none;height:36px;padding:0 14px;white-space:nowrap">{{ adLabel }}</button></div>
+        <sc-if value="{{ err.usuario }}"><div style="font-size:12px;color:var(--bz-error);margin-top:5px">{{ err.usuario }}</div></sc-if>
+        <sc-if value="{{ adHint }}"><div style="font-size:12px;color:var(--color-neutral-700);margin-top:5px">Directorio de prueba: amolina, ctapia, egarcia, rnaranjo, sloor</div></sc-if></div>
+      <sc-if value="{{ f.validated }}"><div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--bz-success);background:var(--bz-success-bg)"><span style="width:36px;height:36px;display:grid;place-items:center;background:var(--color-accent);color:#fff;font-family:var(--font-heading);font-weight:600">{{ fIni }}</span><div style="flex:1;display:flex;flex-direction:column;line-height:1.3"><span style="font-weight:500">{{ f.nombre }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ f.correo }} · {{ f.area }}</span></div><span style="font-size:11px;font-weight:600;color:var(--bz-success)">Validado</span></div></sc-if>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+        <div class="field"><label>Perfil</label><select class="input" value="{{ f.perfil }}" onChange="{{ onPerfilF }}"><option value="">Selecciona un perfil</option><sc-for list="{{ activeProfs }}" as="p"><option value="{{ p.id }}">{{ p.nombre }}</option></sc-for></select><sc-if value="{{ err.perfil }}"><div style="font-size:12px;color:var(--bz-error);margin-top:5px">{{ err.perfil }}</div></sc-if></div>
+        <div class="field"><label>Estado</label><div class="seg" style="display:flex"><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ fAct }}" onChange="{{ setAct }}">Activo</label><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ fIn }}" onChange="{{ setIn }}">Inactivo</label></div></div>
+      </div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ close }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ saveAdd }}" style="height:38px;padding:0 18px">Agregar usuario</button></div>
+    </sc-if>
+    <sc-if value="{{ mEdit }}">
+      <div><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Editar registro</span><div class="dialog-title" style="font-size:26px">Editar usuario</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--color-divider)"><div style="padding:10px 14px;border-right:1px solid var(--color-divider)"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">Usuario AD</div><div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--color-accent-800)">{{ f.usuario }}</div></div><div style="padding:10px 14px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">Perfil</div><div style="font-size:13px">{{ fPerfilNombre }}</div></div></div>
+      <div class="field"><label>Nombre completo</label><input class="input" value="{{ f.nombre }}" onChange="{{ onNombre }}"><sc-if value="{{ err.nombre }}"><div style="font-size:12px;color:var(--bz-error);margin-top:5px">{{ err.nombre }}</div></sc-if></div>
+      <div class="field"><label>Estado</label><div class="seg" style="display:flex"><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ fAct }}" onChange="{{ setAct }}">Activo</label><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ fIn }}" onChange="{{ setIn }}">Inactivo</label></div><sc-if value="{{ err.estado }}"><div style="font-size:12px;color:var(--bz-error);margin-top:5px">{{ err.estado }}</div></sc-if></div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ close }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ saveEdit }}" style="height:38px;padding:0 18px">Guardar cambios</button></div>
+    </sc-if>
+    <sc-if value="{{ mToggle }}">
+      <div class="dialog-title" style="font-size:24px">{{ tg.title }}</div>
+      <div class="dialog-body">{{ tg.body }}</div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ close }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ tg.ok }}" style="height:38px;padding:0 18px;background:{{ tg.c }};border-color:{{ tg.c }}">{{ tg.cta }}</button></div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DIR={amolina:['Alejandra Molina','Riesgos'],ctapia:['Cristina Tapia','Banca Personas'],egarcia:['Eduardo García','Crédito Pyme'],rnaranjo:['Roberto Naranjo','Cobranzas'],sloor:['Sebastián Loor','Tecnología']};
+const E0={q:'',perfil:'',estado:''};
+const ini=n=>{const p=n.trim().split(/\s+/);return ((p[0]||'?')[0]+(p.length>1?p[p.length-1][0]:'')).toUpperCase();};
+const norm=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+class Component extends DCLogic {
+  state={fd:{...E0},f0:{...E0},page:1,size:10,modal:null,f:{},err:{},target:null};
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const users=P.users||[],profiles=P.profiles||[],me=P.me||{id:'mfcevallos'};
+    const pn=id=>(profiles.find(p=>p.id===+id)||{nombre:'—'});
+    const q=norm(s.f0.q.trim());
+    const list=users.filter(u=>(!q||norm(u.usuario).includes(q)||norm(u.nombre).includes(q))&&(!s.f0.perfil||u.perfil===+s.f0.perfil)&&(!s.f0.estado||u.estado===s.f0.estado));
+    const pages=Math.max(1,Math.ceil(list.length/s.size)),p=Math.min(s.page,pages);
+    const rows=list.slice((p-1)*s.size,p*s.size).map(u=>{const act=u.estado==='Activo';const pr=pn(u.perfil);return {...u,ini:ini(u.nombre),isMe:u.usuario===me.id,perfilNombre:pr.nombre,
+      pBg:pr.estado==='Activo'?'var(--color-accent-100)':'var(--color-neutral-200)',pFg:pr.estado==='Activo'?'var(--color-accent-800)':'var(--color-neutral-700)',
+      eBg:act?'var(--bz-success-bg)':'var(--color-neutral-200)',eFg:act?'var(--bz-success)':'var(--color-neutral-700)',op:act?1:.62,tLabel:act?'Inactivar':'Activar',tColor:act?'var(--bz-error)':'var(--bz-success)',
+      edit:()=>set({modal:'edit',target:u.usuario,f:{usuario:u.usuario,nombre:u.nombre,estado:u.estado,perfil:u.perfil},err:{}}),
+      toggle:()=>{if(u.usuario===me.id&&act){P.toast&&P.toast('No puedes inactivar tu propio usuario');return;}set({modal:'toggle',target:u.usuario});}};});
+    const setF=o=>this.setState(st=>({f:{...st.f,...o},err:{}}));
+    const upd=(id,o)=>P.setUsers&&P.setUsers(us=>us.map(x=>x.usuario===id?{...x,...o}:x));
+    const t=users.find(x=>x.usuario===s.target)||{};const tAct=t.estado==='Activo';
+    const validate=()=>{const u=norm((s.f.usuario||'').trim());if(!u)return set({err:{usuario:'Ingresa el usuario de red.'}});if(users.some(x=>x.usuario===u))return set({err:{usuario:'Este usuario ya está registrado en el portal.'}});
+      setF({validating:true,validated:false});setTimeout(()=>{const d=DIR[u];if(d)this.setState(st=>({f:{...st.f,usuario:u,validating:false,validated:true,nombre:d[0],area:d[1],correo:u+'@bancoamazonas.ec'}}));else this.setState(st=>({f:{...st.f,validating:false},err:{usuario:'No se encontró el usuario en el directorio activo.'}}));},700);};
+    const active=users.filter(u=>u.estado==='Activo').length;
+    return {
+      lock:!!P.lock,stats:[{l:'Total',n:users.length,c:'var(--color-text)'},{l:'Activos',n:active,c:'var(--bz-success)'},{l:'Inactivos',n:users.length-active,c:'var(--color-neutral-600)'}],
+      fd:s.fd,onQ:e=>set({fd:{...s.fd,q:e.target.value}}),onPerfil:e=>set({fd:{...s.fd,perfil:e.target.value}}),onEstado:e=>set({fd:{...s.fd,estado:e.target.value}}),
+      apply:()=>set({f0:{...s.fd},page:1}),clear:()=>set({fd:{...E0},f0:{...E0},page:1}),onKey:e=>{if(e.key==='Enter')set({f0:{...s.fd},page:1});},
+      profOpts:profiles.map(x=>({id:String(x.id),nombre:x.nombre})),activeProfs:profiles.filter(x=>x.estado==='Activo').map(x=>({id:String(x.id),nombre:x.nombre})),
+      size:String(s.size),onSize:e=>set({size:+e.target.value,page:1}),total:list.length,rows,empty:!list.length,
+      pg:{from:list.length?(p-1)*s.size+1:0,to:Math.min(p*s.size,list.length),prevDis:p<=1,nextDis:p>=pages,prev:()=>set({page:p-1}),next:()=>set({page:p+1}),
+        nums:Array.from({length:pages},(_,i)=>({n:i+1,go:()=>set({page:i+1}),bg:i+1===p?'var(--color-accent)':'transparent',fg:i+1===p?'#fff':'var(--color-text)',bd:i+1===p?'var(--color-accent)':'var(--color-divider)'}))},
+      modal:!!s.modal,mAdd:s.modal==='add',mEdit:s.modal==='edit',mToggle:s.modal==='toggle',close:()=>set({modal:null}),
+      openAdd:()=>set({modal:'add',f:{usuario:'',estado:'Activo',perfil:'',validated:false},err:{}}),
+      f:s.f,err:s.err,fIni:s.f.nombre?ini(s.f.nombre):'',fAct:s.f.estado==='Activo',fIn:s.f.estado==='Inactivo',setAct:()=>setF({estado:'Activo'}),setIn:()=>setF({estado:'Inactivo'}),
+      fPerfilNombre:pn(s.f.perfil).nombre,adLabel:s.f.validating?'Validando…':(s.f.validated?'Validado ✓':'Validar en AD'),adHint:!s.f.validated&&!s.err.usuario,validate,
+      onUsuario:e=>setF({usuario:e.target.value,validated:false}),onPerfilF:e=>setF({perfil:e.target.value}),onNombre:e=>setF({nombre:e.target.value}),
+      saveAdd:()=>{if(!s.f.validated)return set({err:{usuario:'Valida el usuario en Active Directory antes de continuar.'}});if(!s.f.perfil)return set({err:{perfil:'Selecciona un perfil.'}});
+        P.setUsers&&P.setUsers(us=>[{id:s.f.usuario,usuario:s.f.usuario,nombre:s.f.nombre,correo:s.f.correo,perfil:+s.f.perfil,estado:s.f.estado,acceso:'—',cargo:s.f.area},...us]);set({modal:null,f0:{...E0},fd:{...E0},page:1});P.toast&&P.toast(`Usuario ${s.f.usuario} agregado`);},
+      saveEdit:()=>{if(!(s.f.nombre||'').trim())return set({err:{nombre:'El nombre es obligatorio.'}});if(s.target===me.id&&s.f.estado==='Inactivo')return set({err:{estado:'No puedes inactivar tu propio usuario.'}});
+        upd(s.target,{nombre:s.f.nombre.trim(),estado:s.f.estado});set({modal:null});P.toast&&P.toast('Cambios guardados');},
+      tg:{title:tAct?'¿Inactivar usuario?':'¿Activar usuario?',cta:tAct?'Inactivar':'Activar',c:tAct?'var(--bz-error)':'var(--bz-success)',
+        body:tAct?`${t.nombre} (${t.usuario}) perderá el acceso al portal. Su cuenta de Active Directory no se modifica.`:`${t.nombre} (${t.usuario}) recuperará el acceso con su perfil ${pn(t.perfil).nombre}.`,
+        ok:()=>{upd(t.usuario,{estado:tAct?'Inactivo':'Activo'});set({modal:null});P.toast&&P.toast(`Usuario ${t.usuario} ${tAct?'inactivado':'activado'}`);}},
+    };
+  }
+}
+</script>
+</body>
+</html>

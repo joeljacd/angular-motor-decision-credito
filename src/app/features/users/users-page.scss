@@ -1,0 +1,12 @@
+:host { display: flex; flex-direction: column; gap: 20px; animation: ui-in 0.3s ease both; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.count { font-size: 12px; color: var(--color-neutral-700); }
+.size { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-neutral-700); }
+.mono { font-family: var(--font-mono); font-size: 13px; }
+.person { display: flex; align-items: center; gap: 10px; }
+.names { display: flex; flex-direction: column; line-height: 1.25; }
+.sub { font-size: 12px; color: var(--color-neutral-700); }
+tr.inactive td { opacity: 0.62; }
+tr.inactive td:last-child { opacity: 1; }
+.nowrap { white-space: nowrap; }
+.row-actions { display: flex; gap: 4px; }

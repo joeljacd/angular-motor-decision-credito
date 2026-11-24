@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px">
+    <div style="flex:1;min-width:260px">
+      <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Seguridad · Gestión de accesos</span>
+      <h1 style="margin:2px 0 4px;font-size:40px">Perfiles</h1>
+      <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:640px">Las opciones de cada perfil son las del menú real y sus capacidades. Los cambios aplican al instante a los usuarios con ese perfil.</p>
+    </div>
+    <button class="btn btn-primary blueprint" disabled="{{ lock }}" onClick="{{ openAdd }}" style="height:40px;padding:0 16px;white-space:nowrap"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>+ Agregar perfil</button>
+  </div>
+
+  <section class="blueprint" style="background:var(--color-surface);padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="field"><label>Código o nombre</label><input class="input" placeholder="Ej. PRF-002 o Aprobador" value="{{ fd.q }}" onChange="{{ onQ }}" onKeyDown="{{ onKey }}"></div>
+    <div class="field"><label>Incluye sección</label><select class="input" value="{{ fd.grupo }}" onChange="{{ onGrupo }}"><option value="">Cualquiera</option><sc-for list="{{ grupos }}" as="g"><option value="{{ g }}">{{ g }}</option></sc-for></select></div>
+    <div class="field"><label>Estado</label><select class="input" value="{{ fd.estado }}" onChange="{{ onEstado }}"><option value="">Todos</option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-secondary" onClick="{{ clear }}" style="height:36px;flex:1;white-space:nowrap">Limpiar</button><button class="btn btn-primary" onClick="{{ apply }}" style="height:36px;flex:1;white-space:nowrap">Buscar</button></div>
+  </section>
+
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="overflow-x:auto"><table class="table" style="min-width:900px">
+      <thead><tr><th style="padding-left:18px">Código</th><th>Perfil</th><th>Capacidades</th><th>Opciones del menú</th><th>Usuarios</th><th>Estado</th><th style="text-align:right;padding-right:18px">Acciones</th></tr></thead>
+      <tbody><sc-for list="{{ rows }}" as="p" hint-placeholder-count="5"><tr style="opacity:{{ p.op }}">
+        <td style="padding:11px 10px 11px 18px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--color-accent-700);white-space:nowrap">{{ p.codigo }}</td>
+        <td style="padding:11px 10px;max-width:280px"><div style="display:flex;flex-direction:column;line-height:1.3"><span style="font-weight:500">{{ p.nombre }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ p.desc }}</span></div></td>
+        <td style="padding:11px 10px"><div style="display:flex;flex-wrap:wrap;gap:4px"><sc-for list="{{ p.caps }}" as="c"><span style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;background:var(--color-neutral-200);color:var(--color-neutral-800)">{{ c }}</span></sc-for></div></td>
+        <td style="padding:11px 10px"><div style="display:flex;align-items:center;gap:10px"><div style="display:flex;gap:2px"><sc-for list="{{ p.ticks }}" as="tk"><span title="{{ tk.l }}" style="width:5px;height:16px;background:{{ tk.c }}"></span></sc-for></div><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-neutral-700)">{{ p.nScr }}/{{ totalScr }}</span></div></td>
+        <td style="padding:11px 10px;font-family:var(--font-heading);font-weight:600;font-size:17px">{{ p.nUsers }}</td>
+        <td style="padding:11px 10px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;background:{{ p.eBg }};color:{{ p.eFg }}"><span style="width:6px;height:6px;background:currentColor"></span>{{ p.estado }}</span></td>
+        <td style="padding:11px 18px 11px 10px"><div style="display:flex;justify-content:flex-end;gap:4px"><button class="btn btn-ghost" disabled="{{ lock }}" onClick="{{ p.edit }}" style="font-size:13px;padding:3px 8px">Editar</button><button class="btn btn-ghost" disabled="{{ lock }}" onClick="{{ p.toggle }}" style="font-size:13px;padding:3px 8px;color:{{ p.tColor }}">{{ p.tLabel }}</button></div></td>
+      </tr></sc-for></tbody>
+    </table></div>
+    <sc-if value="{{ empty }}"><div style="padding:40px 20px;text-align:center;font-size:14px;color:var(--color-neutral-700)">Sin resultados.</div></sc-if>
+    <div style="padding:10px 18px;border-top:1px solid var(--color-divider);font-size:13px;color:var(--color-neutral-700)">Mostrando {{ total }} perfiles</div>
+  </section>
+</div>
+
+<sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;overflow-y:auto;align-items:start;padding-top:min(6vh,48px)">
+  <div class="dialog blueprint" style="width:min(940px,100%);background:var(--color-surface);gap:16px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <sc-if value="{{ mForm }}">
+      <div style="display:flex;align-items:flex-start;gap:12px"><div style="flex:1"><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">{{ kicker }}</span><div class="dialog-title" style="font-size:26px">{{ title }}</div></div><button class="btn btn-ghost btn-icon" title="Cerrar" onClick="{{ close }}" style="color:var(--color-text)"><svg viewBox="0 0 24 24" width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+        <div class="field"><label>Nombre del perfil</label><input class="input" value="{{ f.nombre }}" onChange="{{ onNombre }}"><sc-if value="{{ err.nombre }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ err.nombre }}</div></sc-if></div>
+        <div class="field"><label>Descripción</label><input class="input" value="{{ f.desc }}" onChange="{{ onDesc }}"></div>
+        <div class="field"><label>Estado</label><div class="seg" style="display:flex"><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ fAct }}" onChange="{{ setAct }}">Activo</label><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ fIn }}" onChange="{{ setIn }}">Inactivo</label></div><sc-if value="{{ err.estado }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ err.estado }}</div></sc-if></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px"><div style="display:flex;align-items:baseline;gap:10px"><h4 style="margin:0">Opciones del sistema</h4><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-neutral-700);white-space:nowrap">{{ nAssigned }}/{{ totalOpts }} asignadas</span></div>
+        <sc-if value="{{ affects }}"><span style="font-size:12px;padding:3px 8px;background:var(--bz-info-bg);color:var(--bz-info)">{{ affects }}</span></sc-if></div>
+      <sc-if value="{{ err.opts }}"><div style="font-size:12px;color:var(--bz-error);margin-top:-8px">{{ err.opts }}</div></sc-if>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+        <div style="border:1px solid var(--color-divider);display:flex;flex-direction:column;min-width:0">
+          <div style="padding:10px 12px;border-bottom:1px solid var(--color-divider);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700);min-height:42px;display:flex;align-items:center">Disponibles · {{ nAvail }}</div>
+          <div style="height:340px;overflow-y:auto;padding:4px 0">
+            <sc-for list="{{ avail }}" as="g"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px"><span style="font-family:var(--font-heading);font-weight:600;font-size:14px;color:var(--color-accent-800)">{{ g.m }}</span><button class="btn btn-ghost" onClick="{{ g.all }}" style="font-size:12px;padding:2px 6px;white-space:nowrap;flex:none">Añadir todo</button></div>
+              <sc-for list="{{ g.items }}" as="it"><button onClick="{{ it.act }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px 7px 22px;border:0;background:transparent;font:inherit;font-size:14px;color:var(--color-text);cursor:pointer;text-align:left" style-hover="background:var(--color-accent-100)"><span style="display:flex;flex-direction:column"><span>{{ it.label }}</span><span style="font-size:11px;color:var(--color-neutral-700)">{{ it.hint }}</span></span><span style="font-size:16px;color:var(--color-accent-700)">+</span></button></sc-for>
+            </sc-for>
+            <sc-if value="{{ availEmpty }}"><div style="padding:40px 16px;text-align:center;font-size:13px;color:var(--color-neutral-700)">Todas las opciones están asignadas.</div></sc-if>
+          </div>
+        </div>
+        <div style="border:1px solid var(--color-accent-400);display:flex;flex-direction:column;min-width:0;background:color-mix(in srgb,var(--color-accent-100) 45%,transparent)">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--color-accent-300);min-height:42px"><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-800);flex:1">Asignadas · {{ nAssigned }}</span><button class="btn btn-ghost" onClick="{{ removeAll }}" style="font-size:12px;padding:2px 6px;white-space:nowrap;flex:none">Quitar todo</button></div>
+          <div style="height:340px;overflow-y:auto;padding:4px 0">
+            <sc-for list="{{ assigned }}" as="g"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px"><span style="font-family:var(--font-heading);font-weight:600;font-size:14px;color:var(--color-accent-800)">{{ g.m }}</span><button class="btn btn-ghost" onClick="{{ g.all }}" style="font-size:12px;padding:2px 6px;white-space:nowrap;flex:none">Quitar sección</button></div>
+              <sc-for list="{{ g.items }}" as="it"><button onClick="{{ it.act }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px 7px 22px;border:0;background:transparent;font:inherit;font-size:14px;color:var(--color-text);cursor:pointer;text-align:left;animation:bzIn .18s ease both" style-hover="background:var(--color-accent-200)"><span style="display:flex;flex-direction:column"><span>✓ {{ it.label }}</span><span style="font-size:11px;color:var(--color-neutral-700)">{{ it.hint }}</span></span><span style="font-size:16px;color:var(--color-neutral-700)">−</span></button></sc-for>
+            </sc-for>
+            <sc-if value="{{ assignedEmpty }}"><div style="padding:40px 16px;text-align:center;font-size:13px;color:var(--color-neutral-700)">Elige opciones de la lista de disponibles.</div></sc-if>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ close }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ save }}" style="height:38px;padding:0 18px">{{ cta }}</button></div>
+    </sc-if>
+    <sc-if value="{{ mToggle }}">
+      <div class="dialog-title" style="font-size:24px">{{ tg.title }}</div>
+      <div class="dialog-body">{{ tg.body }}</div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ close }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ tg.ok }}" style="height:38px;padding:0 18px;background:{{ tg.c }};border-color:{{ tg.c }}">{{ tg.cta }}</button></div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const GROUPS=[
+ {m:'Capacidades',i:[['cap.solicitar','Solicitar y editar','Editar borradores y crear solicitudes'],['cap.aprobar','Aprobar y publicar','Nunca sobre lo propio (cuatro ojos)']]},
+ {m:'Inicio',i:[['inicio','Inicio','Bandeja de pendientes']]},
+ {m:'Motor',i:[['flujos','Flujos','Versiones, editor y revisión'],['solicitudes','Solicitudes de cambio','Lista y detalle']]},
+ {m:'Maestros',i:[['m-canales','Canales y productos','Incluye la matriz canal–producto'],['m-acciones','Acciones',''],['m-parametros','Parámetros',''],['m-catalogos','Catálogos',''],['m-roles','Roles','']]},
+ {m:'Auditoría',i:[['historial','Historial',''],['integridad','Integridad','']]},
+ {m:'Seguridad',i:[['usuarios','Usuarios',''],['perfiles','Perfiles','']]}];
+const ALL=GROUPS.flatMap(g=>g.i.map(x=>x[0]));const SCR=ALL.filter(x=>!x.startsWith('cap.'));
+const E0={q:'',grupo:'',estado:''};
+const norm=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const capsOf=o=>[o.includes('cap.solicitar')&&'Solicitar',o.includes('cap.aprobar')&&'Aprobar',(o.includes('historial')||o.includes('integridad'))&&'Auditar'].filter(Boolean);
+class Component extends DCLogic {
+  state={fd:{...E0},f0:{...E0},modal:null,f:{},err:{},target:null};
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const profiles=P.profiles||[],users=P.users||[],me=P.me||{};
+    const q=norm(s.f0.q.trim());const gIds=s.f0.grupo?(GROUPS.find(g=>g.m===s.f0.grupo)||{i:[]}).i.map(x=>x[0]):null;
+    const list=profiles.filter(p=>(!q||norm(p.nombre).includes(q)||norm(p.codigo).includes(q))&&(!s.f0.estado||p.estado===s.f0.estado)&&(!gIds||p.opts.some(o=>gIds.includes(o))));
+    const rows=list.map(p=>{const act=p.estado==='Activo';const c=capsOf(p.opts);return {...p,caps:c.length?c:['Solo lectura'],nScr:p.opts.filter(o=>!o.startsWith('cap.')).length,nUsers:users.filter(u=>u.perfil===p.id).length,
+      ticks:SCR.map(id=>({l:id,c:p.opts.includes(id)?'var(--color-accent)':'var(--color-neutral-300)'})),eBg:act?'var(--bz-success-bg)':'var(--color-neutral-200)',eFg:act?'var(--bz-success)':'var(--color-neutral-700)',op:act?1:.62,
+      tLabel:act?'Inactivar':'Activar',tColor:act?'var(--bz-error)':'var(--bz-success)',
+      edit:()=>set({modal:'form',target:p.id,f:{nombre:p.nombre,desc:p.desc,estado:p.estado,opts:[...p.opts]},err:{}}),
+      toggle:()=>{if(p.id===1&&act){P.toast&&P.toast('El perfil Administrador no se puede inactivar');return;}set({modal:'toggle',target:p.id});}};});
+    const f=s.f,opts=f.opts||[];const setF=o=>this.setState(st=>({f:{...st.f,...o},err:{}}));
+    const grp=asg=>GROUPS.map(g=>{const items=g.i.filter(([id])=>asg?opts.includes(id):!opts.includes(id));return {m:g.m,items:items.map(([id,l,h])=>({label:l,hint:h,act:()=>setF({opts:asg?opts.filter(o=>o!==id):[...opts,id]})})),
+      all:()=>{const ids=items.map(x=>x[0]);setF({opts:asg?opts.filter(o=>!ids.includes(o)):[...opts,...ids]});}};}).filter(g=>g.items.length);
+    const avail=s.modal==='form'?grp(false):[],assigned=s.modal==='form'?grp(true):[];
+    const editing=s.modal==='form'&&s.target;const nU=editing?users.filter(u=>u.perfil===s.target&&u.estado==='Activo').length:0;
+    const t=profiles.find(p=>p.id===s.target)||{};const tAct=t.estado==='Activo';const tUsers=users.filter(u=>u.perfil===t.id&&u.estado==='Activo').length;
+    return {
+      lock:!!P.lock,fd:s.fd,onQ:e=>set({fd:{...s.fd,q:e.target.value}}),onGrupo:e=>set({fd:{...s.fd,grupo:e.target.value}}),onEstado:e=>set({fd:{...s.fd,estado:e.target.value}}),
+      apply:()=>set({f0:{...s.fd}}),clear:()=>set({fd:{...E0},f0:{...E0}}),onKey:e=>{if(e.key==='Enter')set({f0:{...s.fd}});},grupos:GROUPS.map(g=>g.m),
+      rows,empty:!list.length,total:list.length,totalScr:SCR.length,
+      modal:!!s.modal,mForm:s.modal==='form',mToggle:s.modal==='toggle',close:()=>set({modal:null}),
+      openAdd:()=>set({modal:'form',target:null,f:{nombre:'',desc:'',estado:'Activo',opts:['inicio']},err:{}}),
+      kicker:editing?'Editar registro':'Nuevo registro',title:editing?`Editar perfil · ${t.nombre}`:'Agregar perfil',cta:editing?'Guardar y aplicar':'Crear perfil',
+      affects:editing&&nU?`Se aplica al instante a ${nU} usuario${nU>1?'s':''} activo${nU>1?'s':''}`:'',
+      f,err:s.err,fAct:f.estado==='Activo',fIn:f.estado==='Inactivo',setAct:()=>setF({estado:'Activo'}),setIn:()=>setF({estado:'Inactivo'}),
+      onNombre:e=>setF({nombre:e.target.value}),onDesc:e=>setF({desc:e.target.value}),
+      avail,assigned,availEmpty:!avail.length,assignedEmpty:!assigned.length,nAssigned:opts.length,nAvail:ALL.length-opts.length,totalOpts:ALL.length,removeAll:()=>setF({opts:[]}),
+      save:()=>{const n=(f.nombre||'').trim();if(!n)return set({err:{nombre:'El nombre es obligatorio.'}});
+        if(profiles.some(p=>norm(p.nombre)===norm(n)&&p.id!==s.target))return set({err:{nombre:'Ya existe un perfil con ese nombre.'}});
+        if(!opts.some(o=>!o.startsWith('cap.')))return set({err:{opts:'Asigna al menos una pantalla del menú.'}});
+        if(s.target===1&&(!opts.includes('usuarios')||!opts.includes('perfiles')))return set({err:{opts:'El perfil Administrador debe conservar Usuarios y Perfiles para no perder el control del portal.'}});
+        if(s.target===1&&f.estado!=='Activo')return set({err:{estado:'El perfil Administrador no se puede inactivar.'}});
+        const ordered=ALL.filter(id=>opts.includes(id));
+        if(editing){P.setProfiles&&P.setProfiles(ps=>ps.map(p=>p.id===s.target?{...p,nombre:n,desc:f.desc,estado:f.estado,opts:ordered,upd:'22/11/2026'}:p));
+          const mine=(users.find(u=>u.usuario===me.id)||{}).perfil===s.target;P.toast&&P.toast(mine?`Perfil ${n} actualizado · tu menú cambió`:`Perfil ${n} actualizado · aplicado a sus usuarios`);}
+        else{P.setProfiles&&P.setProfiles(ps=>{const id=Math.max(...ps.map(p=>p.id))+1;return [...ps,{id,codigo:'PRF-'+String(id).padStart(3,'0'),nombre:n,desc:f.desc,estado:f.estado,opts:ordered,upd:'22/11/2026'}];});P.toast&&P.toast(`Perfil ${n} creado`);}
+        set({modal:null});},
+      tg:{title:tAct?'¿Inactivar perfil?':'¿Activar perfil?',cta:tAct?'Inactivar':'Activar',c:tAct?'var(--bz-error)':'var(--bz-success)',
+        body:tAct?`${t.nombre} dejará de dar acceso.${tUsers?` ${tUsers} usuario${tUsers>1?'s':''} activo${tUsers>1?'s':''} perderá${tUsers>1?'n':''} su menú al instante.`:''}`:`${t.nombre} volverá a dar acceso a sus usuarios.`,
+        ok:()=>{P.setProfiles&&P.setProfiles(ps=>ps.map(p=>p.id===t.id?{...p,estado:tAct?'Inactivo':'Activo',upd:'22/11/2026'}:p));set({modal:null});P.toast&&P.toast(`Perfil ${t.nombre} ${tAct?'inactivado':'activado'}`);}},
+    };
+  }
+}
+</script>
+</body>
+</html>

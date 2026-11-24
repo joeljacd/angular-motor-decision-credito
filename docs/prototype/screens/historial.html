@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzSheet{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div>
+    <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Auditoría · solo lectura</span>
+    <h1 style="margin:2px 0 4px;font-size:40px">Historial</h1>
+    <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:640px">Cada cambio queda firmado y encadenado al anterior. Los datos sensibles se muestran enmascarados.</p>
+  </div>
+
+  <section class="blueprint" style="background:var(--color-surface);padding:16px 18px;display:flex;flex-direction:column;gap:14px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end">
+      <div class="field"><label>Canal</label><select class="input" value="{{ fd.canal }}" onChange="{{ on.canal }}"><option value="">Todos</option><sc-for list="{{ opt.canal }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+      <div class="field"><label>Producto</label><select class="input" value="{{ fd.producto }}" onChange="{{ on.producto }}"><option value="">Todos</option><sc-for list="{{ opt.producto }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+      <div class="field"><label>Versión</label><select class="input" value="{{ fd.version }}" onChange="{{ on.version }}"><option value="">Todas</option><sc-for list="{{ opt.version }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+      <div class="field"><label>Usuario</label><select class="input" value="{{ fd.usuario }}" onChange="{{ on.usuario }}"><option value="">Todos</option><sc-for list="{{ opt.usuario }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+      <div class="field"><label>Tipo de elemento</label><select class="input" value="{{ fd.elemTipo }}" onChange="{{ on.elemTipo }}"><option value="">Todos</option><sc-for list="{{ opt.elemTipo }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+      <div class="field"><label>Elemento</label><input class="input" value="{{ fd.elemento }}" onChange="{{ on.elemento }}" onKeyDown="{{ onKey }}" placeholder="ej. PA-006"></div>
+      <div class="field"><label>Desde</label><input class="input" type="date" value="{{ fd.desde }}" onChange="{{ on.desde }}"></div>
+      <div class="field"><label>Hasta</label><input class="input" type="date" value="{{ fd.hasta }}" onChange="{{ on.hasta }}"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-secondary" onClick="{{ clear }}" style="height:36px;padding:0 14px">Limpiar</button><button class="btn btn-primary" onClick="{{ apply }}" style="height:36px;padding:0 16px">Buscar</button></div>
+  </section>
+
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="overflow-x:auto"><table class="table" style="min-width:960px">
+      <thead><tr><th style="padding-left:18px">Registro</th><th>Fecha y hora</th><th>Usuario</th><th>Tipo de cambio</th><th>Elemento</th><th>Resumen</th></tr></thead>
+      <tbody><sc-for list="{{ rows }}" as="r" hint-placeholder-count="10"><tr onClick="{{ r.open }}" style="cursor:pointer;background:{{ r.bg }}">
+        <td style="padding:10px 10px 10px 18px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-neutral-700)">#{{ r.n }}</td>
+        <td style="padding:10px;font-size:13px;white-space:nowrap;font-family:ui-monospace,Menlo,monospace">{{ r.fecha }}</td>
+        <td style="padding:10px;font-size:13px;white-space:nowrap">{{ r.usuario }}</td>
+        <td style="padding:10px"><span style="font-size:11px;padding:2px 8px;white-space:nowrap;background:{{ r.tBg }};color:{{ r.tFg }}">{{ r.tipo }}</span></td>
+        <td style="padding:10px;font-size:13px"><div style="display:flex;flex-direction:column;line-height:1.3"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-accent-700)">{{ r.elemento }}</span><span style="font-size:11px;color:var(--color-neutral-700)">{{ r.elemTipo }} · {{ r.ctx }}</span></div></td>
+        <td style="padding:10px;font-size:13px">{{ r.resumen }}</td>
+      </tr></sc-for></tbody>
+    </table></div>
+    <sc-if value="{{ empty }}"><div style="padding:40px 20px;text-align:center;font-size:14px;color:var(--color-neutral-700)">No hay registros con estos filtros.</div></sc-if>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;border-top:1px solid var(--color-divider)">
+      <span style="font-size:13px;color:var(--color-neutral-700)">Mostrando {{ pg.from }}–{{ pg.to }} de {{ pg.total }}</span>
+      <div style="display:flex;gap:4px"><button class="btn btn-secondary" disabled="{{ pg.prevDis }}" onClick="{{ pg.prev }}" style="height:30px;padding:0 10px">‹</button><sc-for list="{{ pg.nums }}" as="n"><button class="btn btn-secondary" onClick="{{ n.go }}" style="min-width:30px;height:30px;padding:0 8px;background:{{ n.bg }};color:{{ n.fg }};border-color:{{ n.bd }}">{{ n.n }}</button></sc-for><button class="btn btn-secondary" disabled="{{ pg.nextDis }}" onClick="{{ pg.next }}" style="height:30px;padding:0 10px">›</button></div>
+    </div>
+  </section>
+</div>
+
+<sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ close }}" style="position:fixed;inset:0;z-index:140;background:color-mix(in srgb,#000 35%,transparent)"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(640px,100vw);z-index:141;background:var(--color-surface);border-left:1px solid var(--color-divider);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;animation:bzSheet .2s ease both;color:var(--color-text)">
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:18px 20px;border-bottom:1px solid var(--color-divider)"><div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:8px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-neutral-700)">Registro #{{ d.n }}</span><span style="font-size:11px;padding:2px 8px;background:{{ d.tBg }};color:{{ d.tFg }}">{{ d.tipo }}</span></div><h3 style="margin:0">{{ d.elemento }}</h3><span style="font-size:13px;color:var(--color-neutral-700)">{{ d.resumen }}</span></div><button class="btn btn-ghost btn-icon" title="Cerrar" onClick="{{ close }}" style="color:var(--color-text)"><svg viewBox="0 0 24 24" width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--color-divider)"><sc-for list="{{ d.meta }}" as="m"><div style="padding:8px 12px;border-bottom:1px solid var(--color-divider);border-right:1px solid var(--color-divider);display:flex;flex-direction:column"><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ m.k }}</span><span style="font-size:13px">{{ m.v }}</span></div></sc-for></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">Diferencia JSON</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--color-divider);background:var(--bz-code-bg)">
+          <div style="padding:6px 10px;border-bottom:1px solid var(--color-divider);font-size:11px;color:var(--color-neutral-700)">Antes</div><div style="padding:6px 10px;border-bottom:1px solid var(--color-divider);border-left:1px solid var(--color-divider);font-size:11px;color:var(--color-neutral-700)">Después</div>
+          <div style="display:flex;flex-direction:column;padding:6px 0;min-width:0"><sc-for list="{{ d.before }}" as="l"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;padding:0 10px;background:{{ l.bg }};color:{{ l.fg }}">{{ l.t }}</span></sc-for></div>
+          <div style="display:flex;flex-direction:column;padding:6px 0;border-left:1px solid var(--color-divider);min-width:0"><sc-for list="{{ d.after }}" as="l"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;padding:0 10px;background:{{ l.bg }};color:{{ l.fg }}">{{ l.t }}</span></sc-for></div>
+        </div>
+      </div>
+      <div style="border:1px solid var(--color-divider)">
+        <button onClick="{{ toggleSig }}" style="width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;border:0;background:transparent;cursor:pointer;color:var(--color-text);text-align:left"><svg viewBox="0 0 24 24" width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform:{{ sigRot }}"><path d="m6 9 6 6 6-6"></path></svg><span style="font-family:var(--font-heading);font-weight:600;font-size:15px">Datos de integridad</span><span style="font-size:11px;padding:1px 6px;background:{{ d.sigBg }};color:{{ d.sigFg }}">{{ d.sigState }}</span></button>
+        <sc-if value="{{ sigOpen }}"><div style="display:flex;flex-direction:column;gap:8px;padding:0 12px 12px"><sc-for list="{{ d.sig }}" as="sg"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ sg.k }}</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;overflow-wrap:anywhere;padding:6px 8px;background:var(--bz-code-bg);border:1px solid var(--color-divider)">{{ sg.v }}</span></div></sc-for></div></sc-if>
+      </div>
+    </div>
+  </aside>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const hex=(seed,n=64)=>{let h=2166136261^seed,o='';for(let i=0;i<n;i++){h=Math.imul(h^(i+seed*31),16777619);o+=((h>>>(i%24))&15).toString(16);}return o;};
+const TT={'Alta':'s','Cambio':'w','Baja':'e','Apertura':'i','Envío':'i','Devolución':'w','Aprobación':'s','Publicación':'s','Descarte':'e','Vencimiento':'n'};
+const TC={s:['var(--bz-success-bg)','var(--bz-success)'],w:['var(--bz-warning-bg)','var(--bz-warning-fg)'],e:['var(--bz-error-bg)','var(--bz-error)'],i:['var(--bz-info-bg)','var(--bz-info)'],n:['var(--color-neutral-200)','var(--color-neutral-700)']};
+const E=(n,fecha,usuario,tipo,elemTipo,elemento,resumen,canal,producto,version,before,after)=>({n,fecha,usuario,tipo,elemTipo,elemento,resumen,canal,producto,version,before,after});
+const W='Solicitudes Web',A='Auto Plan';
+const DATA=[
+ E(1062,'22/11/2026 10:42:13','Ana Pérez','Cambio','Condición','PA-006 · Condición 2','desde 800.00 → 850.00',W,A,'v2',{variable:'INGRESO_FAMILIAR',tipo:'RANGO',desde:'•••.••',hasta:null},{variable:'INGRESO_FAMILIAR',tipo:'RANGO',desde:'•••.••',hasta:null,_nota:'valor sensible enmascarado'}),
+ E(1061,'22/11/2026 10:31:02','Ana Pérez','Cambio','Condición','PA-007 · Condición 1','ANTIGUEDAD_LABORAL → SCORE_BURO_V2',W,A,'v2',{variable:'ANTIGUEDAD_LABORAL',tipo:'RANGO',desde:'1'},{variable:'SCORE_BURO_V2',tipo:'RANGO',desde:'650'}),
+ E(1060,'22/11/2026 10:18:47','Ana Pérez','Baja','Condición','PA-008 · Condición 1','Grupo raíz vaciado',W,A,'v2',{variable:'ACTIVIDAD_ECONOMICA',tipo:'CATALOGO',catalogo:'ACTIVIDADES_ECONOMICAS',modo:'pertenece'},null),
+ E(1059,'21/11/2026 17:05:10','Luis Mora','Devolución','Versión','Versión 2','Devuelto con comentario',W,A,'v2',{estado:'En revisión'},{estado:'En edición',comentario:'Revisar el umbral de ingreso de PA-006…'}),
+ E(1058,'21/11/2026 16:40:55','Ana Pérez','Envío','Versión','Versión 2','Enviado a revisión',W,A,'v2',{estado:'En edición'},{estado:'En revisión'}),
+ E(1057,'21/11/2026 12:02:31','Luis Mora','Alta','Solicitud','SC-0141','DIAS_VENCIMIENTO 15 → 20 (pendiente)','—','—','—',null,{parametro:'DIAS_VENCIMIENTO',valor:'20',estado:'Pendiente'}),
+ E(1056,'20/11/2026 09:12:44','Ana Pérez','Apertura','Versión','Versión 2','Borrador abierto desde la versión 1',W,A,'v2',null,{version:2,origen:'v1',estado:'En edición'}),
+ E(1055,'18/11/2026 15:20:00','Luis Mora','Publicación','Versión','Versión 1 · Agencias / Auto Plan','Publicada sin sello (migración)','Agencias',A,'v1',{estado:'Aprobada'},{estado:'Publicada vigente',sello:null}),
+ E(1054,'17/11/2026 11:48:19','Luis Mora','Aprobación','Solicitud','SC-0133','Alta de producto 4 Tarjeta Joven','—','—','—',{estado:'Pendiente'},{estado:'Aprobada',aprobador:'Luis Mora'}),
+ E(1053,'16/11/2026 10:03:07','Ana Pérez','Alta','Solicitud','SC-0136','Alta de rol GG-CRED-CONSULTA (pendiente)','—','—','—',null,{rol:'GG-CRED-CONSULTA',auditar:true}),
+ E(1052,'12/11/2026 08:30:41','Sistema','Vencimiento','Solicitud','SC-0121','Venció sin actividad (15 días)','—','—','—',{estado:'Pendiente'},{estado:'Vencida'}),
+ E(1051,'12/11/2026 08:30:40','Luis Mora','Cambio','Catálogo','CANTONES_ACEPTADOS','+ 0907 Durán',W,A,'v1',{elementos:7},{elementos:8,agregado:'0907 Durán'}),
+ E(1050,'05/11/2026 14:11:09','Luis Mora','Descarte','Versión','Versión 4 · Solicitudes Web / Consumo','Borrador descartado',W,'Consumo','v4',{estado:'En edición'},null),
+ E(1049,'30/10/2026 18:22:50','Ana Pérez','Publicación','Versión','Versión 3 · Agencias / Consumo','Publicada vigente','Agencias','Consumo','v3',{estado:'Aprobada'},{estado:'Publicada vigente'}),
+ E(1048,'30/10/2026 18:22:12','Luis Mora','Aprobación','Versión','Versión 3 · Agencias / Consumo','Aprobada','Agencias','Consumo','v3',{estado:'En revisión'},{estado:'Aprobada'}),
+ E(1047,'28/10/2026 10:15:00','Luis Mora','Cambio','Acción','E · ECA','Severidad 25 → 20','—','—','—',{codigo:'E',severidad:25},{codigo:'E',severidad:20}),
+ E(1046,'20/10/2026 09:40:22','Ana Pérez','Baja','Canal','3 Banca Móvil','Solicitud cancelada por el solicitante','—','—','—',{estado:'Pendiente'},{estado:'Cancelada'}),
+ E(1045,'15/10/2026 09:30:00','Luis Mora','Publicación','Versión','Versión 1','Publicada vigente y sellada',W,A,'v1',{estado:'Aprobada'},{estado:'Publicada vigente',sello:'Sellada'}),
+ E(1044,'15/10/2026 09:29:41','Luis Mora','Aprobación','Versión','Versión 1','Aprobada',W,A,'v1',{estado:'En revisión'},{estado:'Aprobada'}),
+ E(1043,'14/10/2026 16:02:18','Ana Pérez','Cambio','Política','PA-004','Acción «No cumple» E → R',W,A,'v1',{nocumple:{accion:'E',codigo:'104'}},{nocumple:{accion:'R',codigo:'104'}}),
+ E(1042,'14/10/2026 15:44:03','Ana Pérez','Alta','Política','PA-007','Política «Edad y estabilidad»',W,A,'v1',null,{codigo:'PA-007',nombre:'Edad y estabilidad',orden:3}),
+ E(1041,'14/10/2026 15:10:27','Ana Pérez','Alta','Categoría','4 · Información Laboral','Categoría creada (inactiva)',W,A,'v1',null,{codigo:'4',nombre:'Información Laboral',activa:false})];
+const toDate=s=>{const [d,m,y]=s.slice(0,10).split('/');return `${y}-${m}-${d}`;};
+const EMPTY={canal:'',producto:'',version:'',usuario:'',elemTipo:'',elemento:'',desde:'',hasta:''};
+const lines=(o,other)=>{if(o===null||o===undefined)return [{t:'null',bg:'transparent',fg:'var(--color-neutral-600)'}];const ls=JSON.stringify(o,null,2).split('\n');const ot=other?JSON.stringify(other,null,2).split('\n'):[];return {ls,ot};};
+class Component extends DCLogic {
+  state={fd:{...EMPTY},f:{...EMPTY},page:1,sel:null,sig:false};
+  renderVals(){
+    const s=this.state,set=o=>this.setState(o),f=s.f;
+    const list=DATA.filter(r=>(!f.canal||r.canal===f.canal)&&(!f.producto||r.producto===f.producto)&&(!f.version||r.version===f.version)&&(!f.usuario||r.usuario===f.usuario)&&(!f.elemTipo||r.elemTipo===f.elemTipo)&&(!f.elemento||r.elemento.toLowerCase().includes(f.elemento.toLowerCase()))&&(!f.desde||toDate(r.fecha)>=f.desde)&&(!f.hasta||toDate(r.fecha)<=f.hasta));
+    const size=10,pages=Math.max(1,Math.ceil(list.length/size)),p=Math.min(s.page,pages);
+    const rows=list.slice((p-1)*size,p*size).map(r=>{const c=TC[TT[r.tipo]];return {...r,tBg:c[0],tFg:c[1],ctx:r.canal==='—'?'Maestros':`${r.canal} / ${r.producto} · ${r.version}`,bg:s.sel===r.n?'var(--color-accent-100)':'transparent',open:()=>set({sel:r.n,sig:false})};});
+    const r=DATA.find(x=>x.n===s.sel);let d={};
+    if(r){const c=TC[TT[r.tipo]];const mk=(o,other)=>{if(o==null)return [{t:'null',bg:'transparent',fg:'var(--color-neutral-600)'}];const ls=JSON.stringify(o,null,2).split('\n');const os=other==null?[]:JSON.stringify(other,null,2).split('\n');return ls.map(t=>({t,bg:os.includes(t)?'transparent':(o===r.before?'var(--bz-error-bg)':'var(--bz-success-bg)'),fg:os.includes(t)?'var(--color-text)':(o===r.before?'var(--bz-error)':'var(--bz-success)')}));};
+      const bad=r.n===1043;
+      d={...r,tBg:c[0],tFg:c[1],before:mk(r.before,r.after),after:mk(r.after,r.before),
+        meta:[{k:'Fecha y hora',v:r.fecha},{k:'Usuario',v:r.usuario},{k:'Canal / producto',v:r.canal==='—'?'— (maestro)':`${r.canal} / ${r.producto}`},{k:'Versión',v:r.version},{k:'Tipo de elemento',v:r.elemTipo},{k:'Tipo de cambio',v:r.tipo}],
+        sigState:bad?'Cadena rota aquí':'Firma válida',sigBg:bad?'var(--bz-error-bg)':'var(--bz-success-bg)',sigFg:bad?'var(--bz-error)':'var(--bz-success)',
+        sig:[{k:'Registro',v:`#${r.n}`},{k:'Firma (HMAC-SHA256)',v:hex(r.n)},{k:'Firma anterior',v:bad?hex(r.n-1).replace(/^.{6}/,'000000')+'  ≠ esperada':hex(r.n-1)},{k:'Id de llave',v:r.n>1050?'kms-ba-prod-03':'kms-ba-prod-02'}]};}
+    const on=k=>e=>set({fd:{...s.fd,[k]:e.target.value}});const uniq=k=>[...new Set(DATA.map(x=>x[k]).filter(v=>v!=='—'))];
+    return {
+      fd:s.fd,on:{canal:on('canal'),producto:on('producto'),version:on('version'),usuario:on('usuario'),elemTipo:on('elemTipo'),elemento:on('elemento'),desde:on('desde'),hasta:on('hasta')},
+      opt:{canal:uniq('canal'),producto:uniq('producto'),version:uniq('version').sort(),usuario:uniq('usuario'),elemTipo:uniq('elemTipo')},
+      apply:()=>set({f:{...s.fd},page:1}),clear:()=>set({fd:{...EMPTY},f:{...EMPTY},page:1}),onKey:e=>{if(e.key==='Enter')set({f:{...s.fd},page:1});},
+      rows,empty:!list.length,
+      pg:{total:list.length,from:list.length?(p-1)*size+1:0,to:Math.min(p*size,list.length),prevDis:p<=1,nextDis:p>=pages,prev:()=>set({page:p-1}),next:()=>set({page:p+1}),
+        nums:Array.from({length:pages},(_,i)=>({n:i+1,go:()=>set({page:i+1}),bg:i+1===p?'var(--color-accent)':'transparent',fg:i+1===p?'#fff':'var(--color-text)',bd:i+1===p?'var(--color-accent)':'var(--color-divider)'}))},
+      hasSel:!!r,d,close:()=>set({sel:null}),sigOpen:s.sig,toggleSig:()=>set({sig:!s.sig}),sigRot:s.sig?'none':'rotate(-90deg)',
+    };
+  }
+}
+</script>
+</body>
+</html>

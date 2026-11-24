@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@keyframes bzSlide{0%{left:-35%}100%{left:100%}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px">
+    <div style="flex:1;min-width:280px">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-neutral-700)"><a href="#" onClick="{{ goFlows }}" style="color:var(--color-neutral-700);text-decoration:none">Flujos</a><span>›</span><a href="#" onClick="{{ goEditor }}" style="color:var(--color-neutral-700);text-decoration:none">1 Solicitudes Web / 1 Auto Plan</a><span>›</span><span style="color:var(--color-text)">Revisión</span></div>
+      <h1 style="margin:4px 0 4px;font-size:36px">Revisión de diferencias</h1>
+      <div style="font-size:14px;color:var(--color-neutral-700)">Versión 2 (borrador) comparada contra la <strong style="color:var(--color-text);font-weight:500">versión 1 vigente</strong> · {{ metaLine }}</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+      <sc-if value="{{ isPreview }}"><button class="btn btn-secondary" onClick="{{ goEditor }}" style="height:38px;padding:0 14px;white-space:nowrap">Volver al editor</button></sc-if>
+      <sc-if value="{{ showActions }}">
+        <button class="btn btn-secondary" disabled="{{ myEdit }}" onClick="{{ openReturn }}" style="height:38px;padding:0 14px;white-space:nowrap"><svg viewBox="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg>Devolver</button>
+        <span onMouseEnter="{{ tipOn }}" onMouseLeave="{{ tipOff }}" style="position:relative;display:inline-flex">
+          <button class="btn btn-primary blueprint" disabled="{{ myEdit }}" onClick="{{ openApprove }}" style="height:38px;padding:0 16px;white-space:nowrap"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Aprobar y publicar</button>
+          <sc-if value="{{ showTip }}"><span style="position:absolute;top:calc(100% + 10px);right:0;width:250px;padding:8px 10px;background:var(--color-text);color:var(--color-bg);font-size:12px;line-height:1.35;box-shadow:var(--shadow-md);z-index:5">No puedes aprobar un cambio que solicitaste o editaste</span></sc-if>
+        </span>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ bannerText }}">
+    <div style="display:flex;gap:10px;align-items:center;padding:10px 14px;background:{{ bannerBg }};color:{{ bannerFg }};border:1px solid {{ bannerFg }};font-size:13px"><span style="width:8px;height:8px;flex:none;background:currentColor"></span><span>{{ bannerText }}</span></div>
+  </sc-if>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:16px">
+    <div class="blueprint" style="flex:1;min-width:320px;display:grid;grid-template-columns:repeat(3,1fr);background:var(--color-surface)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <sc-for list="{{ summary }}" as="sm" hint-placeholder-count="3"><div style="padding:14px 18px;border-right:1px solid var(--color-divider);display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ sm.label }}</span><span style="font-family:var(--font-heading);font-weight:600;font-size:34px;line-height:1;color:{{ sm.color }}">{{ sm.n }}</span></div></sc-for>
+    </div>
+    <label style="display:flex;align-items:center;gap:10px;padding:0 16px;border:1px solid var(--color-divider);background:var(--color-surface);font-size:14px;cursor:pointer;white-space:nowrap"><input type="checkbox" checked="{{ onlyChanges }}" onChange="{{ toggleOnly }}" style="width:16px;height:16px;accent-color:var(--color-accent)">Solo cambios</label>
+  </div>
+
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+      <sc-if value="{{ r.isSec }}"><div style="display:flex;align-items:baseline;gap:10px;padding:14px 20px 8px;border-top:1px solid var(--color-divider);background:var(--color-neutral-100)"><span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">{{ r.kicker }}</span><span style="font-family:var(--font-heading);font-weight:600;font-size:17px">{{ r.title }}</span><sc-if value="{{ r.badge }}"><span style="font-size:11px;padding:1px 6px;background:{{ r.bBg }};color:{{ r.bFg }}">{{ r.badge }}</span></sc-if></div></sc-if>
+      <sc-if value="{{ r.isItem }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 20px 6px 32px;opacity:{{ r.op }}"><span style="width:18px;height:18px;display:grid;place-items:center;font:700 12px var(--font-body);background:{{ r.bBg }};color:{{ r.bFg }}">{{ r.sym }}</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-accent-700)">{{ r.code }}</span><span style="font-weight:500;font-size:14px">{{ r.title }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ r.note }}</span></div></sc-if>
+      <sc-if value="{{ r.isRow }}"><div style="display:grid;grid-template-columns:minmax(160px,260px) minmax(0,1fr);gap:12px;align-items:start;padding:6px 20px 6px 60px;font-size:13px">
+        <span style="color:var(--color-neutral-700);padding-top:3px">{{ r.label }}</span>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0">
+          <sc-if value="{{ r.before }}"><span style="font-family:ui-monospace,Menlo,monospace;padding:2px 8px;background:var(--bz-error-bg);color:var(--bz-error);text-decoration:{{ r.strike }};overflow-wrap:anywhere">{{ r.before }}</span></sc-if>
+          <sc-if value="{{ r.arrow }}"><span style="color:var(--color-neutral-600)">→</span></sc-if>
+          <sc-if value="{{ r.after }}"><span style="font-family:ui-monospace,Menlo,monospace;padding:2px 8px;background:var(--bz-success-bg);color:var(--bz-success);overflow-wrap:anywhere">{{ r.after }}</span></sc-if>
+        </div>
+      </div></sc-if>
+      <sc-if value="{{ r.isNone }}"><div style="padding:8px 20px 12px 32px;font-size:13px;color:var(--color-neutral-700)">{{ r.text }}</div></sc-if>
+    </sc-for>
+    <div style="height:10px"></div>
+  </section>
+</div>
+
+<sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;overflow-y:auto;align-items:start;padding-top:min(12vh,100px)">
+  <div class="dialog blueprint" style="width:min(520px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <sc-if value="{{ mApprove }}">
+      <div class="dialog-title" style="font-size:24px">¿Aprobar y publicar la versión 2?</div>
+      <div class="dialog-body" style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:12px;border:1px solid var(--color-divider)"><div style="display:flex;flex-direction:column"><span style="font-size:11px;color:var(--color-neutral-700)">Versión 1</span><span style="font-weight:500">Publicada vigente → Retirada</span></div><span>→</span><div style="display:flex;flex-direction:column"><span style="font-size:11px;color:var(--color-neutral-700)">Versión 2</span><span style="font-weight:500;color:var(--bz-success)">Borrador → Publicada vigente</span></div></div>
+        <span>El motor cargará la versión 2 en menos de 1 minuto. Esta acción queda firmada a tu nombre en el historial.</span>
+      </div>
+      <div class="field"><label>Resultado simulado (solo prototipo)</label><select class="input" value="{{ simRes }}" onChange="{{ onSim }}"><option value="ok">Publicación exitosa</option><option value="conflict">Conflicto: la vigente cambió</option><option value="error">Error al publicar</option></select></div>
+      <sc-if value="{{ publishing }}"><div style="position:relative;height:3px;overflow:hidden;background:var(--color-accent-100)"><div style="position:absolute;top:0;bottom:0;width:35%;background:var(--color-accent);animation:bzSlide .9s ease-in-out infinite"></div></div><span style="font-size:12px;color:var(--color-neutral-700)">Firmando y publicando…</span></sc-if>
+      <div class="dialog-actions"><button class="btn btn-secondary" disabled="{{ publishing }}" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" disabled="{{ publishing }}" onClick="{{ doApprove }}" style="height:38px;padding:0 18px">Aprobar y publicar</button></div>
+    </sc-if>
+    <sc-if value="{{ mConflict }}">
+      <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;align-self:flex-start;padding:2px 8px;background:var(--bz-error-bg);color:var(--bz-error);border:1px solid var(--bz-error)">Conflicto</span>
+      <div class="dialog-title" style="font-size:24px">La versión vigente cambió desde que se abrió el borrador</div>
+      <div class="dialog-body">Hay que rehacer el borrador a partir de la nueva versión vigente. No se publicó nada.</div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cerrar</button><button class="btn btn-primary" onClick="{{ goFlowsBtn }}" style="height:38px;padding:0 18px">Ir a Flujos</button></div>
+    </sc-if>
+    <sc-if value="{{ mError }}">
+      <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;align-self:flex-start;padding:2px 8px;background:var(--bz-error-bg);color:var(--bz-error);border:1px solid var(--bz-error)">Error al publicar</span>
+      <div class="dialog-title" style="font-size:24px">El motor no pudo cargar la versión</div>
+      <div class="dialog-body">La versión anterior sigue vigente. El borrador permanece en revisión; puedes reintentar.</div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cerrar</button><button class="btn btn-primary" onClick="{{ openApprove }}" style="height:38px;padding:0 18px">Reintentar</button></div>
+    </sc-if>
+    <sc-if value="{{ mReturn }}">
+      <div class="dialog-title" style="font-size:24px">Devolver el borrador</div>
+      <div class="dialog-body">El borrador vuelve a «En edición» y el comentario se muestra a quien lo editó.</div>
+      <div class="field"><label>Comentario (obligatorio)</label><textarea class="input" value="{{ retText }}" onChange="{{ onRet }}" placeholder="Explica qué debe corregirse"></textarea><sc-if value="{{ retErr }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ retErr }}</div></sc-if></div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ doReturn }}" style="height:38px;padding:0 18px">Devolver</button></div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const RES=[['cumple','Cumple'],['nocumple','No cumple'],['falta','Falta dato']];
+const DET={heredada:'Heredada del flujo',si:'Propia: sí',no:'Propia: no'};
+const OPD={'=':'=','<>':'<>','>':'>','>=':'≥','<':'<','<=':'≤'};
+const condPh=c=>{if(c.k==='RANGO'){if(c.desde&&c.hasta)return `${c.v} entre ${c.desde} y ${c.hasta}`;if(c.desde)return `${c.v} ≥ ${c.desde}`;if(c.hasta)return `${c.v} ≤ ${c.hasta}`;return `${c.v} (sin límites)`;}
+  if(c.k==='CATALOGO')return `${c.v} ${c.modo==='no pertenece'?'no pertenece a':'pertenece a'} ${c.cat}`;return `${c.v} ${OPD[c.op]||c.op} ${c.val}`;};
+const flat=(g,key,label,out)=>{out[key]={node:g,label};g.ch.forEach((x,i)=>{const k=key+'/'+i;if(x.t==='g')flat(x,k,`${label} › Grupo ${x.op}`,out);else out[k]={node:x,label:`${label} › Condición ${i+1}`};});return out;};
+const CF=[['v','variable'],['k','tipo de regla'],['desde','desde'],['hasta','hasta'],['cat','catálogo'],['modo','modo'],['op','operador'],['val','valor']];
+const yn=b=>b?'Sí':'No';
+
+class Component extends DCLogic {
+  state={only:true,modal:null,sim:'ok',publishing:false,ret:'',retTouched:false,tip:false};
+  componentDidMount(){const p=this.props.params||{};const f=this.props.flow||{};if(f.status==='revision'){if(p.open==='approve')this.setState({modal:'approve'});if(p.open==='return')this.setState({modal:'return'});}}
+  diff(){const P=this.props;const A=P.baseline||{cats:[]},B=P.draft||{cats:[]};const secs=[];const cnt={chg:0,add:0,del:0};
+    const pmap=d=>{const m={};d.cats.forEach(c=>c.pols.forEach(p=>m[p.code]={c,p}));return m;};const pa=pmap(A),pb=pmap(B);
+    const codes=[...new Set([...A.cats.map(c=>c.code),...B.cats.map(c=>c.code)])].sort();
+    if(A.detener!==B.detener){secs.push({title:'Configuración del flujo',kicker:'Flujo',items:[{kind:'chg',code:'',title:'Regla de detención del flujo',rows:[{label:'Detener al encontrar acción que detiene',before:yn(A.detener),after:yn(B.detener)}]}]});cnt.chg++;}
+    codes.forEach(cc=>{const ca=A.cats.find(c=>c.code===cc),cb=B.cats.find(c=>c.code===cc);const c=cb||ca;const sec={kicker:'Categoría',title:`${c.code} · ${c.nombre}`,items:[]};
+      if(!ca){sec.badge='Agregada';sec.kind='add';cnt.add++;}else if(!cb){sec.badge='Eliminada';sec.kind='del';cnt.del++;}
+      else{const rows=[];if(ca.nombre!==cb.nombre)rows.push({label:'Nombre',before:ca.nombre,after:cb.nombre});if(ca.orden!==cb.orden)rows.push({label:'Orden',before:String(ca.orden),after:String(cb.orden)});
+        if(ca.activa!==cb.activa)rows.push({label:'Activa',before:yn(ca.activa),after:yn(cb.activa)});if(ca.det!==cb.det)rows.push({label:'Detención',before:DET[ca.det],after:DET[cb.det]});
+        if(rows.length){sec.items.push({kind:'chg',code:'',title:'Datos de la categoría',rows});cnt.chg++;}}
+      const pcodes=[...new Set([...(ca?ca.pols:[]).map(p=>p.code),...(cb?cb.pols:[]).map(p=>p.code)])].sort();
+      pcodes.forEach(pc=>{const a=pa[pc],b=pb[pc];const inB=cb&&cb.pols.some(p=>p.code===pc),inA=ca&&ca.pols.some(p=>p.code===pc);
+        if(inB&&!a){sec.items.push({kind:'add',code:pc,title:b.p.nombre,rows:[{label:'Lógica',after:condPhAll(b.p.root)}]});cnt.add++;return;}
+        if(inA&&!b){sec.items.push({kind:'del',code:pc,title:a.p.nombre,rows:[{label:'Lógica',before:condPhAll(a.p.root)}]});cnt.del++;return;}
+        if(!inB)return; // moved away: reported in destination
+        const rows=[];const pA=a.p,pB=b.p;
+        if(a.c.code!==b.c.code)rows.push({label:'Categoría (movida)',before:`${a.c.code} · ${a.c.nombre}`,after:`${b.c.code} · ${b.c.nombre}`});
+        if(pA.nombre!==pB.nombre)rows.push({label:'Nombre',before:pA.nombre,after:pB.nombre});if(pA.orden!==pB.orden)rows.push({label:'Orden',before:String(pA.orden),after:String(pB.orden)});
+        if(pA.activa!==pB.activa)rows.push({label:'Activa',before:yn(pA.activa),after:yn(pB.activa)});
+        RES.forEach(([k,l])=>{const x=pA.res[k],y=pB.res[k];if(x.a!==y.a)rows.push({label:`${l} · acción`,before:x.a,after:y.a});if(x.cod!==y.cod)rows.push({label:`${l} · código`,before:x.cod,after:y.cod});if(x.msg!==y.msg)rows.push({label:`${l} · mensaje`,before:x.msg,after:y.msg});});
+        const fa=flat(pA.root,'r',`Grupo ${pA.root.op}`,{}),fb=flat(pB.root,'r',`Grupo ${pB.root.op}`,{});
+        [...new Set([...Object.keys(fa),...Object.keys(fb)])].sort().forEach(k=>{const x=fa[k],y=fb[k];
+          if(x&&!y){rows.push({label:x.label.replace(/^Grupo [YO] › /,''),before:x.node.t==='c'?condPh(x.node):'Subgrupo '+x.node.op,del:true});return;}
+          if(y&&!x){rows.push({label:y.label.replace(/^Grupo [YO] › /,''),after:y.node.t==='c'?condPh(y.node):'Subgrupo '+y.node.op});return;}
+          if(x.node.t!==y.node.t){rows.push({label:y.label,before:x.node.t==='c'?condPh(x.node):'Subgrupo',after:y.node.t==='c'?condPh(y.node):'Subgrupo'});return;}
+          if(x.node.t==='g'){if(x.node.op!==y.node.op)rows.push({label:k==='r'?'Grupo raíz · operador':y.label+' · operador',before:x.node.op,after:y.node.op});return;}
+          CF.forEach(([f,l])=>{if((x.node[f]||'')!==(y.node[f]||''))rows.push({label:`${y.label.replace(/^Grupo [YO] › /,'')} · ${l}`,before:x.node[f]||'—',after:y.node[f]||'—'});});});
+        if(rows.length){sec.items.push({kind:'chg',code:pc,title:pB.nombre,rows});cnt.chg++;}else sec.items.push({kind:'same',code:pc,title:pB.nombre,rows:[]});});
+      secs.push(sec);});
+    const res=[['Variables',P.baseRes&&P.baseRes.vars,P.vars,v=>v.code,v=>({Nombre:v.nombre,Tipo:v.tipo,Sensible:yn(v.sens),Origen:v.origen==='request'?'Request':'Calculada','Ruta o cálculo':v.origen==='request'?v.ruta:`${v.fn}(${v.campo})`})],
+      ['Campos del request',P.baseRes&&P.baseRes.fields,P.fields,f=>f.cat+' · '+f.ruta,f=>({Tipo:f.tipo,Obligatorio:yn(f.req),Formato:f.formato||'—','Long. máx.':String(f.max||'—'),'Catálogo':f.catalogo||'—',Sensible:yn(f.sens)})]];
+    res.forEach(([t,a,b,key,fl])=>{const sec={kicker:'Recursos',title:t,items:[]};a=a||[];b=b||a;const ka=Object.fromEntries(a.map(x=>[key(x),x])),kb=Object.fromEntries(b.map(x=>[key(x),x]));
+      [...new Set([...Object.keys(ka),...Object.keys(kb)])].forEach(k=>{const x=ka[k],y=kb[k];if(!x){sec.items.push({kind:'add',code:k,title:'',rows:Object.entries(fl(y)).map(([l,v])=>({label:l,after:v}))});cnt.add++;return;}
+        if(!y){sec.items.push({kind:'del',code:k,title:'',rows:[]});cnt.del++;return;}const fx=fl(x),fy=fl(y);const rows=Object.keys(fy).filter(l=>fx[l]!==fy[l]).map(l=>({label:l,before:fx[l],after:fy[l]}));
+        if(rows.length){sec.items.push({kind:'chg',code:k,title:'',rows});cnt.chg++;}});secs.push(sec);});
+    const ca=(P.baseRes&&P.baseRes.catalogs)||[],cbs=P.catalogs||ca;const csec={kicker:'Recursos',title:'Catálogos',items:[]};
+    cbs.forEach(cb=>{const c0=ca.find(c=>c.code===cb.code);if(!c0){csec.items.push({kind:'add',code:cb.code,title:cb.nombre,rows:[]});cnt.add++;return;}
+      const m0=Object.fromEntries(c0.items.map(i=>[i[0],i])),m1=Object.fromEntries(cb.items.map(i=>[i[0],i]));const rows=[];
+      Object.keys(m1).forEach(k=>{if(!m0[k])rows.push({label:`Elemento ${k}`,after:`${m1[k][1]} · ${m1[k][2]?'activo':'inactivo'}`});else if(m0[k][1]!==m1[k][1]||m0[k][2]!==m1[k][2])rows.push({label:`Elemento ${k}`,before:`${m0[k][1]} · ${m0[k][2]?'activo':'inactivo'}`,after:`${m1[k][1]} · ${m1[k][2]?'activo':'inactivo'}`});});
+      Object.keys(m0).forEach(k=>{if(!m1[k])rows.push({label:`Elemento ${k}`,before:`${m0[k][1]}`,del:true});});
+      if(rows.length){csec.items.push({kind:'chg',code:cb.code,title:cb.nombre,rows});cnt.chg++;}});secs.push(csec);
+    return {secs,cnt};}
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const me=P.me||{id:'lmora',puedeAprobar:true,nombre:'Luis Mora'},flow=P.flow||{status:'revision',editors:['aperez'],openedId:'aperez',vence:'05/12/2026'};
+    const myEdit=(flow.editors||[]).includes(me.id)||flow.openedId===me.id;
+    const {secs,cnt}=this.diff();
+    const K={add:{sym:'+',bBg:'var(--bz-success-bg)',bFg:'var(--bz-success)',note:'agregado'},del:{sym:'−',bBg:'var(--bz-error-bg)',bFg:'var(--bz-error)',note:'eliminado'},chg:{sym:'~',bBg:'var(--bz-warning-bg)',bFg:'var(--bz-warning-fg)',note:'cambiado'},same:{sym:'=',bBg:'var(--color-neutral-200)',bFg:'var(--color-neutral-700)',note:'sin cambios'}};
+    const rows=[];
+    secs.forEach(sec=>{const items=s.only?sec.items.filter(i=>i.kind!=='same'):sec.items;if(s.only&&!items.length&&!sec.kind)return;
+      rows.push({isSec:true,kicker:sec.kicker,title:sec.title,badge:sec.badge||'',bBg:sec.kind==='add'?'var(--bz-success-bg)':'var(--bz-error-bg)',bFg:sec.kind==='add'?'var(--bz-success)':'var(--bz-error)'});
+      if(!items.length)rows.push({isNone:true,text:'Sin cambios'});
+      items.forEach(it=>{const k=K[it.kind];rows.push({isItem:true,sym:k.sym,bBg:k.bBg,bFg:k.bFg,code:it.code,title:it.title,note:k.note,op:it.kind==='same'?.6:1});
+        it.rows.forEach(r=>rows.push({isRow:true,label:r.label,before:r.before||'',after:r.after||'',arrow:!!(r.before&&r.after),strike:r.del||(!r.after)?'line-through':'none'}));});});
+    if(!rows.length)rows.push({isNone:true,text:'No hay diferencias contra la versión vigente.'});
+    const st=flow.status;
+    let bannerText='',bannerBg='',bannerFg='';
+    if(st==='edicion'){bannerText='Vista previa: el borrador aún no se ha enviado a revisión.';bannerBg='var(--bz-warning-bg)';bannerFg='var(--bz-warning-fg)';}
+    if(st==='publicada'){bannerText='Versión 2 publicada y vigente. La versión 1 pasó a Retirada.';bannerBg='var(--bz-success-bg)';bannerFg='var(--bz-success)';}
+    if(st==='revision'&&!me.puedeAprobar){bannerText='Solo un aprobador puede publicar o devolver este borrador.';bannerBg='var(--color-neutral-100)';bannerFg='var(--color-neutral-700)';}
+    if(st==='revision'&&myEdit&&me.puedeAprobar){bannerText='Editaste este borrador: otro aprobador debe revisarlo y publicarlo.';bannerBg='var(--bz-info-bg)';bannerFg='var(--bz-info)';}
+    const retErr=s.retTouched&&!s.ret.trim()?'El comentario es obligatorio':'';
+    return {
+      goFlows:e=>{e.preventDefault();P.go&&P.go('flujos');},goEditor:e=>{e&&e.preventDefault&&e.preventDefault();P.go&&P.go('editor');},goFlowsBtn:()=>P.go&&P.go('flujos'),
+      metaLine:`Enviado por ${flow.openedBy||'Ana Pérez'}${flow.sentAt?' el '+flow.sentAt:''} · vence ${flow.vence}`,
+      isPreview:st==='edicion',showActions:st==='revision'&&me.puedeAprobar,myEdit,showTip:s.tip&&myEdit,tipOn:()=>set({tip:true}),tipOff:()=>set({tip:false}),
+      bannerText,bannerBg,bannerFg,
+      summary:[{label:'Cambiados',n:cnt.chg,color:'var(--bz-warning-fg)'},{label:'Agregados',n:cnt.add,color:'var(--bz-success)'},{label:'Eliminados',n:cnt.del,color:'var(--bz-error)'}],
+      onlyChanges:s.only,toggleOnly:e=>set({only:e.target.checked}),rows,
+      modal:!!s.modal,mApprove:s.modal==='approve',mConflict:s.modal==='conflict',mError:s.modal==='error',mReturn:s.modal==='return',
+      openApprove:()=>set({modal:'approve',publishing:false}),openReturn:()=>set({modal:'return',ret:'',retTouched:false}),closeModal:()=>set({modal:null}),
+      simRes:s.sim,onSim:e=>set({sim:e.target.value}),publishing:s.publishing,
+      doApprove:()=>{set({publishing:true});setTimeout(()=>{if(s.sim==='ok'){P.setFlow&&P.setFlow({status:'publicada',devolucion:null,approvedBy:me.nombre});this.setState({modal:null,publishing:false});P.toast&&P.toast('Versión 2 publicada · el motor la cargará en menos de 1 minuto');}
+        else this.setState({modal:s.sim,publishing:false});},1400);},
+      retText:s.ret,onRet:e=>set({ret:e.target.value,retTouched:true}),retErr,
+      doReturn:()=>{if(!s.ret.trim())return set({retTouched:true});P.setFlow&&P.setFlow({status:'edicion',devolucion:`${s.ret.trim()} — ${me.nombre}, 22/11/2026`});set({modal:null});P.toast&&P.toast('Borrador devuelto con comentario');},
+    };
+  }
+}
+function condPhAll(n,top=true){if(n.t==='c')return condPh(n);if(!n.ch.length)return '(vacío)';const s=n.ch.map(x=>condPhAll(x,false)).join(` ${n.op} `);return top||n.ch.length<2?s:`( ${s} )`;}
+</script>
+</body>
+</html>

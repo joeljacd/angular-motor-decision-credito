@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px">
+    <div style="flex:1;min-width:260px">
+      <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Auditoría</span>
+      <h1 style="margin:2px 0 4px;font-size:40px">Integridad</h1>
+      <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:640px">Verifica la cadena de firmas del historial, los sellos de cada versión y el sello global. Si un sello no es válido, el motor no evalúa ese alcance.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:end">
+      <div class="field"><label>Resultado simulado (prototipo)</label><select class="input" value="{{ sim }}" onChange="{{ onSim }}" disabled="{{ running }}"><option value="bad">Con hallazgos</option><option value="ok">Sin hallazgos</option></select></div>
+      <button class="btn btn-primary blueprint" disabled="{{ running }}" onClick="{{ run }}" style="height:40px;padding:0 16px;white-space:nowrap"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><svg viewBox="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>Verificar integridad</button>
+    </div>
+  </div>
+
+  <sc-if value="{{ running }}">
+    <section class="blueprint" style="background:var(--color-surface);padding:18px 20px;display:flex;flex-direction:column;gap:10px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px"><span>{{ stepText }}</span><span style="font-family:ui-monospace,Menlo,monospace">{{ pct }}%</span></div>
+      <div style="height:8px;background:var(--color-accent-100);position:relative;overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ pct }}%;background:var(--color-accent);transition:width .12s linear"></div></div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showOk }}">
+    <section class="blueprint" style="border-color:var(--bz-success);background:var(--bz-success-bg);padding:20px;display:flex;gap:16px;align-items:center;animation:bzIn .2s ease both"><i class="corner tl" style="color:var(--bz-success)"></i><i class="corner tr" style="color:var(--bz-success)"></i><i class="corner bl" style="color:var(--bz-success)"></i><i class="corner br" style="color:var(--bz-success)"></i>
+      <svg viewBox="0 0 24 24" width="36" height="36" style="flex:none;fill:none;stroke:var(--bz-success);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+      <div style="display:flex;flex-direction:column"><span style="font-family:var(--font-heading);font-weight:600;font-size:24px;color:var(--bz-success)">Integridad verificada</span><span style="font-size:14px">1 210 registros encadenados · 9 versiones selladas · sello global válido · {{ when }}</span></div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showBad }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:1px solid var(--color-divider);background:var(--color-surface)">
+      <sc-for list="{{ stats }}" as="st" hint-placeholder-count="4"><div style="padding:14px 18px;border-right:1px solid var(--color-divider);display:flex;flex-direction:column;gap:2px"><span style="font-family:var(--font-heading);font-weight:600;font-size:30px;line-height:1;color:{{ st.c }}">{{ st.n }}</span><span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">{{ st.l }}</span></div></sc-for>
+    </div>
+
+    <section class="blueprint" style="border-color:var(--bz-error);background:var(--color-surface);padding:18px 20px;display:flex;flex-direction:column;gap:14px"><i class="corner tl" style="color:var(--bz-error)"></i><i class="corner tr" style="color:var(--bz-error)"></i><i class="corner bl" style="color:var(--bz-error)"></i><i class="corner br" style="color:var(--bz-error)"></i>
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:10px"><h4 style="margin:0">Cadena del historial</h4><span style="font-size:14px;color:var(--bz-error);font-weight:600">Primer registro donde se rompe la cadena: #1043</span></div>
+      <div style="display:flex;align-items:center;overflow-x:auto;padding:4px 0">
+        <sc-for list="{{ chain }}" as="c"><div style="display:flex;align-items:center;flex:none">
+          <sc-if value="{{ c.link }}"><span style="width:28px;height:2px;background:{{ c.lc }};border-top:{{ c.dash }}"></span></sc-if>
+          <div style="width:84px;padding:8px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:600;color:{{ c.fg }}">#{{ c.n }}</span><span style="font-size:10px;color:{{ c.fg }}">{{ c.st }}</span></div>
+        </div></sc-for>
+      </div>
+      <span style="font-size:12px;color:var(--color-neutral-700)">Cada registro guarda la firma del anterior. Desde #1043 la firma anterior no coincide: los registros posteriores no se pueden garantizar hasta su reconciliación.</span>
+    </section>
+
+    <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex;align-items:baseline;gap:10px;padding:14px 18px;border-bottom:1px solid var(--color-divider)"><h4 style="margin:0">Hallazgos</h4><span style="font-size:13px;color:var(--color-neutral-700)">{{ when }}</span></div>
+      <div style="overflow-x:auto"><table class="table" style="min-width:820px">
+        <thead><tr><th style="padding-left:18px">Tipo</th><th>Ubicación</th><th>Detalle</th><th style="text-align:right;padding-right:18px"></th></tr></thead>
+        <tbody><sc-for list="{{ findings }}" as="f" hint-placeholder-count="6"><tr>
+          <td style="padding:11px 10px 11px 18px"><span style="font-size:11px;padding:2px 8px;white-space:nowrap;background:{{ f.bg }};color:{{ f.fg }}">{{ f.tipo }}</span></td>
+          <td style="padding:11px 10px;font-family:ui-monospace,Menlo,monospace;font-size:12px">{{ f.loc }}</td>
+          <td style="padding:11px 10px;font-size:13px">{{ f.det }}</td>
+          <td style="padding:11px 18px 11px 10px;text-align:right;white-space:nowrap">
+            <sc-if value="{{ f.seal }}"><button class="btn btn-ghost" disabled="{{ f.sealDis }}" onClick="{{ f.doSeal }}" style="font-size:13px;padding:3px 8px">Solicitar sellado</button></sc-if>
+            <sc-if value="{{ f.pend }}"><a href="#" onClick="{{ f.goPend }}" style="font-size:11px;padding:2px 6px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);text-decoration:none">Pendiente · {{ f.pend }}</a></sc-if>
+            <sc-if value="{{ f.hist }}"><button class="btn btn-ghost" onClick="{{ goHist }}" style="font-size:13px;padding:3px 8px">Ver en Historial</button></sc-if>
+          </td>
+        </tr></sc-for></tbody>
+      </table></div>
+    </section>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STEPS=[[0,'Verificando cadena del historial…'],[45,'Verificando sellos de versiones…'],[80,'Verificando sello global y tabla de roles…'],[96,'Generando informe…']];
+const C={alt:['var(--bz-error-bg)','var(--bz-error)'],ver:['var(--bz-error-bg)','var(--bz-error)'],warn:['var(--bz-warning-bg)','var(--bz-warning-fg)'],info:['var(--color-neutral-200)','var(--color-neutral-700)']};
+class Component extends DCLogic {
+  state={sim:'bad',running:false,pct:0,result:'bad',when:'Última verificación: 22/11/2026 08:00 · automática'};
+  componentWillUnmount(){clearInterval(this._i);}
+  run(){clearInterval(this._i);this.setState({running:true,pct:0});this._i=setInterval(()=>{const p=this.state.pct+3;if(p>=100){clearInterval(this._i);this.setState({running:false,pct:100,result:this.state.sim,when:'Verificación manual: 22/11/2026 11:24 · '+((this.props.me||{}).nombre||'')});this.props.toast&&this.props.toast(this.state.sim==='ok'?'Integridad verificada sin hallazgos':'Verificación terminada con hallazgos');}else this.setState({pct:p});},70);}
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);const me=P.me||{id:'cruiz',puedeSolicitar:false},reqs=P.reqs||[];
+    const pend=reqs.find(r=>r.estado==='Pendiente'&&r.tipo==='Sellado'&&r.elemento.startsWith('Versión 1 · 2 Agencias'));
+    const sealDone=reqs.find(r=>r.estado==='Pendiente'&&r.elemento==='Sellado · Versión 1 · Agencias / Auto Plan');const pp=pend||sealDone;
+    const F=(tipo,k,loc,det,extra={})=>({tipo,bg:C[k][0],fg:C[k][1],loc,det,seal:false,pend:'',hist:false,...extra});
+    const findings=[F('Registro alterado','alt','Historial #1043','La firma anterior almacenada no coincide con la firma de #1042.',{hist:true}),
+      F('Registro borrado','alt','Historial #1047 → #1049','Falta el registro #1048 en la secuencia.',{hist:true}),
+      F('Fuera de orden','warn','Historial #1051','Marca de tiempo anterior a #1050.',{hist:true}),
+      F('Campo de auditoría distinto','warn','Historial #1052 · updated_by','El valor almacenado difiere del firmado.',{hist:true}),
+      F('Versión con firma distinta','ver','2 Agencias / 2 Consumo · v3','La firma de la versión no corresponde a su contenido: el motor no evalúa este canal + producto.'),
+      F('Versión sin sello','warn','2 Agencias / 1 Auto Plan · v1','Publicada sin sello: el motor no la usa hasta que se selle.',{seal:me.puedeSolicitar&&!pp,sealDis:!!P.lock,pend:pp?pp.id:'',goPend:e=>{e.preventDefault();P.go&&P.go('solicitudes',{id:pp.id});},
+        doSeal:()=>{const id='SC-0'+(Math.max(...reqs.map(r=>+r.id.slice(3)))+1);P.setReqs&&P.setReqs(rs=>[{id,tipo:'Sellado',elemento:'Sellado · Versión 1 · Agencias / Auto Plan',accion:'Sellar',solicitante:me.id,fecha:'22/11/2026',vence:'07/12/2026',estado:'Pendiente',actual:{Sello:'Sin sellar'},propuesto:{Sello:'Sellada'},comentario:'Detectado en verificación de integridad.'},...rs]);P.toast&&P.toast(`Solicitud ${id} creada`);}}),
+      F('Sello global inválido','ver','Sello global','El hash global no coincide con el conjunto de versiones vigentes: el motor no evalúa ningún canal.')];
+    const chain=[1040,1041,1042,1043,1044,1045,1046].map((n,i)=>{const broken=n>=1043;const first=n===1043;
+      return {n,link:i>0,lc:broken?'var(--bz-error)':'var(--bz-success)',dash:first?'2px dashed var(--bz-error)':'none',bd:first?'var(--bz-error)':(broken?'var(--bz-warning)':'var(--bz-success)'),bg:first?'var(--bz-error-bg)':'transparent',fg:first?'var(--bz-error)':(broken?'var(--bz-warning-fg)':'var(--bz-success)'),st:first?'Rompe la cadena':(broken?'No garantizado':'Válido')};});
+    const step=[...STEPS].reverse().find(([p])=>s.pct>=p);
+    return {
+      sim:s.sim,onSim:e=>set({sim:e.target.value}),running:s.running,run:()=>this.run(),pct:s.pct,stepText:step?step[1]:'',
+      showOk:!s.running&&s.result==='ok',showBad:!s.running&&s.result==='bad',when:s.when,
+      stats:[{n:'1 210',l:'Registros verificados',c:'var(--color-text)'},{n:4,l:'Hallazgos en historial',c:'var(--bz-error)'},{n:2,l:'Versiones con problema',c:'var(--bz-error)'},{n:'Inválido',l:'Sello global',c:'var(--bz-error)'}],
+      chain,findings,goHist:()=>P.go&&P.go('historial'),
+    };
+  }
+}
+</script>
+</body>
+</html>

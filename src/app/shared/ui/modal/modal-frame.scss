@@ -1,0 +1,29 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-lg);
+  animation: ui-in 0.2s ease both;
+  position: relative;
+}
+.head { display: flex; flex-direction: column; gap: 6px; padding-right: 28px; }
+.meta { display: flex; align-items: center; gap: 10px; }
+.code {
+  font-family: var(--font-mono); font-size: 12px; padding: 2px 8px; border: 1px solid currentColor;
+  &.tone-error { background: var(--color-error-bg); color: var(--color-error); }
+  &.tone-warning { background: var(--color-warning-bg); color: var(--color-warning-fg); }
+  &.tone-info { background: var(--color-info-bg); color: var(--color-info); }
+}
+.kicker { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-neutral-700); }
+.title { margin: 0; font-size: 24px; }
+.body { font-size: 14px; color: var(--color-text); }
+.actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+.actions:empty { display: none; }
+.close {
+  position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; display: grid; place-items: center;
+  border: 0; background: transparent; color: inherit; cursor: pointer; border-radius: var(--radius-md);
+  &:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+}

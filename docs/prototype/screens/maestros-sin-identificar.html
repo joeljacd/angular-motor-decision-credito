@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@keyframes bzSheet{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:16px;color:var(--color-text);font-family:var(--font-body)">
+
+<sc-if value="{{ isVar }}" hint-placeholder-val="{{ true }}">
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--color-divider)">
+      <div style="display:flex;flex-direction:column"><h4 style="margin:0">Variables del flujo</h4><span style="font-size:12px;color:var(--color-neutral-700)">Origen: campo del request o cálculo predefinido. No hay fórmulas libres.</span></div>
+      <div style="flex:1"></div>
+      <div style="position:relative;width:240px"><svg viewBox="0 0 24 24" width="14" height="14" style="position:absolute;left:9px;top:11px;fill:none;stroke:var(--color-neutral-600);stroke-width:1.5;stroke-linecap:round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input class="input" placeholder="Buscar variable" value="{{ q }}" onChange="{{ onQ }}" style="padding-left:30px"></div>
+      <sc-if value="{{ canEdit }}"><button class="btn btn-primary" onClick="{{ newVar }}" style="height:36px;padding:0 14px;white-space:nowrap">+ Variable</button></sc-if>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="table" style="min-width:900px">
+        <thead><tr><th style="padding-left:18px">Código</th><th>Nombre</th><th>Tipo</th><th>Sensible</th><th>Origen</th><th>Ruta o cálculo</th><th>Usada en</th><th style="text-align:right;padding-right:18px"></th></tr></thead>
+        <tbody><sc-for list="{{ varRows }}" as="v" hint-placeholder-count="8">
+          <tr>
+            <td style="padding:10px 10px 10px 18px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--color-accent-700);white-space:nowrap">{{ v.code }}</td>
+            <td style="padding:10px">{{ v.nombre }}</td>
+            <td style="padding:10px"><span style="font-size:11px;padding:2px 6px;background:var(--color-neutral-200);color:var(--color-neutral-800)">{{ v.tipo }}</span></td>
+            <td style="padding:10px"><sc-if value="{{ v.sens }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--color-accent-700)"><svg viewBox="0 0 24 24" width="13" height="13" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Sensible</span></sc-if><sc-if value="{{ v.notSens }}"><span style="color:var(--color-neutral-500)">—</span></sc-if></td>
+            <td style="padding:10px;font-size:13px;white-space:nowrap">{{ v.origenLabel }}</td>
+            <td style="padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:12px">{{ v.calc }}</td>
+            <td style="padding:10px"><div style="display:flex;flex-wrap:wrap;gap:4px"><sc-for list="{{ v.uses }}" as="u"><a href="#" onClick="{{ u.go }}" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;padding:1px 5px;border:1px solid var(--color-accent-300);text-decoration:none">{{ u.code }}</a></sc-for><sc-if value="{{ v.unused }}"><span style="font-size:12px;color:var(--color-neutral-500)">Sin uso</span></sc-if></div></td>
+            <td style="padding:10px 18px 10px 10px;text-align:right"><button class="btn btn-ghost" onClick="{{ v.edit }}" style="font-size:13px;padding:3px 8px">{{ editLabel }}</button></td>
+          </tr>
+        </sc-for></tbody>
+      </table>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isReq }}">
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--color-divider)">
+      <div style="display:flex;flex-direction:column"><h4 style="margin:0">Campos del request</h4><span style="font-size:12px;color:var(--color-neutral-700)">Contrato de entrada del motor, agrupado por categoría.</span></div>
+      <div style="flex:1"></div>
+      <sc-if value="{{ canEdit }}"><button class="btn btn-primary" onClick="{{ newField }}" style="height:36px;padding:0 14px;white-space:nowrap">+ Campo</button></sc-if>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="table" style="min-width:1100px">
+        <thead><tr><th style="padding-left:18px">Ruta</th><th>Tipo</th><th>Oblig.</th><th>Formato</th><th>Long. máx.</th><th>Catálogo de valores</th><th>Descripción</th><th>Ejemplo</th><th></th></tr></thead>
+        <tbody><sc-for list="{{ fieldRows }}" as="f" hint-placeholder-count="10">
+          <sc-if value="{{ f.isHead }}"><tr><td colspan="9" style="padding:12px 18px 6px;background:var(--color-neutral-100);font-family:var(--font-heading);font-weight:600;font-size:14px;color:var(--color-accent-800)">{{ f.cat }} <span style="font-family:var(--font-body);font-weight:400;font-size:12px;color:var(--color-neutral-700)">· {{ f.n }} campos</span></td></tr></sc-if>
+          <sc-if value="{{ f.isRow }}"><tr>
+            <td style="padding:9px 10px 9px 18px"><span style="display:inline-flex;align-items:center;gap:6px;font-family:ui-monospace,Menlo,monospace;font-size:12px"><sc-if value="{{ f.sens }}"><svg viewBox="0 0 24 24" width="12" height="12" style="fill:none;stroke:var(--color-accent-700);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><title>Dato sensible</title><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></sc-if>{{ f.ruta }}</span></td>
+            <td style="padding:9px 10px"><span style="font-size:11px;padding:2px 6px;background:var(--color-neutral-200);color:var(--color-neutral-800)">{{ f.tipo }}</span></td>
+            <td style="padding:9px 10px;font-size:13px">{{ f.reqLabel }}</td>
+            <td style="padding:9px 10px;font-family:ui-monospace,Menlo,monospace;font-size:12px">{{ f.formato }}</td>
+            <td style="padding:9px 10px;font-size:13px">{{ f.max }}</td>
+            <td style="padding:9px 10px;font-family:ui-monospace,Menlo,monospace;font-size:11px">{{ f.catalogo }}</td>
+            <td style="padding:9px 10px;font-size:13px">{{ f.desc }}</td>
+            <td style="padding:9px 10px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-neutral-700)">{{ f.ej }}</td>
+            <td style="padding:9px 18px 9px 10px;text-align:right"><button class="btn btn-ghost" onClick="{{ f.edit }}" style="font-size:13px;padding:3px 8px">{{ editLabel }}</button></td>
+          </tr></sc-if>
+        </sc-for></tbody>
+      </table>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isCat }}">
+  <div style="display:grid;grid-template-columns:{{ catCols }};gap:16px;align-items:start">
+    <aside style="border:1px solid var(--color-divider);background:var(--color-surface);display:flex;flex-direction:column">
+      <div style="padding:10px 14px;border-bottom:1px solid var(--color-divider);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">Catálogos del borrador</div>
+      <sc-for list="{{ catList }}" as="c">
+        <button onClick="{{ c.pick }}" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:0;border-bottom:1px solid var(--color-divider);background:{{ c.bg }};cursor:pointer;text-align:left;color:var(--color-text)" style-hover="background:var(--color-accent-100)">
+          <span style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:{{ c.color }};overflow-wrap:anywhere">{{ c.code }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ c.nombre }}</span></span>
+          <span style="font-size:11px;padding:1px 6px;background:{{ c.nBg }};color:{{ c.nFg }}">{{ c.n }}</span>
+        </button>
+      </sc-for>
+    </aside>
+    <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column;min-width:0"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--color-divider)">
+        <div style="display:flex;flex-direction:column;min-width:0"><span style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--color-accent-700)">{{ cur.code }}</span><h4 style="margin:0">{{ cur.nombre }}</h4></div>
+        <div style="flex:1"></div>
+        <sc-if value="{{ canEdit }}"><button class="btn btn-secondary" onClick="{{ openWiz }}" style="height:34px;padding:0 12px;white-space:nowrap"><svg viewBox="0 0 24 24" width="15" height="15" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>Carga masiva</button><button class="btn btn-primary" onClick="{{ addItem }}" style="height:34px;padding:0 12px;white-space:nowrap">+ Elemento</button></sc-if>
+      </div>
+      <sc-if value="{{ curEmpty }}">
+        <div style="padding:48px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="font-family:var(--font-heading);font-weight:600;font-size:20px">Este catálogo no tiene elementos</span><span style="font-size:14px;color:var(--color-neutral-700);max-width:380px">Las condiciones que lo usen no encontrarán coincidencias. Agrega elementos uno a uno o con una carga masiva.</span><sc-if value="{{ canEdit }}"><button class="btn btn-primary" onClick="{{ openWiz }}" style="height:36px;padding:0 14px;margin-top:6px">Carga masiva</button></sc-if></div>
+      </sc-if>
+      <sc-if value="{{ curHas }}">
+      <div style="overflow-x:auto"><table class="table" style="min-width:520px">
+        <thead><tr><th style="padding-left:18px;width:150px">Código</th><th>Descripción</th><th style="width:90px">Activo</th><th style="width:60px"></th></tr></thead>
+        <tbody><sc-for list="{{ itemRows }}" as="it">
+          <tr>
+            <td style="padding:6px 10px 6px 18px;vertical-align:top"><input class="input" disabled="{{ ro }}" value="{{ it.code }}" onChange="{{ it.onCode }}" style="min-height:30px;font-family:ui-monospace,Menlo,monospace;font-size:13px"><sc-if value="{{ it.err }}"><div style="font-size:11px;color:var(--bz-error);margin-top:3px">{{ it.err }}</div></sc-if></td>
+            <td style="padding:6px 10px;vertical-align:top"><input class="input" disabled="{{ ro }}" value="{{ it.desc }}" onChange="{{ it.onDesc }}" style="min-height:30px"></td>
+            <td style="padding:6px 10px;vertical-align:top"><label style="display:flex;align-items:center;gap:8px;height:30px;font-size:13px;cursor:pointer"><input type="checkbox" disabled="{{ ro }}" checked="{{ it.active }}" onChange="{{ it.onActive }}" style="width:16px;height:16px;accent-color:var(--color-accent)">{{ it.activeLabel }}</label></td>
+            <td style="padding:6px 18px 6px 10px;vertical-align:top;text-align:right"><sc-if value="{{ canEdit }}"><button class="btn btn-ghost btn-icon" title="Dar de baja" onClick="{{ it.del }}" style="width:30px;height:30px;color:var(--color-neutral-700)"><svg viewBox="0 0 24 24" width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path></svg></button></sc-if></td>
+          </tr>
+        </sc-for></tbody>
+      </table></div>
+      </sc-if>
+    </section>
+  </div>
+</sc-if>
+</div>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeSheet }}" style="position:fixed;inset:0;z-index:140;background:color-mix(in srgb,#000 35%,transparent)"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(460px,100vw);z-index:141;background:var(--color-surface);border-left:1px solid var(--color-divider);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;animation:bzSheet .2s ease both;color:var(--color-text)">
+    <div style="display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--color-divider)"><div style="flex:1"><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">{{ sh.kicker }}</span><h3 style="margin:0">{{ sh.title }}</h3></div><button class="btn btn-ghost btn-icon" title="Cerrar" onClick="{{ closeSheet }}" style="color:var(--color-text)"><svg viewBox="0 0 24 24" width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+    <div style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+      <sc-if value="{{ sh.isVar }}">
+        <div class="field"><label>Código</label><input class="input" disabled="{{ sh.lockCode }}" value="{{ vf.code }}" onChange="{{ vfOn.code }}" style="font-family:ui-monospace,Menlo,monospace"><sc-if value="{{ vfErr.code }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ vfErr.code }}</div></sc-if></div>
+        <div class="field"><label>Nombre</label><input class="input" disabled="{{ ro }}" value="{{ vf.nombre }}" onChange="{{ vfOn.nombre }}"><sc-if value="{{ vfErr.nombre }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ vfErr.nombre }}</div></sc-if></div>
+        <div class="field"><label>Tipo de dato</label><select class="input" disabled="{{ sh.lockType }}" value="{{ vf.tipo }}" onChange="{{ vfOn.tipo }}"><option value="TEXT">TEXT</option><option value="NUMBER">NUMBER</option><option value="MONEY">MONEY</option><option value="DATE">DATE</option></select>
+          <sc-if value="{{ sh.usedBy }}"><div style="margin-top:6px;padding:8px 10px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);font-size:12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">No se puede cambiar el tipo ni eliminar: la usan <sc-for list="{{ sh.uses }}" as="u"><a href="#" onClick="{{ u.go }}" style="font-family:ui-monospace,Menlo,monospace;color:var(--bz-warning-fg)">{{ u.code }}</a></sc-for></div></sc-if>
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer"><input type="checkbox" disabled="{{ ro }}" checked="{{ vf.sens }}" onChange="{{ vfOn.sens }}" style="width:16px;height:16px;accent-color:var(--color-accent)"><svg viewBox="0 0 24 24" width="14" height="14" style="fill:none;stroke:var(--color-accent-700);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Dato sensible (se enmascara en historial y logs)</label>
+        <div class="field"><label>Origen</label><div class="seg" style="display:flex"><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" disabled="{{ ro }}" checked="{{ vfReq }}" onChange="{{ vfOn.req }}">Campo del request</label><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" disabled="{{ ro }}" checked="{{ vfCalc }}" onChange="{{ vfOn.calc }}">Calculada</label></div></div>
+        <sc-if value="{{ vfReq }}"><div class="field"><label>Ruta del request</label><select class="input" disabled="{{ ro }}" value="{{ vf.ruta }}" onChange="{{ vfOn.ruta }}" style="font-family:ui-monospace,Menlo,monospace;font-size:13px"><option value="">Selecciona una ruta</option><sc-for list="{{ rutas }}" as="r"><option value="{{ r }}">{{ r }}</option></sc-for></select><sc-if value="{{ vfErr.ruta }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ vfErr.ruta }}</div></sc-if></div></sc-if>
+        <sc-if value="{{ vfCalc }}">
+          <div class="field"><label>Cálculo</label><select class="input" disabled="{{ ro }}" value="{{ vf.fn }}" onChange="{{ vfOn.fn }}"><option value="Edad">Edad</option><option value="Años transcurridos">Años transcurridos</option><option value="Conteo">Conteo</option><option value="Suma">Suma</option></select></div>
+          <div class="field"><label>Campo de origen</label><input class="input" disabled="{{ ro }}" value="{{ vf.campo }}" onChange="{{ vfOn.campo }}" list="bz-rutas" style="font-family:ui-monospace,Menlo,monospace;font-size:13px"><datalist id="bz-rutas"><sc-for list="{{ rutas }}" as="r"><option value="{{ r }}"></option></sc-for></datalist><sc-if value="{{ vfErr.campo }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ vfErr.campo }}</div></sc-if><div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">Solo cálculos predefinidos: Edad, Años transcurridos, Conteo y Suma.</div></div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ sh.isField }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field"><label>Categoría</label><select class="input" disabled="{{ ro }}" value="{{ ff.cat }}" onChange="{{ ffOn.cat }}"><sc-for list="{{ fieldCats }}" as="fc"><option value="{{ fc }}">{{ fc }}</option></sc-for></select></div>
+          <div class="field"><label>Tipo</label><select class="input" disabled="{{ ro }}" value="{{ ff.tipo }}" onChange="{{ ffOn.tipo }}"><option value="TEXT">TEXT</option><option value="NUMBER">NUMBER</option><option value="MONEY">MONEY</option><option value="DATE">DATE</option></select></div>
+        </div>
+        <div class="field"><label>Ruta</label><input class="input" disabled="{{ ro }}" value="{{ ff.ruta }}" onChange="{{ ffOn.ruta }}" placeholder="ej. employment.startDate" style="font-family:ui-monospace,Menlo,monospace;font-size:13px"><sc-if value="{{ ffErr.ruta }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ ffErr.ruta }}</div></sc-if></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field"><label>Formato</label><input class="input" disabled="{{ ro }}" value="{{ ff.formato }}" onChange="{{ ffOn.formato }}" placeholder="MM/dd/yyyy" style="font-family:ui-monospace,Menlo,monospace;font-size:13px"></div>
+          <div class="field"><label>Longitud máxima</label><input class="input" disabled="{{ ro }}" value="{{ ff.max }}" onChange="{{ ffOn.max }}" placeholder="—"></div>
+        </div>
+        <div class="field"><label>Catálogo de valores</label><select class="input" disabled="{{ ro }}" value="{{ ff.catalogo }}" onChange="{{ ffOn.catalogo }}"><option value="">Ninguno</option><sc-for list="{{ catalogCodes }}" as="cc"><option value="{{ cc }}">{{ cc }}</option></sc-for></select></div>
+        <div style="display:flex;gap:20px"><label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer"><input type="checkbox" disabled="{{ ro }}" checked="{{ ff.req }}" onChange="{{ ffOn.req }}" style="width:16px;height:16px;accent-color:var(--color-accent)">Obligatorio</label><label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer"><input type="checkbox" disabled="{{ ro }}" checked="{{ ff.sens }}" onChange="{{ ffOn.sens }}" style="width:16px;height:16px;accent-color:var(--color-accent)">Sensible</label></div>
+        <div class="field"><label>Descripción</label><input class="input" disabled="{{ ro }}" value="{{ ff.desc }}" onChange="{{ ffOn.desc }}"></div>
+        <div class="field"><label>Ejemplo</label><input class="input" disabled="{{ ro }}" value="{{ ff.ej }}" onChange="{{ ffOn.ej }}" style="font-family:ui-monospace,Menlo,monospace;font-size:13px"></div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ canEdit }}">
+      <div style="display:flex;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--color-divider)">
+        <sc-if value="{{ sh.canDelete }}"><button class="btn btn-secondary" disabled="{{ sh.usedBy }}" onClick="{{ sh.del }}" style="height:36px;padding:0 12px;color:var(--bz-error)">Eliminar</button></sc-if>
+        <div style="flex:1"></div>
+        <button class="btn btn-secondary" onClick="{{ closeSheet }}" style="height:36px;padding:0 12px">Cancelar</button>
+        <button class="btn btn-primary" onClick="{{ sh.save }}" style="height:36px;padding:0 14px">Guardar en el borrador</button>
+      </div>
+    </sc-if>
+  </aside>
+</sc-if>
+
+<sc-if value="{{ wizOpen }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;overflow-y:auto;align-items:start;padding-top:min(8vh,70px)">
+  <div class="dialog blueprint" style="width:min(720px,100%);background:var(--color-surface);gap:16px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex;align-items:flex-start;gap:12px"><div style="flex:1"><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Carga masiva · {{ cur.code }}</span><div class="dialog-title" style="font-size:24px">{{ wiz.title }}</div></div><button class="btn btn-ghost btn-icon" title="Cerrar" onClick="{{ closeWiz }}" style="color:var(--color-text)"><svg viewBox="0 0 24 24" width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--color-divider)"><sc-for list="{{ wiz.steps }}" as="st"><div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:{{ st.bg }};color:{{ st.fg }};border-right:1px solid var(--color-divider);font-size:13px;font-weight:500"><span style="width:20px;height:20px;display:grid;place-items:center;border:1px solid currentColor;font-size:11px">{{ st.n }}</span>{{ st.label }}</div></sc-for></div>
+
+    <sc-if value="{{ wiz.s1 }}">
+      <label style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px;border:1.5px dashed var(--color-neutral-400);cursor:pointer;text-align:center" style-hover="border-color:var(--color-accent);background:var(--color-accent-100)">
+        <svg viewBox="0 0 24 24" width="28" height="28" style="fill:none;stroke:var(--color-accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
+        <span style="font-weight:500">{{ wiz.fileLabel }}</span>
+        <span style="font-size:12px;color:var(--color-neutral-700)">JSON o CSV · encabezado fijo <code>code,description,active</code> · UTF-8 · máximo 5 000 filas</span>
+        <input type="file" accept=".csv,.json" onChange="{{ onFile }}" style="display:none">
+      </label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--color-neutral-700)">Archivos de ejemplo: <button class="btn btn-ghost" onClick="{{ sampleOk }}" style="font-size:12px;padding:2px 6px">cantones_2026.csv</button><button class="btn btn-ghost" onClick="{{ sampleBad }}" style="font-size:12px;padding:2px 6px">cantones_con_errores.csv</button></div>
+      <sc-if value="{{ wiz.fileErr }}"><div style="padding:8px 12px;background:var(--bz-error-bg);color:var(--bz-error);border:1px solid var(--bz-error);font-size:13px">{{ wiz.fileErr }}</div></sc-if>
+      <div class="field"><label>Modo</label><div class="seg" style="display:flex;max-width:420px"><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ wiz.add }}" onChange="{{ setAdd }}">Agregar</label><label class="seg-opt" style="flex:1;justify-content:center"><input type="radio" checked="{{ wiz.repl }}" onChange="{{ setRepl }}">Reemplazar</label></div><div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">{{ wiz.modeHint }}</div></div>
+    </sc-if>
+
+    <sc-if value="{{ wiz.s2 }}">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px"><span><strong>{{ wiz.nRows }}</strong> filas</span><span style="color:var(--bz-error)"><strong>{{ wiz.nBad }}</strong> con error</span><span style="color:var(--color-neutral-700)">Modo: {{ wiz.modeLabel }}</span></div>
+      <sc-if value="{{ wiz.hasBad }}"><div style="padding:10px 12px;background:var(--bz-error-bg);color:var(--bz-error);border:1px solid var(--bz-error);font-size:13px">Se rechaza la carga completa: {{ wiz.badMsg }}. Corrige el archivo y vuelve a subirlo.</div></sc-if>
+      <div style="max-height:320px;overflow:auto;border:1px solid var(--color-divider)"><table class="table" style="font-size:13px">
+        <thead><tr><th style="width:60px">Fila</th><th>code</th><th>description</th><th>active</th><th>Resultado</th></tr></thead>
+        <tbody><sc-for list="{{ wiz.rows }}" as="pr"><tr style="background:{{ pr.bg }}"><td style="padding:6px 8px;font-family:ui-monospace,Menlo,monospace">{{ pr.line }}</td><td style="padding:6px 8px;font-family:ui-monospace,Menlo,monospace">{{ pr.code }}</td><td style="padding:6px 8px">{{ pr.description }}</td><td style="padding:6px 8px;font-family:ui-monospace,Menlo,monospace">{{ pr.active }}</td><td style="padding:6px 8px;color:{{ pr.fg }};font-size:12px">{{ pr.status }}</td></tr></sc-for></tbody>
+      </table></div>
+    </sc-if>
+
+    <sc-if value="{{ wiz.s3 }}">
+      <div style="display:flex;gap:14px;align-items:center;padding:16px;border:1px solid var(--bz-success);background:var(--bz-success-bg)"><svg viewBox="0 0 24 24" width="28" height="28" style="flex:none;fill:none;stroke:var(--bz-success);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg><div style="display:flex;flex-direction:column"><span style="font-family:var(--font-heading);font-weight:600;font-size:22px">{{ wiz.result }}</span><span style="font-size:13px;color:var(--color-neutral-700)">Los cambios se aplicaron al borrador; rigen cuando la versión se publique.</span></div></div>
+    </sc-if>
+
+    <div class="dialog-actions">
+      <sc-if value="{{ wiz.canBack }}"><button class="btn btn-secondary" onClick="{{ wizBack }}" style="height:38px;padding:0 16px">Atrás</button></sc-if>
+      <div style="flex:1"></div>
+      <sc-if value="{{ wiz.s1 }}"><button class="btn btn-primary" disabled="{{ wiz.noFile }}" onClick="{{ wizNext }}" style="height:38px;padding:0 18px">Ver vista previa</button></sc-if>
+      <sc-if value="{{ wiz.s2 }}"><button class="btn btn-primary" disabled="{{ wiz.hasBad }}" onClick="{{ wizProcess }}" style="height:38px;padding:0 18px">Procesar carga</button></sc-if>
+      <sc-if value="{{ wiz.s3 }}"><button class="btn btn-primary" onClick="{{ closeWiz }}" style="height:38px;padding:0 18px">Listo</button></sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FCATS=['Común','Cliente','Geográfica','Financiera','Laboral'];
+const ok15=()=>{const rows=[['0901','Guayaquil','true'],['1701','Quito D.M.','true'],['0101','Cuenca (cantón)','true'],['0907','Durán','false']];
+  const nw=[['0902','Alfredo Baquerizo Moreno'],['0906','Daule'],['0910','El Empalme'],['0916','Milagro'],['0920','Naranjal'],['0924','Playas'],['0928','Samborondón'],['1702','Cayambe'],['1703','Mejía'],['1704','Pedro Moncayo'],['1705','Rumiñahui'],['0102','Girón']];
+  nw.forEach(([c,d])=>rows.push([c,d,'true']));return rows;};
+const toCsv=rows=>'code,description,active\n'+rows.map(r=>r.join(',')).join('\n');
+const SAMPLE_OK=toCsv(ok15());
+const SAMPLE_BAD=toCsv(ok15().map((r,i)=>i===5?[r[0],r[1],'si']:(i===9?['0906',r[1],'true']:r)));
+const parse=(text,name)=>{const out={rows:[],err:''};text=text.replace(/^\uFEFF/,'');
+  if(/\.json$/i.test(name)||text.trim().startsWith('[')){try{const a=JSON.parse(text);if(!Array.isArray(a))throw 0;out.rows=a.map((o,i)=>({line:i+1,code:String(o.code??''),description:String(o.description??''),active:String(o.active??'')}));}catch(e){out.err='El JSON no es válido: debe ser un arreglo de objetos {code, description, active}.';}}
+  else{const lines=text.split(/\r?\n/).filter(l=>l.trim());if(!lines.length){out.err='El archivo está vacío.';return out;}
+    if(lines[0].trim().toLowerCase()!=='code,description,active'){out.err='Encabezado inválido: debe ser exactamente «code,description,active».';return out;}
+    out.rows=lines.slice(1).map((l,i)=>{const p=l.split(',');return {line:i+2,code:(p[0]||'').trim(),description:(p.slice(1,-1).join(',')||'').trim(),active:(p[p.length-1]||'').trim(),cols:p.length};});}
+  if(out.rows.length>5000)out.err=`El archivo tiene ${out.rows.length} filas; el máximo es 5 000.`;
+  const seen={};out.rows.forEach(r=>{let e='';if(!r.code)e='code vacío';else if(r.code.length>10)e='code supera 10 caracteres';else if(seen[r.code])e=`code duplicado (fila ${seen[r.code]})`;else if(!/^(true|false)$/i.test(r.active))e=`active debe ser true o false (valor: «${r.active}»)`;else if(!r.description)e='description vacía';
+    if(!seen[r.code])seen[r.code]=r.line;r.e=e;});return out;};
+
+class Component extends DCLogic {
+  state={q:'',sheet:null,vf:null,ff:null,touched:false,cat:null,wiz:null};
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const tab=P.tab||'var',ro=!!P.ro,canEdit=!ro;
+    const vars=P.vars||[],fields=P.fields||[],catalogs=P.catalogs||[],draft=P.draft||{cats:[]};
+    const usage={};draft.cats.forEach(c=>c.pols.forEach(p=>{const w=g=>g.ch.forEach(x=>x.t==='g'?w(x):((usage[x.v]=usage[x.v]||new Set()).add(p.code)));w(p.root);}));
+    const usesOf=code=>[...(usage[code]||[])].map(pc=>({code:pc,go:e=>{e.preventDefault();set({sheet:null});P.openPolicy&&P.openPolicy(pc);}}));
+    const q=s.q.toUpperCase();
+    const varRows=vars.filter(v=>!q||v.code.includes(q)||v.nombre.toUpperCase().includes(q)).map(v=>{const uses=usesOf(v.code);return {...v,notSens:!v.sens,origenLabel:v.origen==='request'?'Campo del request':'Calculada',calc:v.origen==='request'?v.ruta:`${v.fn}(${v.campo})`,uses,unused:!uses.length,
+      edit:()=>set({sheet:{type:'var',code:v.code},vf:{...v},touched:false})};});
+    const fieldRows=[];FCATS.forEach(c=>{const fs=fields.filter(f=>f.cat===c);if(!fs.length)return;fieldRows.push({isHead:true,cat:c,n:fs.length});
+      fs.forEach(f=>fieldRows.push({isRow:true,...f,reqLabel:f.req?'Sí':'No',max:f.max||'—',formato:f.formato||'—',catalogo:f.catalogo||'—',edit:()=>set({sheet:{type:'field',ruta:f.ruta,cat:f.cat},ff:{...f},touched:false})}));});
+    // sheet
+    let sh={},vfErr={},ffErr={};const vf=s.vf||{},ff=s.ff||{};
+    if(s.sheet&&s.sheet.type==='var'){const isNew=!s.sheet.code;const uses=isNew?[]:usesOf(s.sheet.code);
+      if(s.touched){if(!/^[A-Z][A-Z0-9_]{2,39}$/.test(vf.code||''))vfErr.code='Mayúsculas, dígitos y _ (3 a 40)';else if(isNew&&vars.some(v=>v.code===vf.code))vfErr.code='Ya existe una variable con ese código';
+        if(!(vf.nombre||'').trim())vfErr.nombre='Obligatorio';if(vf.origen==='request'&&!vf.ruta)vfErr.ruta='Selecciona la ruta';if(vf.origen==='calc'&&!vf.campo)vfErr.campo='Indica el campo de origen';}
+      sh={isVar:true,kicker:'Variable',title:isNew?'Nueva variable':vf.code,lockCode:ro||!isNew,lockType:ro||uses.length>0,usedBy:uses.length>0,uses,canDelete:!isNew,
+        del:()=>{P.setVars(vs=>vs.filter(v=>v.code!==s.sheet.code));set({sheet:null});P.toast&&P.toast(`Variable ${s.sheet.code} eliminada del borrador`);},
+        save:()=>{this.setState({touched:true});const e={};if(!/^[A-Z][A-Z0-9_]{2,39}$/.test(vf.code||'')||(isNew&&vars.some(v=>v.code===vf.code))||!(vf.nombre||'').trim()||(vf.origen==='request'&&!vf.ruta)||(vf.origen==='calc'&&!vf.campo))return;
+          if(P.sim409)return P.conflict&&P.conflict();const clean={...vf};if(clean.origen==='request'){delete clean.fn;delete clean.campo;}else delete clean.ruta;
+          P.setVars(vs=>isNew?[...vs,clean]:vs.map(v=>v.code===clean.code?clean:v));set({sheet:null});P.toast&&P.toast(`Variable ${clean.code} guardada en el borrador`);}};}
+    if(s.sheet&&s.sheet.type==='field'){const isNew=!s.sheet.ruta;
+      const dup=fields.some(f=>f.cat===ff.cat&&f.ruta===ff.ruta&&!(f.ruta===s.sheet.ruta&&f.cat===s.sheet.cat));
+      if(s.touched){if(!/^[a-z][a-zA-Z0-9]*(\.[a-z][a-zA-Z0-9]*)+$/.test(ff.ruta||''))ffErr.ruta='Usa notación con puntos (ej. employment.startDate)';else if(dup)ffErr.ruta=`La ruta ${ff.ruta} ya existe en la categoría ${ff.cat}`;}
+      sh={isField:true,kicker:'Campo del request',title:isNew?'Nuevo campo':ff.ruta,canDelete:!isNew,usedBy:false,
+        del:()=>{P.setFields(fs=>fs.filter(f=>!(f.ruta===s.sheet.ruta&&f.cat===s.sheet.cat)));set({sheet:null});},
+        save:()=>{this.setState({touched:true});if(!/^[a-z][a-zA-Z0-9]*(\.[a-z][a-zA-Z0-9]*)+$/.test(ff.ruta||'')||dup)return;if(P.sim409)return P.conflict&&P.conflict();
+          P.setFields(fs=>isNew?[...fs,{...ff}]:fs.map(f=>f.ruta===s.sheet.ruta&&f.cat===s.sheet.cat?{...ff}:f));set({sheet:null});P.toast&&P.toast(`Campo ${ff.ruta} guardado en el borrador`);}};}
+    const setVf=o=>this.setState(st=>({vf:{...st.vf,...o}}));const setFf=o=>this.setState(st=>({ff:{...st.ff,...o}}));
+    // catalogs
+    const curCode=s.cat||P.selCat||(catalogs[0]&&catalogs[0].code);const cur=catalogs.find(c=>c.code===curCode)||{code:'',nombre:'',items:[]};
+    const updCat=fn=>P.setCatalogs(cs=>cs.map(c=>c.code===cur.code?{...c,items:fn(c.items.map(i=>[...i]))}:c));
+    const counts={};cur.items.forEach(i=>counts[i[0]]=(counts[i[0]]||0)+1);
+    const itemRows=cur.items.map((it,i)=>({code:it[0],desc:it[1],active:it[2],activeLabel:it[2]?'Sí':'No',err:!it[0]?'Código obligatorio':(counts[it[0]]>1?'Código repetido':''),
+      onCode:e=>{const v=e.target.value.trim();updCat(a=>{a[i][0]=v;return a;});},onDesc:e=>{const v=e.target.value;updCat(a=>{a[i][1]=v;return a;});},onActive:e=>{const v=e.target.checked;updCat(a=>{a[i][2]=v;return a;});},
+      del:()=>{updCat(a=>a.filter((_,j)=>j!==i));P.toast&&P.toast(`Elemento ${it[0]||''} dado de baja en el borrador`);}}));
+    // wizard
+    let wiz={};const w=s.wiz;
+    if(w){const st=w.step;const bad=(w.parsed?w.parsed.rows.filter(r=>r.e):[]);
+      wiz={title:['Subir archivo','Vista previa','Resultado'][st-1],s1:st===1,s2:st===2,s3:st===3,canBack:st===2,
+        steps:['Archivo','Vista previa','Resultado'].map((l,i)=>({n:i+1,label:l,bg:i+1===st?'var(--color-accent-100)':'transparent',fg:i+1<=st?'var(--color-accent-700)':'var(--color-neutral-600)'})),
+        fileLabel:w.name?`${w.name} · ${w.parsed?w.parsed.rows.length:0} filas`:'Arrastra o elige un archivo',fileErr:w.parsed&&w.parsed.err,noFile:!w.parsed||!!w.parsed.err,
+        add:w.mode==='add',repl:w.mode==='repl',modeLabel:w.mode==='add'?'Agregar':'Reemplazar',modeHint:w.mode==='add'?'Agrega y actualiza elementos; no elimina los existentes.':'El catálogo quedará exactamente como el archivo: se eliminan los códigos que no vengan.',
+        nRows:w.parsed?w.parsed.rows.length:0,nBad:bad.length,hasBad:bad.length>0,badMsg:bad.length===1?`hay 1 fila con error (fila ${bad[0].line})`:`hay ${bad.length} filas con error (filas ${bad.map(b=>b.line).join(', ')})`,
+        rows:(w.parsed?w.parsed.rows:[]).slice(0,300).map(r=>({...r,bg:r.e?'var(--bz-error-bg)':'transparent',fg:r.e?'var(--bz-error)':'var(--bz-success)',status:r.e||'OK'})),
+        result:w.result||''};}
+    const loadText=(text,name)=>this.setState(st=>({wiz:{...st.wiz,name,parsed:parse(text,name)}}));
+    return {
+      isVar:tab==='var',isReq:tab==='req',isCat:tab==='cat',canEdit,ro,editLabel:ro?'Ver':'Editar',q:s.q,onQ:e=>set({q:e.target.value}),varRows,fieldRows,
+      newVar:()=>set({sheet:{type:'var'},vf:{code:'',nombre:'',tipo:'TEXT',sens:false,origen:'request',ruta:'',fn:'Edad',campo:''},touched:false}),
+      newField:()=>set({sheet:{type:'field'},ff:{cat:'Laboral',ruta:'',tipo:'DATE',req:false,formato:'MM/dd/yyyy',max:'',catalogo:'',sens:false,desc:'',ej:''},touched:false}),
+      sheetOpen:!!s.sheet,closeSheet:()=>set({sheet:null}),sh,vf,vfErr,ff,ffErr,vfReq:vf.origen==='request',vfCalc:vf.origen==='calc',
+      vfOn:{code:e=>setVf({code:e.target.value.toUpperCase()}),nombre:e=>setVf({nombre:e.target.value}),tipo:e=>setVf({tipo:e.target.value}),sens:e=>setVf({sens:e.target.checked}),req:()=>setVf({origen:'request'}),calc:()=>setVf({origen:'calc'}),ruta:e=>setVf({ruta:e.target.value}),fn:e=>setVf({fn:e.target.value}),campo:e=>setVf({campo:e.target.value})},
+      ffOn:{cat:e=>setFf({cat:e.target.value}),tipo:e=>setFf({tipo:e.target.value}),ruta:e=>setFf({ruta:e.target.value.trim()}),formato:e=>setFf({formato:e.target.value}),max:e=>setFf({max:e.target.value}),catalogo:e=>setFf({catalogo:e.target.value}),req:e=>setFf({req:e.target.checked}),sens:e=>setFf({sens:e.target.checked}),desc:e=>setFf({desc:e.target.value}),ej:e=>setFf({ej:e.target.value})},
+      rutas:[...new Set(fields.map(f=>f.ruta))],fieldCats:FCATS,catalogCodes:catalogs.map(c=>c.code),
+      catCols:'minmax(220px,280px) minmax(0,1fr)',
+      catList:catalogs.map(c=>({code:c.code,nombre:c.nombre,n:c.items.length,nBg:c.items.length?'var(--color-neutral-200)':'var(--bz-warning-bg)',nFg:c.items.length?'var(--color-neutral-700)':'var(--bz-warning-fg)',
+        bg:c.code===cur.code?'var(--color-accent-100)':'transparent',color:c.code===cur.code?'var(--color-accent-700)':'var(--color-text)',pick:()=>set({cat:c.code})})),
+      cur,curEmpty:!cur.items.length,curHas:cur.items.length>0,itemRows,
+      addItem:()=>updCat(a=>[...a,['','',true]]),
+      openWiz:()=>set({wiz:{step:1,mode:'add',name:'',parsed:null}}),closeWiz:()=>set({wiz:null}),wizOpen:!!w,wiz,
+      onFile:e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>loadText(String(rd.result),f.name);rd.readAsText(f,'utf-8');},
+      sampleOk:()=>loadText(SAMPLE_OK,'cantones_2026.csv'),sampleBad:()=>loadText(SAMPLE_BAD,'cantones_con_errores.csv'),
+      setAdd:()=>set({wiz:{...w,mode:'add'}}),setRepl:()=>set({wiz:{...w,mode:'repl'}}),
+      wizNext:()=>set({wiz:{...w,step:2}}),wizBack:()=>set({wiz:{...w,step:1}}),
+      wizProcess:()=>{const rows=w.parsed.rows;const ex=Object.fromEntries(cur.items.map(i=>[i[0],i]));let add=0,chg=0,del=0;
+        rows.forEach(r=>{const a=/^true$/i.test(r.active);const e=ex[r.code];if(!e)add++;else if(e[1]!==r.description||e[2]!==a)chg++;});
+        if(w.mode==='repl')del=cur.items.filter(i=>!rows.some(r=>r.code===i[0])).length;
+        updCat(items=>{let base=w.mode==='repl'?[]:items;rows.forEach(r=>{const a=/^true$/i.test(r.active);const i=base.findIndex(x=>x[0]===r.code);if(i>=0)base[i]=[r.code,r.description,a];else base.push([r.code,r.description,a]);});return base;});
+        set({wiz:{...w,step:3,result:`${rows.length} procesados: ${add} agregados, ${chg} cambiados, ${del} eliminados`}});P.toast&&P.toast('Carga masiva aplicada al borrador');},
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div>
+    <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Control de cuatro ojos</span>
+    <h1 style="margin:2px 0 4px;font-size:40px">Solicitudes de cambio</h1>
+    <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:640px">Canales, productos, acciones, parámetros, catálogos, roles y sellados se cambian solo con una solicitud aprobada por otra persona.</p>
+  </div>
+
+  <section class="blueprint" style="background:var(--color-surface);padding:14px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;align-items:end"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="field"><label>Estado</label><select class="input" value="{{ f.estado }}" onChange="{{ onF.estado }}"><option value="">Todos</option><sc-for list="{{ estados }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+    <div class="field"><label>Tipo de elemento</label><select class="input" value="{{ f.tipo }}" onChange="{{ onF.tipo }}"><option value="">Todos</option><sc-for list="{{ tipos }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+    <div class="field"><label>Solicitante</label><select class="input" value="{{ f.sol }}" onChange="{{ onF.sol }}"><option value="">Todos</option><sc-for list="{{ sols }}" as="o"><option value="{{ o.id }}">{{ o.n }}</option></sc-for></select></div>
+    <label style="display:flex;align-items:center;gap:10px;height:36px;font-size:14px;cursor:pointer"><input type="checkbox" checked="{{ f.mine }}" onChange="{{ onF.mine }}" style="width:16px;height:16px;accent-color:var(--color-accent)">Solo mías</label>
+  </section>
+
+  <div style="display:grid;grid-template-columns:{{ cols }};gap:16px;align-items:start">
+    <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column;min-width:0"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="padding:12px 18px;border-bottom:1px solid var(--color-divider);font-size:13px;color:var(--color-neutral-700)">{{ count }} solicitudes</div>
+      <div style="overflow-x:auto"><table class="table" style="min-width:640px">
+        <thead><tr><th style="padding-left:18px">Id</th><th>Tipo</th><th>Elemento</th><th>Solicitante</th><th>Estado</th><th>Vence</th></tr></thead>
+        <tbody><sc-for list="{{ rows }}" as="r" hint-placeholder-count="6"><tr onClick="{{ r.pick }}" style="cursor:pointer;background:{{ r.bg }}">
+          <td style="padding:11px 10px 11px 18px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-accent-700)">{{ r.id }}</td>
+          <td style="padding:11px 10px;font-size:13px;white-space:nowrap">{{ r.tipo }}</td>
+          <td style="padding:11px 10px;font-size:13px">{{ r.elemento }}</td>
+          <td style="padding:11px 10px;font-size:13px;white-space:nowrap">{{ r.solN }}</td>
+          <td style="padding:11px 10px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;white-space:nowrap;background:{{ r.eBg }};color:{{ r.eFg }}"><span style="width:6px;height:6px;background:currentColor"></span>{{ r.estado }}</span></td>
+          <td style="padding:11px 10px"><span style="font-size:12px;padding:2px 6px;white-space:nowrap;background:{{ r.vBg }};color:{{ r.vFg }}">{{ r.vence }}</span></td>
+        </tr></sc-for></tbody>
+      </table></div>
+      <sc-if value="{{ empty }}"><div style="padding:40px 20px;text-align:center;font-size:14px;color:var(--color-neutral-700)">No hay solicitudes con estos filtros.</div></sc-if>
+    </section>
+
+    <sc-if value="{{ hasSel }}">
+    <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column;min-width:0;position:sticky;top:76px;animation:bzIn .18s ease both"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="padding:16px 18px;border-bottom:1px solid var(--color-divider);display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-accent-700)">{{ d.id }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ d.tipo }} · {{ d.accion }}</span><div style="flex:1"></div><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;background:{{ d.eBg }};color:{{ d.eFg }}"><span style="width:6px;height:6px;background:currentColor"></span>{{ d.estado }}</span></div>
+        <h3 style="margin:0">{{ d.elemento }}</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px;margin-top:4px"><sc-for list="{{ d.meta }}" as="m"><div style="display:flex;flex-direction:column"><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ m.k }}</span><span>{{ m.v }}</span></div></sc-for></div>
+      </div>
+      <sc-if value="{{ d.comentario }}"><div style="padding:12px 18px;border-bottom:1px solid var(--color-divider);font-size:13px"><span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">Comentario del solicitante</span><div style="margin-top:2px">{{ d.comentario }}</div></div></sc-if>
+      <sc-if value="{{ d.rechazo }}"><div style="margin:12px 18px 0;padding:10px 12px;background:var(--bz-error-bg);font-size:13px"><strong style="color:var(--bz-error)">Rechazada por {{ d.aprobador }}:</strong> {{ d.rechazo }}</div></sc-if>
+      <div style="padding:12px 18px 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">Valor actual vs. propuesto</div>
+      <div style="margin:0 18px 14px;border:1px solid var(--color-divider)">
+        <div style="display:grid;grid-template-columns:120px 1fr 1fr;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700);border-bottom:1px solid var(--color-divider)"><span style="padding:6px 10px">Campo</span><span style="padding:6px 10px;border-left:1px solid var(--color-divider)">Actual</span><span style="padding:6px 10px;border-left:1px solid var(--color-divider)">Propuesto</span></div>
+        <sc-for list="{{ d.cmp }}" as="c"><div style="display:grid;grid-template-columns:120px 1fr 1fr;font-size:13px;border-bottom:1px solid var(--color-divider);background:{{ c.bg }}"><span style="padding:7px 10px;color:var(--color-neutral-700)">{{ c.k }}</span><span style="padding:7px 10px;border-left:1px solid var(--color-divider);color:{{ c.aFg }};text-decoration:{{ c.strike }}">{{ c.a }}</span><span style="padding:7px 10px;border-left:1px solid var(--color-divider);color:{{ c.bFg }};font-weight:{{ c.w }}">{{ c.b }}</span></div></sc-for>
+      </div>
+      <sc-if value="{{ staleErr }}"><div style="margin:0 18px 14px;padding:10px 12px;background:var(--bz-error-bg);color:var(--bz-error);border:1px solid var(--bz-error);font-size:13px"><strong>Conflicto:</strong> el elemento cambió desde la solicitud; debe rehacerse.</div></sc-if>
+      <sc-if value="{{ d.pending }}">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 18px;border-top:1px solid var(--color-divider)">
+          <sc-if value="{{ d.canCancel }}"><button class="btn btn-secondary" disabled="{{ lock }}" onClick="{{ doCancel }}" style="height:36px;padding:0 12px;color:var(--bz-error)">Cancelar solicitud</button></sc-if>
+          <div style="flex:1"></div>
+          <sc-if value="{{ d.showApprove }}">
+            <button class="btn btn-secondary" disabled="{{ d.own }}" onClick="{{ openReject }}" style="height:36px;padding:0 12px">Rechazar</button>
+            <span onMouseEnter="{{ tipOn }}" onMouseLeave="{{ tipOff }}" style="position:relative;display:inline-flex"><button class="btn btn-primary" disabled="{{ d.approveDis }}" onClick="{{ doApprove }}" style="height:36px;padding:0 14px">Aprobar</button>
+              <sc-if value="{{ showTip }}"><span style="position:absolute;bottom:calc(100% + 8px);right:0;width:240px;padding:8px 10px;background:var(--color-text);color:var(--color-bg);font-size:12px;line-height:1.35;box-shadow:var(--shadow-md);z-index:5">No puedes aprobar un cambio que solicitaste o editaste</span></sc-if></span>
+          </sc-if>
+        </div>
+      </sc-if>
+    </section>
+    </sc-if>
+  </div>
+</div>
+
+<sc-if value="{{ rejectOpen }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;align-items:start;padding-top:min(12vh,100px)">
+  <div class="dialog blueprint" style="width:min(460px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="dialog-title" style="font-size:24px">Rechazar {{ d.id }}</div>
+    <div class="field"><label>Comentario (obligatorio)</label><textarea class="input" value="{{ rej }}" onChange="{{ onRej }}" placeholder="Motivo del rechazo"></textarea><sc-if value="{{ rejErr }}"><div style="font-size:12px;color:var(--bz-error);margin-top:4px">{{ rejErr }}</div></sc-if></div>
+    <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeReject }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ doReject }}" style="height:38px;padding:0 18px;background:var(--bz-error);border-color:var(--bz-error)">Rechazar</button></div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAMES={mfcevallos:'María Fernanda Cevallos',lmora:'Luis Mora',aperez:'Ana Pérez',cruiz:'Carla Ruiz'};
+const days=d=>{const [a,b,c]=d.split('/').map(Number);return Math.round((new Date(c,b-1,a)-new Date(2026,10,22))/864e5);};
+const EST={Pendiente:['var(--bz-warning-bg)','var(--bz-warning-fg)'],Aprobada:['var(--bz-success-bg)','var(--bz-success)'],Rechazada:['var(--bz-error-bg)','var(--bz-error)'],Cancelada:['var(--color-neutral-200)','var(--color-neutral-700)'],Vencida:['var(--bz-orange-bg)','var(--bz-orange)']};
+class Component extends DCLogic {
+  state={f:{estado:'',tipo:'',sol:'',mine:false},sel:null,reject:false,rej:'',rejT:false,stale:null,tip:false,w:typeof window!=='undefined'?window.innerWidth:1440};
+  componentDidMount(){this._r=()=>this.setState({w:window.innerWidth});window.addEventListener('resize',this._r);}
+  componentWillUnmount(){window.removeEventListener('resize',this._r);}
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const me=P.me||{id:'lmora',nombre:'Luis Mora',puedeAprobar:true},reqs=P.reqs||[];
+    const selId=s.sel||(P.params&&P.params.id)||null;
+    const list=reqs.filter(r=>(!s.f.estado||r.estado===s.f.estado)&&(!s.f.tipo||r.tipo===s.f.tipo)&&(!s.f.sol||r.solicitante===s.f.sol)&&(!s.f.mine||r.solicitante===me.id));
+    const rows=list.map(r=>{const e=EST[r.estado];const n=days(r.vence);const pend=r.estado==='Pendiente';
+      return {...r,solN:NAMES[r.solicitante],eBg:e[0],eFg:e[1],vence:pend?(n<0?'Vencida':`${n} días`):'—',vBg:pend&&n<3?'var(--bz-orange-bg)':'transparent',vFg:pend&&n<3?'var(--bz-orange)':'var(--color-neutral-700)',
+        bg:r.id===selId?'var(--color-accent-100)':'transparent',pick:()=>set({sel:r.id,stale:null})};});
+    const r=reqs.find(x=>x.id===selId);let d={};
+    if(r){const e=EST[r.estado];const own=r.solicitante===me.id;const keys=[...new Set([...Object.keys(r.actual||{}),...Object.keys(r.propuesto||{})])];
+      d={...r,eBg:e[0],eFg:e[1],own,pending:r.estado==='Pendiente',canCancel:own&&r.estado==='Pendiente',showApprove:me.puedeAprobar,approveDis:own||s.stale===r.id,
+        meta:[{k:'Solicitante',v:NAMES[r.solicitante]},{k:'Fecha',v:r.fecha},{k:'Vence',v:r.estado==='Pendiente'?`${r.vence} (${days(r.vence)} días)`:r.vence},{k:'Aprobador',v:r.aprobador||'—'}],
+        cmp:keys.map(k=>{const a=(r.actual||{})[k],b=(r.propuesto||{})[k];const ch=a!==b;return {k,a:a??'—',b:b??'—',bg:ch?'var(--bz-warning-bg)':'transparent',aFg:ch?'var(--bz-error)':'var(--color-text)',bFg:ch?'var(--bz-success)':'var(--color-text)',w:ch?600:400,strike:ch&&a?'line-through':'none'};})};}
+    const upd=o=>P.setReqs&&P.setReqs(rs=>rs.map(x=>x.id===r.id?{...x,...o}:x));
+    const onF=k=>e=>set({f:{...s.f,[k]:e.target.type==='checkbox'?e.target.checked:e.target.value}});
+    return {
+      f:s.f,onF:{estado:onF('estado'),tipo:onF('tipo'),sol:onF('sol'),mine:onF('mine')},estados:Object.keys(EST),tipos:[...new Set(reqs.map(x=>x.tipo))],sols:Object.entries(NAMES).map(([id,n])=>({id,n})),
+      cols:r&&s.w>=1200?'minmax(0,1fr) 440px':'minmax(0,1fr)',count:list.length,rows,empty:!list.length,hasSel:!!r,d,lock:!!P.lock,
+      staleErr:r&&s.stale===r.id,showTip:s.tip&&d.own,tipOn:()=>set({tip:true}),tipOff:()=>set({tip:false}),
+      doApprove:()=>{if(r.stale){set({stale:r.id});return;}upd({estado:'Aprobada',aprobador:me.nombre});P.toast&&P.toast(`Solicitud ${r.id} aprobada · el cambio ya rige`);},
+      doCancel:()=>{upd({estado:'Cancelada'});P.toast&&P.toast(`Solicitud ${r.id} cancelada`);},
+      rejectOpen:s.reject,openReject:()=>set({reject:true,rej:'',rejT:false}),closeReject:()=>set({reject:false}),rej:s.rej,onRej:e=>set({rej:e.target.value,rejT:true}),rejErr:s.rejT&&!s.rej.trim()?'El comentario es obligatorio':'',
+      doReject:()=>{if(!s.rej.trim())return set({rejT:true});upd({estado:'Rechazada',aprobador:me.nombre,rechazo:s.rej.trim()});set({reject:false});P.toast&&P.toast(`Solicitud ${r.id} rechazada`);},
+    };
+  }
+}
+</script>
+</body>
+</html>

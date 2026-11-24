@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/styles.css">
+<script src="_ds/industry-0caad489-90d3-4a30-b254-3e7a29211412/_ds_bundle.js"></script>
+<style>@keyframes bzIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:18px;color:var(--color-text);font-family:var(--font-body)">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px">
+    <div style="flex:1;min-width:260px">
+      <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Flujos · Versiones por canal + producto</span>
+      <h1 style="margin:2px 0 4px;font-size:40px">Flujos</h1>
+      <p style="margin:0;font-size:14px;color:var(--color-neutral-700);max-width:620px">Una versión publicada o retirada nunca se edita: para cambiarla se abre un borrador.</p>
+    </div>
+    <sc-if value="{{ showOpen }}"><button class="btn btn-primary blueprint" disabled="{{ lock }}" onClick="{{ openModal }}" style="height:40px;padding:0 16px;white-space:nowrap"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>+ Abrir borrador</button></sc-if>
+    <sc-if value="{{ showGo }}"><button class="btn btn-primary blueprint" onClick="{{ goDraft }}" style="height:40px;padding:0 16px;white-space:nowrap"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Ir al borrador →</button></sc-if>
+  </div>
+
+  <section class="blueprint" style="background:var(--color-surface);padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="field"><label>Canal</label><select class="input" value="{{ canal }}" onChange="{{ onCanal }}"><sc-for list="{{ canales }}" as="c"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></div>
+    <div class="field"><label>Producto (solo combinaciones habilitadas)</label><select class="input" value="{{ producto }}" onChange="{{ onProducto }}"><sc-for list="{{ productos }}" as="p"><option value="{{ p.code }}">{{ p.label }}</option></sc-for></select></div>
+    <div style="display:flex;gap:16px;font-size:13px;color:var(--color-neutral-700);padding-bottom:8px"><span>{{ nVers }} versiones</span><span>Vigente: <strong style="color:var(--color-text);font-weight:500">{{ vigLabel }}</strong></span></div>
+  </section>
+
+  <sc-if value="{{ draftNotice }}">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:12px 16px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);border:1px solid var(--bz-warning)">
+      <svg viewBox="0 0 24 24" width="18" height="18" style="flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
+      <span style="flex:1;min-width:240px;font-size:14px;color:var(--color-text)">{{ draftNotice }}</span>
+      <button class="btn btn-secondary" onClick="{{ goDraft }}" style="height:32px;padding:0 12px;background:var(--color-surface)">Continuar</button>
+      <sc-if value="{{ canDiscard }}"><button class="btn btn-secondary" disabled="{{ lock }}" onClick="{{ askDiscard }}" style="height:32px;padding:0 12px;background:var(--color-surface);color:var(--bz-error);border-color:var(--bz-error)">Descartar</button></sc-if>
+    </div>
+  </sc-if>
+
+  <section class="blueprint" style="background:var(--color-surface);display:flex;flex-direction:column"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <sc-if value="{{ hasRows }}" hint-placeholder-val="{{ true }}">
+    <div style="overflow-x:auto"><table class="table" style="min-width:960px">
+      <thead><tr><th style="padding-left:18px">Versión</th><th>Estado</th><th>Sello</th><th>Publicada el</th><th>Aprobada por</th><th>Vigencia</th><th style="text-align:right;padding-right:18px">Acciones</th></tr></thead>
+      <tbody><sc-for list="{{ rows }}" as="r" hint-placeholder-count="3"><tr>
+        <td style="padding:12px 10px 12px 18px;font-family:var(--font-heading);font-weight:600;font-size:18px">v{{ r.v }}</td>
+        <td style="padding:12px 10px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;white-space:nowrap;background:{{ r.eBg }};color:{{ r.eFg }}"><span style="width:6px;height:6px;background:currentColor"></span>{{ r.estado }}</span></td>
+        <td style="padding:12px 10px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 8px;white-space:nowrap;border:1px solid {{ r.sBd }};color:{{ r.sFg }}">{{ r.sello }}</span></td>
+        <td style="padding:12px 10px;font-size:13px">{{ r.pub }}</td>
+        <td style="padding:12px 10px;font-size:13px">{{ r.apr }}</td>
+        <td style="padding:12px 10px;font-size:13px;color:var(--color-neutral-700);white-space:nowrap">{{ r.vig }}</td>
+        <td style="padding:12px 18px 12px 10px"><div style="display:flex;justify-content:flex-end;gap:4px;flex-wrap:wrap">
+          <button class="btn btn-ghost" onClick="{{ r.view }}" style="font-size:13px;padding:3px 8px">{{ r.viewLabel }}</button>
+          <sc-if value="{{ r.canClose }}"><button class="btn btn-ghost" disabled="{{ lock }}" onClick="{{ r.close }}" style="font-size:13px;padding:3px 8px;white-space:nowrap">Solicitar cierre de vigencia</button></sc-if>
+          <sc-if value="{{ r.canSeal }}"><button class="btn btn-ghost" disabled="{{ lock }}" onClick="{{ r.seal }}" style="font-size:13px;padding:3px 8px;white-space:nowrap">Solicitar sellado</button></sc-if>
+          <sc-if value="{{ r.badSig }}"><button class="btn btn-ghost" onClick="{{ goIntegrity }}" style="font-size:13px;padding:3px 8px;color:var(--bz-error);white-space:nowrap">Ver en Integridad</button></sc-if>
+        </div></td>
+      </tr></sc-for></tbody>
+    </table></div>
+    </sc-if>
+    <sc-if value="{{ noRows }}"><div style="padding:56px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="font-family:var(--font-heading);font-weight:600;font-size:22px">Este canal + producto aún no tiene versiones</span><span style="font-size:14px;color:var(--color-neutral-700)">El motor no evalúa solicitudes de esta combinación hasta que se publique una versión.</span><sc-if value="{{ showOpen }}"><button class="btn btn-primary" disabled="{{ lock }}" onClick="{{ openModal }}" style="height:36px;padding:0 14px;margin-top:6px">Abrir borrador vacío</button></sc-if></div></sc-if>
+  </section>
+</div>
+
+<sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:150;overflow-y:auto;align-items:start;padding-top:min(12vh,100px)">
+  <div class="dialog blueprint" style="width:min(520px,100%);background:var(--color-surface);gap:14px;padding:24px;animation:bzIn .2s ease both;color:var(--color-text)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <sc-if value="{{ mOpen }}">
+      <div><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">{{ comboLabel }}</span><div class="dialog-title" style="font-size:24px">Abrir borrador</div></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ openOpts }}" as="o"><label style="display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid {{ o.bd }};background:{{ o.bg }};cursor:{{ o.cursor }};opacity:{{ o.op }}"><input type="radio" disabled="{{ o.dis }}" checked="{{ o.on }}" onChange="{{ o.pick }}" style="margin-top:3px;accent-color:var(--color-accent)"><span style="display:flex;flex-direction:column;gap:2px;flex:1"><span style="font-weight:500">{{ o.label }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ o.hint }}</span></span></label></sc-for>
+        <sc-if value="{{ showRetSel }}"><div class="field"><label>Versión retirada</label><select class="input" value="{{ retSel }}" onChange="{{ onRetSel }}"><sc-for list="{{ retiradas }}" as="rv"><option value="{{ rv }}">Versión {{ rv }}</option></sc-for></select></div></sc-if>
+      </div>
+      <div style="font-size:12px;color:var(--color-neutral-700)">El borrador vence a los 15 días sin actividad. Solo un aprobador distinto de quien lo edite podrá publicarlo.</div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ doOpen }}" style="height:38px;padding:0 18px">Abrir borrador</button></div>
+    </sc-if>
+    <sc-if value="{{ mReq }}">
+      <div class="dialog-title" style="font-size:24px">{{ rq.title }}</div>
+      <div class="dialog-body" style="text-wrap:pretty">{{ rq.body }}</div>
+      <sc-if value="{{ rq.dup }}"><div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;background:var(--bz-warning-bg);color:var(--bz-warning-fg);border:1px solid var(--bz-warning);font-size:13px">Ya hay una solicitud pendiente sobre este elemento: <a href="#" onClick="{{ rq.goDup }}" style="font-family:ui-monospace,Menlo,monospace;color:var(--bz-warning-fg)">{{ rq.dup }}</a></div></sc-if>
+      <div style="padding:10px 12px;background:var(--color-neutral-100);font-size:13px;color:var(--color-neutral-700)">Este cambio no rige hasta que otro aprobador lo apruebe.</div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" disabled="{{ rq.dup }}" onClick="{{ rq.ok }}" style="height:38px;padding:0 18px">Crear solicitud de cambio</button></div>
+    </sc-if>
+    <sc-if value="{{ mDiscard }}">
+      <div class="dialog-title" style="font-size:24px">¿Descartar el borrador?</div>
+      <div class="dialog-body">Se elimina la versión 2 y todos sus cambios. La versión vigente no se modifica. No se puede deshacer.</div>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ closeModal }}" style="height:38px;padding:0 16px">Cancelar</button><button class="btn btn-primary" onClick="{{ doDiscard }}" style="height:38px;padding:0 18px;background:var(--bz-error);border-color:var(--bz-error)">Descartar borrador</button></div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CAN=[['1','Solicitudes Web'],['2','Agencias'],['3','Banca Móvil']];
+const PRO=[['1','Auto Plan'],['2','Consumo'],['3','Microcrédito']];
+const EN={'1':['1','2'],'2':['1','2'],'3':['2']};
+const V=(v,estado,sello,pub,apr,vig)=>({v,estado,sello,pub,apr,vig});
+const STATIC={'1-2':[V(3,'vigente','Sellada','02/09/2026','Luis Mora','02/09/2026 → —'),V(2,'retirada','Sellada','10/05/2026','Ana Pérez','10/05/2026 → 02/09/2026'),V(1,'retirada','Sellada','12/01/2026','Luis Mora','12/01/2026 → 10/05/2026')],
+ '2-1':[V(1,'vigente','Sin sellar','18/11/2026','Luis Mora','18/11/2026 → —')],
+ '2-2':[V(3,'vigente','Firma inválida','30/10/2026','Ana Pérez','30/10/2026 → —'),V(2,'retirada','Sellada','03/04/2026','Luis Mora','03/04/2026 → 30/10/2026')],'3-2':[]};
+const ES={vigente:['Publicada vigente','var(--bz-success-bg)','var(--bz-success)'],retirada:['Retirada','var(--color-neutral-200)','var(--color-neutral-700)'],edicion:['Borrador · En edición','var(--bz-warning-bg)','var(--bz-warning-fg)'],revision:['Borrador · En revisión','var(--bz-info-bg)','var(--bz-info)']};
+const SE={'Sellada':['var(--bz-success)','var(--bz-success)'],'Sin sellar':['var(--bz-warning)','var(--bz-warning-fg)'],'Firma inválida':['var(--bz-error)','var(--bz-error)']};
+class Component extends DCLogic {
+  state={canal:'1',producto:'1',modal:null,opt:'vigente',retSel:'',rq:null,localDrafts:{}};
+  renderVals(){
+    const s=this.state,P=this.props,set=o=>this.setState(o);
+    const me=P.me||{id:'aperez',nombre:'Ana Pérez',puedeSolicitar:true},flow=P.flow||{status:'edicion',openedBy:'Ana Pérez',openedAt:'20/11/2026'},reqs=P.reqs||[];
+    const key=`${s.canal}-${s.producto}`;const cn=CAN.find(c=>c[0]===s.canal),pn=PRO.find(p=>p[0]===s.producto);const comboLabel=`${cn[0]} ${cn[1]} / ${pn[0]} ${pn[1]}`;
+    let vers;
+    if(key==='1-1'){vers=[];if(['edicion','revision'].includes(flow.status))vers.push(V(2,flow.status,'Sin sellar','—','—','—'));
+      if(flow.status==='publicada'){vers.push(V(2,'vigente','Sellada','22/11/2026',flow.approvedBy||'Luis Mora','22/11/2026 → —'));vers.push(V(1,'retirada','Sellada','15/10/2026','Luis Mora','15/10/2026 → 22/11/2026'));}
+      else vers.push(V(1,'vigente','Sellada','15/10/2026','Luis Mora','15/10/2026 → —'));}
+    else vers=[...(s.localDrafts[key]?[V((STATIC[key][0]||{v:0}).v+1,'edicion','Sin sellar','—','—','—')]:[]),...STATIC[key]];
+    const draft=vers.find(v=>v.estado==='edicion'||v.estado==='revision');const vig=vers.find(v=>v.estado==='vigente');const rets=vers.filter(v=>v.estado==='retirada').map(v=>String(v.v));
+    const pendingOn=el=>reqs.find(r=>r.estado==='Pendiente'&&r.elemento===el);
+    const nextId=()=>'SC-0'+(Math.max(...reqs.map(r=>+r.id.slice(3)))+1);
+    const mkReq=(tipo,accion,el,actual,propuesto)=>{const id=nextId();P.setReqs&&P.setReqs(rs=>[{id,tipo,elemento:el,accion,solicitante:me.id,fecha:'22/11/2026',vence:'07/12/2026',estado:'Pendiente',actual,propuesto,comentario:''},...rs]);set({modal:null});P.toast&&P.toast(`Solicitud ${id} creada · pendiente de aprobación`);};
+    const rows=vers.map(v=>{const e=ES[v.estado],sc=SE[v.sello];const el=`Versión ${v.v} · ${cn[1]} / ${pn[1]}`;
+      return {...v,estado:e[0],eBg:e[1],eFg:e[2],sBd:sc[0],sFg:sc[1],viewLabel:(v.estado==='edicion'&&me.puedeSolicitar)?'Editar':'Ver',
+        canClose:v.estado==='vigente'&&me.puedeSolicitar,canSeal:v.sello==='Sin sellar'&&v.estado!=='edicion'&&v.estado!=='revision'&&me.puedeSolicitar,badSig:v.sello==='Firma inválida',
+        view:()=>{if(key!=='1-1'){P.toast&&P.toast('En este prototipo la vista detallada está disponible para 1 Solicitudes Web / 1 Auto Plan');return;}
+          if(v.estado==='edicion'||v.estado==='revision')P.go&&P.go('editor');else P.go&&P.go('editor',{readonly:true,version:v.v});},
+        close:()=>{const dup=pendingOn(`Cierre de vigencia · ${el}`);set({modal:'req',rq:{title:`¿Solicitar cierre de vigencia de la versión ${v.v}?`,body:`Al aprobarse, ${comboLabel} quedará sin configuración: el motor dejará de evaluar solicitudes de este canal + producto hasta que se publique otra versión.`,dup:dup&&dup.id,
+          ok:()=>mkReq('Cierre de vigencia','Cerrar vigencia',`Cierre de vigencia · ${el}`,{Estado:'Publicada vigente'},{Estado:'Retirada (sin versión vigente)'})}});},
+        seal:()=>{const dup=reqs.find(r=>r.estado==='Pendiente'&&r.tipo==='Sellado'&&r.elemento.startsWith(`Versión ${v.v} · ${cn[0]} ${cn[1]}`))||pendingOn(`Sellado · ${el}`);
+          set({modal:'req',rq:{title:`¿Solicitar sellado de la versión ${v.v}?`,body:'El motor no usa una versión sin sellar. Al aprobarse, se firma con la llave del servicio y queda registrada en la cadena de integridad.',dup:dup&&dup.id,
+          ok:()=>mkReq('Sellado','Sellar',`Sellado · ${el}`,{Sello:'Sin sellar'},{Sello:'Sellada'})}});}};});
+    const rq=s.rq?{...s.rq,goDup:e=>{e.preventDefault();P.go&&P.go('solicitudes',{id:s.rq.dup});}}:{};
+    const noVers=!vers.length;
+    const openOpts=[['vigente','Desde la versión vigente',vig?`Copia la versión ${vig.v} publicada`:'No hay versión vigente',!vig],['retirada','Desde una versión retirada',rets.length?'Elige la versión a copiar':'No hay versiones retiradas',!rets.length],['vacio','Vacío','Solo disponible si no hay versiones',!noVers]]
+      .map(([k,l,h,dis])=>({label:l,hint:h,dis,on:s.opt===k&&!dis,bd:s.opt===k&&!dis?'var(--color-accent)':'var(--color-divider)',bg:s.opt===k&&!dis?'var(--color-accent-100)':'transparent',cursor:dis?'not-allowed':'pointer',op:dis?.5:1,pick:()=>set({opt:k})}));
+    return {
+      canales:CAN.map(([c,l])=>({code:c,label:`${c} ${l}`})),productos:PRO.filter(([p])=>EN[s.canal].includes(p)).map(([p,l])=>({code:p,label:`${p} ${l}`})),
+      canal:s.canal,producto:s.producto,onCanal:e=>{const c=e.target.value;set({canal:c,producto:EN[c][0]});},onProducto:e=>set({producto:e.target.value}),
+      nVers:vers.length,vigLabel:vig?`v${vig.v}`:'ninguna',lock:!!P.lock,
+      showOpen:!draft&&me.puedeSolicitar,showGo:!!draft,
+      draftNotice:draft?(key==='1-1'?`Ya existe un borrador abierto por ${flow.openedBy} el ${flow.openedAt}. ${flow.status==='revision'?'Está en revisión.':'Continúa sobre él o descártalo.'}`:`Ya existe un borrador abierto por ${me.nombre} el 22/11/2026. Continúa sobre él o descártalo.`):'',
+      canDiscard:!!draft&&draft.estado==='edicion'&&me.puedeSolicitar,
+      goDraft:()=>{if(key==='1-1')P.go&&P.go('editor');else P.toast&&P.toast('En este prototipo el editor detallado está disponible para 1 Solicitudes Web / 1 Auto Plan');},
+      rows,hasRows:rows.length>0,noRows:!rows.length,goIntegrity:()=>P.go&&P.go('integridad'),
+      modal:!!s.modal,mOpen:s.modal==='open',mReq:s.modal==='req',mDiscard:s.modal==='discard',closeModal:()=>set({modal:null}),
+      openModal:()=>set({modal:'open',opt:vig?'vigente':(rets.length?'retirada':'vacio'),retSel:rets[0]||''}),comboLabel,openOpts,showRetSel:s.opt==='retirada'&&rets.length>0,retiradas:rets,retSel:s.retSel,onRetSel:e=>set({retSel:e.target.value}),
+      doOpen:()=>{const src=s.opt==='vigente'?`la versión ${vig&&vig.v}`:(s.opt==='retirada'?`la versión ${s.retSel}`:'cero');
+        if(key==='1-1'){if(s.opt==='vacio')P.setDraft&&P.setDraft({detener:true,desde:'',hasta:'',cats:[]});else P.setDraft&&P.setDraft(JSON.parse(JSON.stringify(P.baseline)));
+          P.setFlow&&P.setFlow({status:'edicion',devolucion:null,openedBy:me.nombre,openedId:me.id,openedAt:'22/11/2026',editors:[me.id],editorNames:me.nombre,last:'22/11/2026 11:20',vence:'07/12/2026'});set({modal:null});P.toast&&P.toast(`Borrador abierto desde ${src}`);P.go&&P.go('editor');}
+        else{set({modal:null,localDrafts:{...s.localDrafts,[key]:true}});P.toast&&P.toast(`Borrador abierto desde ${src}`);}},
+      askDiscard:()=>set({modal:'discard'}),
+      doDiscard:()=>{if(key==='1-1')P.setFlow&&P.setFlow({status:'none'});else set({localDrafts:{...s.localDrafts,[key]:false}});set({modal:null});P.toast&&P.toast('Borrador descartado');},
+      rq,
+    };
+  }
+}
+</script>
+</body>
+</html>
