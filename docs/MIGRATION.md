@@ -10,7 +10,7 @@ Referencias del prototipo en `docs/prototype/` (marcado Angular-like con sintaxi
 | `/flows/editor` | `flujos` | hecho | `editor-borrador.html` |
 | `/flows/review` | `flujos` | hecho | `revision.html` |
 | `/requests` | `solicitudes` | hecho | `solicitudes.html` |
-| `/masters/*` (5) | `m-canales`, `m-acciones`, `m-parametros`, `m-catalogos`, `m-roles` | hecho (un componente, `data.section`) | `maestros.html` (+ `maestros-sin-identificar.html`: confirmar a qué sección pertenece) |
+| `/masters/*` (5) | `m-channels`, `m-actions`, `m-parameters`, `m-catalogs`, `m-roles` | hecho (un componente, `data.section`) | `maestros.html` (+ `maestros-sin-identificar.html`: confirmar a qué sección pertenece) |
 | `/history` | `historial` | hecho | `historial.html` |
 | `/integrity` | `integridad` | hecho | `integridad.html` |
 | `/users` | `usuarios` | hecho | `usuarios.html` |
